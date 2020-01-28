@@ -1,3 +1,7 @@
+@import './base/vars';
+@import './base/mixins';
+@import './base/layouts';
+
 .App {
   text-align: center;
 }
@@ -14,7 +18,7 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: $coucou;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
