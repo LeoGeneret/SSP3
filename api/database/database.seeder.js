@@ -34,6 +34,9 @@ const {
     Visiteur,
     Visite,
     Voiture,
+    VisiteurAbsence,
+    Binome,
+    Secteur
 } = sequelize.models
 
 
@@ -41,9 +44,21 @@ const {
 const HOTEL_COUNT = 45
 const VISITEUR_COUNT = 20
 const VOITURE_COUNT = 10
+const SECTEUR_COUNT = 5
+const SECTEUR_LIST = ['75', '93', '92-94', '77-91', '78-95']
 
 
 const generate = async () => {
+
+    const secteurs = await Secteur.bulkCreate(SECTEUR_LIST.map((secteur_intem) => {
+        return {
+            intitule_secteur: secteur_intem,
+        }
+    }))
+
+    console.log("#######")
+    console.log("HAS GENERATED " + secteurs.length + " secteurs")
+    console.log("#######")
 
     const hotels = await Hotel.bulkCreate(Helpers.loop(HOTEL_COUNT, () => {
 
@@ -56,7 +71,8 @@ const generate = async () => {
             adresse: adresse,
             code_postal: code_postal,
             ville: ville,
-            nombre_chambre : faker.random.number(122)
+            nombre_chambre : faker.random.number(122),
+            secteur_id : faker.random.arrayElement(secteurs).get("id"),
         }
     }))
 
@@ -72,12 +88,38 @@ const generate = async () => {
             adresse: faker.address.streetAddress(),
             code_postal: faker.address.zipCode(),
             ville: faker.address.city(),
+            secteur_id : faker.random.arrayElement(secteurs).get("id"),
         }
     }))
 
 
     console.log("#######")
-    console.log("HAS GENERATED " + visiteurs.length + " hotels")
+    console.log("HAS GENERATED " + visiteurs.length + " visiteurs")
+    console.log("#######")
+
+    const visiteursAbsences = await visiteurs.map(visiteursItem => {
+
+        let absencesCount = faker.random.number(2)
+        const lesRaisons = ["congé maladie", "congé payé", "en formation"]
+
+        return VisiteurAbsence.bulkCreate(Helpers.loop(absencesCount, () => {
+
+            let date_start = moment().startOf("week").add(faker.random.number(4), "day")
+            let date_end = date_start.clone().add(faker.random.number(1), "day").endOf("day")
+
+
+            return {
+                date_start: date_start,
+                date_end: date_end,
+                raison: faker.random.arrayElement(lesRaisons),
+                visiteur_id: visiteursItem.get("id"),
+            }
+        }))
+    })
+
+
+    console.log("#######")
+    console.log("HAS GENERATED " + visiteursAbsences.length + " visiteursAbsences")
     console.log("#######")
 
 
@@ -97,7 +139,19 @@ const generate = async () => {
     console.log("#######")
 
 
-    const binomes = Helpers.loop(Math.round(VISITEUR_COUNT * 1.5), () => Helpers.randomSubArray(visiteurs, 2))
+    const generated_binomes = Helpers.loop(Math.round(VISITEUR_COUNT * 1.5), () => Helpers.randomSubArray(visiteurs, 2))
+
+    const binomes = await Binome.bulkCreate(generated_binomes.map(binomesItem => {
+
+        return {
+            visiteur_id_1: binomesItem[0].get("id"),
+            visiteur_id_2: binomesItem[1].get("id")
+        }
+    }))
+
+    console.log("#######")
+    console.log("HAS GENERATED " + binomes.length + "binomes")
+    console.log("#######")
 
     const visits = await Visite.bulkCreate(binomes.map(binomesItem => {
         
@@ -109,7 +163,7 @@ const generate = async () => {
         let time_end = time_start.clone().add(faker.random.number(3), "hour")
 
         return {
-            visiteur_id: binomesItem[0].get("id"),
+            binome_id: binomesItem.get("id"),
             hotel_id: faker.random.arrayElement(hotels).get("id"),
             voiture_id: faker.random.arrayElement(voitures).get("id"),
             rapport: {
