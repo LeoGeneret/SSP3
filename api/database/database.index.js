@@ -17,6 +17,9 @@ const sequelize = new Sequelize(
   } 
 )
 
+sequelize.authenticate().then(() => {
+  console.log({DATABASE: true})
+})
 
 const Hotel = sequelize.import("./models/Hotel.js"),
       Voiture = sequelize.import("./models/Voiture.js"),
@@ -31,35 +34,39 @@ const Hotel = sequelize.import("./models/Hotel.js"),
  * Database relationship
  */
 
-// Visit's Hotel
-Hotel.hasMany(Visite, {as: "hotels", foreignKey: "hotel_id"})
+// Visite <-> Hotel
+Hotel.hasMany(Visite, {as: "hotel_visites", foreignKey: "hotel_id"})
+Visite.belongsTo(Hotel, {as: "hotel", foreignKey: "hotel_id"})
 
-// Visit's Voiture
-Voiture.hasMany(Visite, {as: "voiture", foreignKey: "voiture_id"})
+// Visite <-> Voiture
+Voiture.hasMany(Visite, {as: "voiture_visites", foreignKey: "voiture_id"}) // @OPTI - useless?
+Visite.belongsTo(Voiture, {as: "voiture", foreignKey: "voiture_id"})
 
-// Binome's Visit
-Binome.hasMany(Visite, {as: "binome", foreignKey: "binome_id"})
+// Visite <-> Binome
+Binome.hasMany(Visite, {as: "binome_visites", foreignKey: "binome_id"})
+Visite.belongsTo(Binome, {as: "binome", foreignKey: "binome_id"})
 
-// Visiteur's Secteur
+// Visite <-> Rapport
+Rapport.hasOne(Visite, {as: "rapport_visite", foreignKey: "rapport_id"})
+Visite.belongsTo(Rapport, {as: "rapport", foreignKey: "rapport_id"})
+
+// Secteur <-> Visiteur
 Secteur.hasMany(Visiteur, {as: "visiteur_secteur", foreignKey: "secteur_id"})
 
-// Hotel's Secteur
+// Secteur <-> Hotel
 Secteur.hasMany(Hotel, {as: "hotel_secteur", foreignKey: "secteur_id"})
 
 
+// Binome <-> Visiteur 1
+Visiteur.hasMany(Binome, {as: "visiteur_1", foreignKey: "visiteur_id_1"})
+Binome.belongsTo(Visiteur, {as: "visiteur_1", foreignKey: "visiteur_id_1"})
+
+// Binome <-> Visiteur 2
+Visiteur.hasMany(Binome, {as: "visiteur_2", foreignKey: "visiteur_id_2"})
+Binome.belongsTo(Visiteur, {as: "visiteur_2", foreignKey: "visiteur_id_2"})
 
 
-
-// Visiteur's Binome
-Visiteur.hasMany(Binome, {as: "visiteur1", foreignKey: "visiteur_id_1"})
-Visiteur.hasMany(Binome, {as: "visiteur2", foreignKey: "visiteur_id_2"})
-
-
-
-// Visit's Rapport  @OPTI = est-ce nécessaire ?
-Rapport.hasOne(Visite, {as: "rapport", foreignKey: "rapport_id"})
-Visite.belongsTo(Rapport, {as: "rapport", foreignKey: "rapport_id"})
-
+// Visiteur <-> VisiteurAbsence
 Visiteur.hasMany(VisiteurAbsence, {as: "absences", foreignKey: "visiteur_id"})
 
 

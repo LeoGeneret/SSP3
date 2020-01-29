@@ -7,6 +7,7 @@ require("dotenv").config()
  */
 const express = require("express")
 const app = express()
+
 const sequelize = require("./database/database.index")
 
 
@@ -23,13 +24,17 @@ app.get("/", async (req, res) => {
 })
 
 
-// REFAIRE
-// app.get("/hotel", async (req, res) => {
+app.get("/visit", async (req, res) => {
 
-//     const hotels = await sequelize.models.Voiture.getAll()
+    // query
+    const offset = (req.query.offset && Number(req.query.offset)) || undefined
+    const limit = (req.query.limit && Number(req.query.limit)) || undefined
 
-//     return res.send(hotels)
-// })
+    console.log(sequelize.models.Visite.associations)
+
+    const results = await sequelize.models.Visite.getAll(offset, limit)
+    return res.send(results)
+})
 
 
 app.listen(PORT, () => console.log("API IS RUNNING ON PORT " + PORT))

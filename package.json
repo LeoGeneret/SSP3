@@ -28,7 +28,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "api": "nodemon api/api.index.js",
-    "seed": "node api/database/database.seeder.js",
+    "seeder": "node api/database/database.seeder.js",
     "sync": "node api/database/database.sync.js"
   },
   "eslintConfig": {
