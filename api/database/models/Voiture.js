@@ -35,10 +35,7 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: false
     })
 
-     /*
-
-
-    Hotel.getAll = async (offset = 0, limit = 5) => {
+    Voiture.getAll = async (offset = 0, limit = 5) => {
 
         let results = {
             error: false,
@@ -46,17 +43,17 @@ module.exports = (sequelize, DataTypes) => {
             data: null
         }
 
-        let hotels = null
+        let voitures = null
 
         try {
-            hotels = await Hotel.findAll({
+            voitures = await Voiture.findAll({
                 offset: offset * limit,
                 limit: limit
             })
 
-            if(hotels){
+            if(voitures){
 
-                let item_count = await Hotel.count()
+                let item_count = await Voiture.count()
 
                 results.data = {
                     pagination: {
@@ -64,12 +61,12 @@ module.exports = (sequelize, DataTypes) => {
                         page_current: offset,
                         page_count: Math.ceil(item_count / limit)
                     },
-                    hotels: hotels
+                    voitures: voitures
                 }
             }
 
-        } catch (GetAllHotelError) {
-            console.error({GetAllHotelError})
+        } catch (GetAllVoitureError) {
+            console.error({GetAllVoitureError})
             results.error = {
                 code: 502,
                 message: "BAD GATEWAY - error on fetching ressources"
@@ -78,8 +75,6 @@ module.exports = (sequelize, DataTypes) => {
 
         return results
     }
-
-    */
 
     return Voiture
 }

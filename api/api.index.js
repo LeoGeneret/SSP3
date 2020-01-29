@@ -7,7 +7,10 @@ require("dotenv").config()
  */
 const express = require("express")
 const app = express()
+const bodyParser = require("body-parser")
 const sequelize = require("./database/database.index")
+
+app.use(express.json())
 
 
 /**
@@ -23,18 +26,33 @@ app.get("/", async (req, res) => {
 })
 
 app.get("/hotel", async (req, res) => {
-    const hotels = await sequelize.models.Hotel.getAll()
-    return res.send(hotels)
+    
+    // query
+    const offset = (req.query.offset && Number(req.query.offset)) || undefined
+    const limit = (req.query.limit && Number(req.query.limit)) || undefined
+
+    const results = await sequelize.models.Hotel.getAll(offset, limit)
+    return res.send(results)
 })
 
 app.get("/visiteur", async (req, res) => {
-    const visiteurs = await sequelize.models.Visiteur.getAll()
-    return res.send(visiteurs)
+
+    // query
+    const offset = (req.query.offset && Number(req.query.offset)) || undefined
+    const limit = (req.query.limit && Number(req.query.limit)) || undefined
+
+    const results = await sequelize.models.Visiteur.getAll(offset, limit)
+    return res.send(results)
 })
 
 app.get("/voiture", async (req, res) => {
-    const voitures = await sequelize.models.Voiture.getAll()
-    return res.send(voitures)
+        
+    // query
+    const offset = (req.query.offset && Number(req.query.offset)) || undefined
+    const limit = (req.query.limit && Number(req.query.limit)) || undefined
+
+    const results = await sequelize.models.Voiture.getAll(offset, limit)
+    return res.send(results)
 })
 
 /*app.get("/hotel", async (req, res) => {
@@ -51,6 +69,11 @@ app.get("/voiture", async (req, res) => {
 // })
 
 
+app.post('/hotels/:id/create', async (req, res) => {
+    console.log(req.body)
+    return res.send({foo:req.params.id})
+    
+})
 
 
 app.listen(PORT, () => console.log("API IS RUNNING ON PORT " + PORT))
