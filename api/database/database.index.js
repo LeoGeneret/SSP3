@@ -69,12 +69,9 @@ sequelize.models = {
   Rapport,
   Visite,
   Visiteur,
-<<<<<<< HEAD
   VisiteurAbsence,
-=======
   Binome,
   Secteur,
->>>>>>> 23db0b07f431e8d34f8ced0c1c12e6e7dfebbf23
 }
   
 module.exports = sequelize
