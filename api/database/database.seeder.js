@@ -33,7 +33,7 @@ const {
     Hotel,
     Visiteur,
     Visite,
-    Voiture
+    Voiture,
 } = sequelize.models
 
 
@@ -56,6 +56,7 @@ const generate = async () => {
             adresse: adresse,
             code_postal: code_postal,
             ville: ville,
+            nombre_chambre : faker.random.number(122)
         }
     }))
 
