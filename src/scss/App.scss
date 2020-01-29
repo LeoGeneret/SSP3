@@ -1,5 +1,5 @@
 @import '~@fullcalendar/core/main.css';
-@import '~@fullcalendar/daygrid/main.css';  
+@import '~@fullcalendar/daygrid/main.css';
 @import '~@fullcalendar/resource-timeline/main.css';
 @import '~@fullcalendar/timeline/main.css';
 
@@ -8,3 +8,14 @@
 @import './base/mixins';
 @import './base/layouts';
 
+.pop-in {
+  position: absolute;
+  display: none;
+  width: 200px;
+  height: 200px;
+  background-color: red;
+}
+
+.active {
+  display: block;
+}

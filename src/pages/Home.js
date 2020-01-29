@@ -1,9 +1,5 @@
 import React from "react";
 import "../scss/App.scss";
-import ListView from "./ListView";
-
-
-
 
 function Home() {
   return (

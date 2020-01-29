@@ -14,14 +14,24 @@ function Planning() {
   const [dateStart, setDateStart] = useState("");
   const [dateEnd, setDateEnd] = useState("");
   const [resourcesList, setResourcesList] = useState([]);
+  const [openPopIn, setOpenPopIn] = useState(false);
 
   useEffect(() => {
     // get FullCalendar API
     let calendarApi = teamPlanning.current.getApi();
     setTeamPlanningRef(calendarApi);
+
     // Access resources
     setResourcesList(teamPlanning.current.props.resources);
   }, []);
+
+  const popInToggle = () => {
+    openPopIn ? setOpenPopIn(false) : setOpenPopIn(true)
+  }
+
+  const handleRemove = info => {
+    info.event.remove()
+  }
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -51,9 +61,13 @@ function Planning() {
     }
   };
 
+
   return (
     <div className="test">
       <h1>PLANNING</h1>
+      <div className={`pop-in ${openPopIn ? 'active': ''}`}>
+        <button></button>
+      </div>
       <div className="formContainer">
         <form onSubmit={handleSubmit}>
           <select value={agent1} onChange={e => setAgent1(e.target.value)}>
@@ -91,6 +105,7 @@ function Planning() {
         <FullCalendar
           ref={teamPlanning}
           defaultView="resourceTimelineWeek"
+          eventClick={popInToggle}
           header={{
             left: "prev,next today",
             center: "title",
@@ -121,7 +136,15 @@ function Planning() {
           plugins={[resourceTimeline]}
           schedulerLicenseKey="GPL-My-Project-Is-O  pen-Source"
           weekends={false}
-          events={[]}
+          events={[
+            {
+              id: 1,
+              title: 'jran',
+              resourceIds: ['a', 'd'],
+              start: '2020-01-28',
+              end: '2020-01-30'
+            }
+          ]}
         />
       </div>
     </div>
