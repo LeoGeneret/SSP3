@@ -35,12 +35,46 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: false
     })
 
-    // Refaire
-    // Voiture.getAll = async () => {
-    //     return Voiture.findAll({
-    //         attributes: ["id", "type", "immatriculation"]
-    //     })
-    // }
+    Voiture.getAll = async (offset = 0, limit = 5) => {
+
+        let results = {
+            error: false,
+            status: 200,
+            data: null
+        }
+
+        let voitures = null
+
+        try {
+            voitures = await Voiture.findAll({
+                offset: offset * limit,
+                limit: limit
+            })
+
+            if(voitures){
+
+                let item_count = await Voiture.count()
+
+                results.data = {
+                    pagination: {
+                        item_count: item_count,
+                        page_current: offset,
+                        page_count: Math.ceil(item_count / limit)
+                    },
+                    voitures: voitures
+                }
+            }
+
+        } catch (GetAllVoitureError) {
+            console.error({GetAllVoitureError})
+            results.error = {
+                code: 502,
+                message: "BAD GATEWAY - error on fetching ressources"
+            }
+        }
+
+        return results
+    }
 
     return Voiture
 }

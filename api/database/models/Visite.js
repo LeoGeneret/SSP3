@@ -23,9 +23,6 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: false
     })
 
-
-    const Visiteur = sequelize.import("./Visiteur")
-
     // Fetchers
 
     Visite.getAll = async (offset = 0, limit = 5) => {

@@ -7,8 +7,11 @@ require("dotenv").config()
  */
 const express = require("express")
 const app = express()
+const bodyParser = require("body-parser")
 
 const sequelize = require("./database/database.index")
+
+app.use(express.json())
 
 
 /**
@@ -23,14 +26,41 @@ app.get("/", async (req, res) => {
     return res.send({api_ssp3_is_runnning: true})
 })
 
+app.get("/hotel", async (req, res) => {
+    
+    // query
+    const offset = (req.query.offset && Number(req.query.offset)) || undefined
+    const limit = (req.query.limit && Number(req.query.limit)) || undefined
+
+    const results = await sequelize.models.Hotel.getAll(offset, limit)
+    return res.send(results)
+})
+
+app.get("/visiteur", async (req, res) => {
+
+    // query
+    const offset = (req.query.offset && Number(req.query.offset)) || undefined
+    const limit = (req.query.limit && Number(req.query.limit)) || undefined
+
+    const results = await sequelize.models.Visiteur.getAll(offset, limit)
+    return res.send(results)
+})
+
+app.get("/voiture", async (req, res) => {
+        
+    // query
+    const offset = (req.query.offset && Number(req.query.offset)) || undefined
+    const limit = (req.query.limit && Number(req.query.limit)) || undefined
+
+    const results = await sequelize.models.Voiture.getAll(offset, limit)
+    return res.send(results)
+})
 
 app.get("/visit", async (req, res) => {
 
     // query
     const offset = (req.query.offset && Number(req.query.offset)) || undefined
     const limit = (req.query.limit && Number(req.query.limit)) || undefined
-
-    console.log(sequelize.models.Visite.associations)
 
     const results = await sequelize.models.Visite.getAll(offset, limit)
     return res.send(results)
