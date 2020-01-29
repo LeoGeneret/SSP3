@@ -1,7 +1,7 @@
 
 module.exports = (sequelize, DataTypes) => {
 
-    const Raport = sequelize.define('rapport', {
+    const Rapport = sequelize.define('rapport', {
 
         note: {
             type: DataTypes.INTEGER,
@@ -18,5 +18,5 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: false
     })
 
-    return Raport
+    return Rapport
 }
