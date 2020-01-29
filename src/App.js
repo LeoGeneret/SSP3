@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Home from './pages/Home';
 import ListView from './pages/ListView';
 import Header from "./shared/Header";
-import Planning from "./pages/EditPlanning"
+import Planning from "./pages/Planning"
 
 
 
