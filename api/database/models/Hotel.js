@@ -23,6 +23,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
 
+        nombre_chambre: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
+
         // status @WAIT
 
     }, {
