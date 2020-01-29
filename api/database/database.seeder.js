@@ -133,14 +133,14 @@ const generate = async () => {
 }
 
 
-// sequelize.sync({force: true}).then(() => {
-//     generate().then(() => {
-//         console.log("DATABASE HAS BEEN SEEDED")
-//         process.exit(0)
-//     })
-// })
-
-generate().then(() => {
-    console.log("DATABASE HAS BEEN SEEDED")
-    process.exit(0)
+sequelize.sync({force: true}).then(() => {
+    generate().then(() => {
+        console.log("DATABASE HAS BEEN SEEDED")
+        process.exit(0)
+    })
 })
+
+// generate().then(() => {
+//     console.log("DATABASE HAS BEEN SEEDED")
+//     process.exit(0)
+// })
