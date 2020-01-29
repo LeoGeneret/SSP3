@@ -35,5 +35,12 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: false
     })
 
+    // Refaire
+    // Voiture.getAll = async () => {
+    //     return Voiture.findAll({
+    //         attributes: ["id", "type", "immatriculation"]
+    //     })
+    // }
+
     return Voiture
 }
