@@ -13,7 +13,7 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: 'mysql',
-    logging: console.log,
+    logging: /*console.log*/false,
   } 
 )
 
@@ -38,8 +38,8 @@ Hotel.hasMany(Visite, {as: "hotels", foreignKey: "hotel_id"})
 // Visit's Voiture
 Voiture.hasMany(Visite, {as: "voiture", foreignKey: "voiture_id"})
 
-// Visit's Visiteur
-Visiteur.hasMany(Visite, {as: "visiteur", foreignKey: "visiteur_id"})
+// Binome's Visit
+Binome.hasMany(Visite, {as: "binome", foreignKey: "binome_id"})
 
 // Visiteur's Secteur
 Secteur.hasMany(Visiteur, {as: "visiteur_secteur", foreignKey: "secteur_id"})
@@ -50,8 +50,6 @@ Secteur.hasMany(Hotel, {as: "hotel_secteur", foreignKey: "secteur_id"})
 
 
 
-// Binome's Visit
-Binome.hasMany(Visite, {as: "binome", foreignKey: "binome_id"})
 
 // Visiteur's Binome
 Visiteur.hasMany(Binome, {as: "visiteur1", foreignKey: "visiteur_id_1"})
