@@ -1,11 +1,12 @@
 import React from "react";
 import "./scss/App.scss";
 
-import { BrowserRouter as Router, Switch, Route} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import Home from './pages/Home';
 import ListView from './pages/ListView';
 import Header from "./shared/Header";
+import Planning from "./pages/EditPlanning"
 
 
 
@@ -15,6 +16,9 @@ function App() {
       <div>
         <Header />
         <Switch>
+          <Route path="/planning">
+            <Planning />
+          </Route>
           <Route path="/list">
             <ListView />
           </Route>
