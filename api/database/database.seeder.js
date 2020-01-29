@@ -33,7 +33,8 @@ const {
     Hotel,
     Visiteur,
     Visite,
-    Voiture
+    Voiture,
+    VisiteurAbsence,
 } = sequelize.models
 
 
@@ -76,7 +77,32 @@ const generate = async () => {
 
 
     console.log("#######")
-    console.log("HAS GENERATED " + visiteurs.length + " hotels")
+    console.log("HAS GENERATED " + visiteurs.length + " visiteurs")
+    console.log("#######")
+
+    const visiteursAbsences = await visiteurs.map(visiteursItem => {
+
+        let absencesCount = faker.random.number(2)
+        const lesRaisons = ["congé maladie", "congé payé", "en formation"]
+
+        return VisiteurAbsence.bulkCreate(Helpers.loop(absencesCount, () => {
+
+            let date_start = moment().startOf("week").add(faker.random.number(4), "day")
+            let date_end = date_start.clone().add(faker.random.number(1), "day").endOf("day")
+
+
+            return {
+                date_start: date_start,
+                date_end: date_end,
+                raison: faker.random.arrayElement(lesRaisons),
+                visiteur_id: visiteursItem.get("id"),
+            }
+        }))
+    })
+
+
+    console.log("#######")
+    console.log("HAS GENERATED " + visiteursAbsences.length + " visiteursAbsences")
     console.log("#######")
 
 

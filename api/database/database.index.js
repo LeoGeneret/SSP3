@@ -22,6 +22,7 @@ const Hotel = sequelize.import("./models/Hotel.js"),
       Voiture = sequelize.import("./models/Voiture.js"),
       Rapport = sequelize.import("./models/Rapport.js"),
       Visiteur = sequelize.import("./models/Visiteur.js"),
+      VisiteurAbsence = sequelize.import("./models/VisiteurAbsence.js"),
       Visite = sequelize.import("./models/Visite.js")
 
 
@@ -42,6 +43,8 @@ Visiteur.hasMany(Visite, {as: "visiteur", foreignKey: "visiteur_id"})
 Rapport.hasOne(Visite, {as: "rapport", foreignKey: "rapport_id"})
 Visite.belongsTo(Rapport, {as: "rapport", foreignKey: "rapport_id"})
 
+Visiteur.hasMany(VisiteurAbsence, {as: "absences", foreignKey: "visiteur_id"})
+
 
 sequelize.models = {
   Hotel,
@@ -49,6 +52,7 @@ sequelize.models = {
   Rapport,
   Visite,
   Visiteur,
+  VisiteurAbsence,
 }
   
 module.exports = sequelize
