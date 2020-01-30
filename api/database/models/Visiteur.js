@@ -65,6 +65,7 @@ module.exports = (sequelize, DataTypes) => {
                 code: 502,
                 message: "BAD GATEWAY - error on fetching ressources"
             }
+            results.status = 502
         }
 
         return results
