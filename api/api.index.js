@@ -26,8 +26,8 @@ const PORT = 3002
 // Init cors
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*")
-    res.header("Access-Control-Allow-Methods", "GET POST, OPTIONS, PUT, DELETE")
-    //res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE")
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
     next()
 })
 
@@ -38,6 +38,9 @@ app.get("/", async (req, res) => {
     return res.send({api_ssp3_is_runnning: true})
 })
 
+/**
+ * HOTEL'S ROUTES
+ */
 app.get("/hotel", async (req, res) => {
     
     // query
@@ -48,6 +51,9 @@ app.get("/hotel", async (req, res) => {
     return res.status(results.status).send(results)
 })
 
+/**
+ * VISITEUR'S ROUTES
+ */
 app.get("/visiteur", async (req, res) => {
 
     // query
@@ -58,6 +64,10 @@ app.get("/visiteur", async (req, res) => {
     return res.status(results.status).send(results)
 })
 
+
+/**
+ * VOITURE'S ROUTES
+ */
 app.get("/voiture", async (req, res) => {
         
     // query
@@ -75,6 +85,35 @@ app.delete("/voiture/:id/delete", async (req, res) => {
     return res.status(results.status).send(results)
 })
 
+app.put("/voiture/create", async (req, res) => {
+    const results = await sequelize.models.Voiture.createVoiture({
+        immatriculation: req.body.immatriculation,
+        type: req.body.type,
+        adresse: req.body.adresse,
+        ville: req.body.ville,
+        code_postal: req.body.code_postal
+    })
+    return res.status(results.status).send(results)
+})
+
+app.patch("/voiture/:id/update", async (req, res) => {
+
+    // params
+    const voitureId = (req.params.id && Number(req.params.id)) || undefined
+
+    const results = await sequelize.models.Voiture.updateVoiture(voitureId, {
+        immatriculation: req.body.immatriculation,
+        type: req.body.type,
+        adresse: req.body.adresse,
+        ville: req.body.ville,
+        code_postal: req.body.code_postal
+    })
+    return res.status(results.status).send(results)
+})
+
+/**
+ * VISITE'S ROUTES
+ */
 app.get("/visit", async (req, res) => {
 
     // query
