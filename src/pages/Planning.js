@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import ReactDOM from 'react-dom';
 import "../scss/App.scss";
 import FullCalendar from "@fullcalendar/react";
 import resourceTimeline from "@fullcalendar/resource-timeline";
@@ -15,6 +16,9 @@ function Planning() {
   const [dateEnd, setDateEnd] = useState("");
   const [resourcesList, setResourcesList] = useState([]);
   const [openPopIn, setOpenPopIn] = useState(false);
+  const [eventClicked, setEventClicked] = useState({});
+  const [eventClickedData, setEventClickedData] = useState({title: ''});
+
 
   useEffect(() => {
     // get FullCalendar API
@@ -25,12 +29,38 @@ function Planning() {
     setResourcesList(teamPlanning.current.props.resources);
   }, []);
 
-  const popInToggle = () => {
-    openPopIn ? setOpenPopIn(false) : setOpenPopIn(true)
+  useEffect(
+    () => popInRender()
+    , [openPopIn]
+  )
+
+  useEffect(
+    () => popInRender()
+    , [eventClicked]
+  )
+
+  const handleEventClick = (info) => {
+    console.log(info.event.title)
+    setEventClicked(info)
+    setEventClickedData({title: info.event.title})
+    setOpenPopIn(!openPopIn)
   }
 
-  const handleRemove = info => {
-    info.event.remove()
+  const popInRender = () => {
+    const popin = (
+      <div className={`pop-in ${openPopIn ? 'active' : ''}`}> 
+        <h1>{eventClickedData.title}</h1>
+        <button onClick={handleRemove}>SUPP</button>
+      </div>
+    )
+    ReactDOM.render(popin, document.getElementById('popin'));
+  }
+
+
+  const handleRemove = () => {
+    console.log(eventClicked);
+    eventClicked.event.remove()
+    setOpenPopIn(!openPopIn)
   }
 
   const handleSubmit = e => {
@@ -64,10 +94,8 @@ function Planning() {
 
   return (
     <div className="test">
+      <div id="popin"></div>
       <h1>PLANNING</h1>
-      <div className={`pop-in ${openPopIn ? 'active': ''}`}>
-        <button></button>
-      </div>
       <div className="formContainer">
         <form onSubmit={handleSubmit}>
           <select value={agent1} onChange={e => setAgent1(e.target.value)}>
@@ -105,7 +133,7 @@ function Planning() {
         <FullCalendar
           ref={teamPlanning}
           defaultView="resourceTimelineWeek"
-          eventClick={popInToggle}
+          eventClick={handleEventClick}
           header={{
             left: "prev,next today",
             center: "title",
@@ -143,6 +171,13 @@ function Planning() {
               resourceIds: ['a', 'd'],
               start: '2020-01-28',
               end: '2020-01-30'
+            },
+            {
+              id: 2,
+              title: 'lol',
+              resourceIds: ['a', 'b'],
+              start: '2020-01-27',
+              end: '2020-01-28'
             }
           ]}
         />
