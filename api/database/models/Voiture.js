@@ -118,15 +118,96 @@ module.exports = (sequelize, DataTypes) => {
             console.error({DeleteVoitureError})
             results.error = {
                 code: 502,
-                message: "BAD GATEWAY - error on fetching ressources"
+                message: "BAD GATEWAY - error on deleting ressource"
             }
             results.status = 502
         }
 
         return results
-
-
     }
+
+    Voiture.createVoiture = async ({immatriculation = null, type = null, adresse = null, ville = null, code_postal = null}) => {
+        let results = {
+            error: false,
+            status: 200,
+            data: null
+        }
+
+        let voiture = null
+
+        if(immatriculation === null || type === null || adresse === null || ville === null || code_postal === null){
+            results.error = {
+                code: 400,
+                message: "BAD REQUEST - one param is null"
+            }
+            results.status = 400
+        } else {
+            try {
+                voiture = await Voiture.create({
+                    immatriculation,
+                    type,
+                    adresse,
+                    ville,
+                    code_postal
+                })
+    
+                if(voiture){
+                    results.data = voiture
+                    results.status = 201
+                }
+            } catch (CreateVoitureError) {
+                console.error({CreateVoitureError})
+                results.error = {
+                    code: 502,
+                    message: "BAD GATEWAY - error on creating ressource"
+                }
+                results.status = 502
+            }
+        }
+        return results
+    }
+
+    Voiture.updateVoiture = async (voitureId, voitureInfo) => {
+        let results = {
+            error: false,
+            status: 200,
+            data: null
+        }
+
+        let voiture = null
+        let nextVoiture = {...voitureInfo}
+        
+        // Remove undifined keys
+        Object.keys(nextVoiture).forEach(key => (nextVoiture[key] === null || nextVoiture[key] === "" || nextVoiture[key] === undefined) && delete nextVoiture[key])
+        
+        try {
+            [voitureModifiedCount,] = await Voiture.update(nextVoiture, {
+                where: {
+                    id: voitureId
+                }
+            })
+
+            if(voitureModifiedCount === 1){
+                results.data = await Voiture.findByPk(voitureId)
+            } else {
+                results.error = {
+                    code: 404,
+                    message: "NOT FOUND - no voiture found"
+                }
+                results.status = 404
+            }
+        } catch (UpdateVoitureError) {
+            console.error({UpdateVoitureError})
+            results.error = {
+                code: 502,
+                message: "BAD GATEWAY - error on updating ressource"
+            }
+            results.status = 502
+        }
+        
+        return results
+    }
+
 
     return Voiture
 }
