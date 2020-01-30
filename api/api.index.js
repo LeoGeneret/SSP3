@@ -112,9 +112,11 @@ app.patch("/voiture/:id/update", async (req, res) => {
 })
 
 /**
- * VISITE'S ROUTES
+ * ####################################
+ * #################################### /visite
+ * ####################################
  */
-app.get("/visit", async (req, res) => {
+app.get("/visite", async (req, res) => {
 
     // query
     const offset = (req.query.offset && Number(req.query.offset)) || undefined
@@ -124,6 +126,44 @@ app.get("/visit", async (req, res) => {
     return res.status(results.status).send(results)
 })
 
+app.delete("/visite/:id/delete", async (req, res) => {
+
+    const visiteId = (req.params.id && Number(req.params.id)) || undefined
+    const results = await sequelize.models.Visite.deleteVisite(visiteId)
+    return res.status(results.status).send(results)
+})
+
+app.patch("/visite/:id/update", async (req, res) => {
+
+    // params
+    const visiteId = (req.params.id && Number(req.params.id)) || undefined
+
+    const results = await sequelize.models.Visite.updateVisite(visiteId, {
+        visited_at: req.body.visited_at,
+        time_start: req.body.time_start,
+        time_end: req.body.time_end,
+        hotel_id: req.body.hotel_id,
+        voiture_id: req.body.voiture_id,
+        binome_id: req.body.binome_id,
+        //@WAIT - rajouter rapport_note, rapport_comment
+    })
+    return res.status(results.status).send(results)
+})
+
+app.put("/visite/create", async (req, res) => {
+    const results = await sequelize.models.Visite.createVisite({
+        visited_at: req.body.visited_at,
+        time_start: req.body.time_start,
+        time_end: req.body.time_end,
+        hotel_id: req.body.hotel_id,
+        voiture_id: req.body.voiture_id,
+        binome_id: req.body.binome_id,
+        //@WAIT - rajouter rapport_note, rapport_comment
+    })
+    return res.status(results.status).send(results)
+})
+
+app.listen(PORT, () => console.log("API IS RUNNING ON PORT " + PORT))
 
 // 200 OK — This is most commonly used HTTP code to show that the operation performed is successful.
 // 201 CREATED — This can be used when you use POST method to create a new resource.
@@ -133,5 +173,3 @@ app.get("/visit", async (req, res) => {
 // 404 NOT FOUND— This can be used if you are looking for certain resource and it is not available in the system.
 // 500 INTERNAL SERVER ERROR — This should never be thrown explicitly but might occur if the system fails.
 // 502 BAD GATEWAY — This can be used if server received an invalid response from the upstream server.
-
-app.listen(PORT, () => console.log("API IS RUNNING ON PORT " + PORT))
