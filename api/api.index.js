@@ -51,6 +51,41 @@ app.get("/hotel", async (req, res) => {
     return res.status(results.status).send(results)
 })
 
+app.delete("/hotel/:id/delete", async (req, res) => {
+    
+    const hotelId = (req.params.id && Number(req.params.id)) || undefined
+    const results = await sequelize.models.Hotel.deleteHotel(hotelId)
+    return res.status(results.status).send(results)
+})
+
+app.put("/hotel/create", async (req, res) => {
+    const results = await sequelize.models.Hotel.createHotel({
+        nom: req.body.nom,
+        adresse: req.body.adresse,
+        code_postal: req.body.code_postal,
+        ville: req.body.ville,
+        nombre_chambre: req.body.nombre_chambre,
+        secteur_id: req.body.secteur_id
+    })
+    return res.status(results.status).send(results)
+})
+
+app.patch("/hotel/:id/update", async (req, res) => {
+
+    // params
+    const hotelId = (req.params.id && Number(req.params.id)) || undefined
+
+    const results = await sequelize.models.Hotel.updateHotel(hotelId, {
+        nom: req.body.nom,
+        adresse: req.body.adresse,
+        code_postal: req.body.code_postal,
+        ville: req.body.ville,
+        nombre_chambre: req.body.nombre_chambre,
+        secteur_id: req.body.secteur_id
+    })
+    return res.status(results.status).send(results)
+})
+
 /**
  * VISITEUR'S ROUTES
  */
@@ -61,6 +96,39 @@ app.get("/visiteur", async (req, res) => {
     const limit = (req.query.limit && Number(req.query.limit)) || undefined
 
     const results = await sequelize.models.Visiteur.getAll(offset, limit)
+    return res.status(results.status).send(results)
+})
+
+app.delete("/visiteur/:id/delete", async (req, res) => {
+    
+    const visiteurId = (req.params.id && Number(req.params.id)) || undefined
+    const results = await sequelize.models.Visiteur.deleteVisiteur(visiteurId)
+    return res.status(results.status).send(results)
+})
+
+app.put("/visiteur/create", async (req, res) => {
+    const results = await sequelize.models.Visiteur.createVisiteur({
+        nom: req.body.nom,
+        adresse: req.body.adresse,
+        ville: req.body.ville,
+        code_postal: req.body.code_postal,
+        secteur_id: req.body.secteur_id
+    })
+    return res.status(results.status).send(results)
+})
+
+app.patch("/visiteur/:id/update", async (req, res) => {
+
+    // params
+    const visiteurId = (req.params.id && Number(req.params.id)) || undefined
+
+    const results = await sequelize.models.Visiteur.updateVisiteur(visiteurId, {
+        nom: req.body.nom,
+        adresse: req.body.adresse,
+        ville: req.body.ville,
+        code_postal: req.body.code_postal,
+        secteur_id: req.body.secteur_id
+    })
     return res.status(results.status).send(results)
 })
 
@@ -79,9 +147,19 @@ app.get("/voiture", async (req, res) => {
 })
 
 app.delete("/voiture/:id/delete", async (req, res) => {
+
+
+    console.log({
+        forBody: req.body
+    })
         
     const voitureId = (req.params.id && Number(req.params.id)) || undefined
     const results = await sequelize.models.Voiture.deleteVoiture(voitureId)
+
+    console.log({
+        responseIs: results
+    })
+
     return res.status(results.status).send(results)
 })
 

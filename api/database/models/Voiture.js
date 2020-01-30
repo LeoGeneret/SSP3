@@ -104,15 +104,15 @@ module.exports = (sequelize, DataTypes) => {
                     id: voitureId
                 }
             })
-            if(voitue === 0){
-                console.error({DeleteVoitureError})
+            if(voiture === 0){
                 results.error = {
                     code: 404,
                     message: "NOT FOUND - no voiture found"
                 }
                 results.status = 404
             } else {
-                results.status = 204
+                results.status = 202
+                results.data = "deleted"
             }
         } catch (DeleteVoitureError) {
             console.error({DeleteVoitureError})
@@ -126,7 +126,7 @@ module.exports = (sequelize, DataTypes) => {
         return results
     }
 
-    Voiture.createVoiture = async ({immatriculation = null, type = null, adresse = null, ville = null, code_postal = null}) => {
+    Voiture.createVoiture = async (fields) => {
         let results = {
             error: false,
             status: 200,
@@ -135,7 +135,7 @@ module.exports = (sequelize, DataTypes) => {
 
         let voiture = null
 
-        if(immatriculation === null || type === null || adresse === null || ville === null || code_postal === null){
+        if(Object.values(fields).some(fieldsItem => fieldsItem === undefined || fieldsItem === null || fieldsItem === "")){
             results.error = {
                 code: 400,
                 message: "BAD REQUEST - one param is null"
@@ -143,13 +143,7 @@ module.exports = (sequelize, DataTypes) => {
             results.status = 400
         } else {
             try {
-                voiture = await Voiture.create({
-                    immatriculation,
-                    type,
-                    adresse,
-                    ville,
-                    code_postal
-                })
+                voiture = await Voiture.create(fields)
     
                 if(voiture){
                     results.data = voiture
@@ -176,7 +170,7 @@ module.exports = (sequelize, DataTypes) => {
 
         let voiture = null
         let nextVoiture = {...voitureInfo}
-        
+                
         // Remove undifined keys
         Object.keys(nextVoiture).forEach(key => (nextVoiture[key] === null || nextVoiture[key] === "" || nextVoiture[key] === undefined) && delete nextVoiture[key])
         
