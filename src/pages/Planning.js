@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import ReactDOM from 'react-dom';
+import ReactDOM from "react-dom";
 import "../scss/App.scss";
 import FullCalendar from "@fullcalendar/react";
 import resourceTimeline from "@fullcalendar/resource-timeline";
@@ -17,8 +17,14 @@ function Planning() {
   const [resourcesList, setResourcesList] = useState([]);
   const [openPopIn, setOpenPopIn] = useState(false);
   const [eventClicked, setEventClicked] = useState({});
-  const [eventClickedData, setEventClickedData] = useState({title: ''});
-
+  const [eventClickedData, setEventClickedData] = useState({});
+  const [editedEvent, setEditedEvent] = useState({
+    title: "",
+    agent1: "",
+    agent2: "",
+    dateStart: "",
+    dateEnd: ""
+  });
 
   useEffect(() => {
     // get FullCalendar API
@@ -29,39 +35,24 @@ function Planning() {
     setResourcesList(teamPlanning.current.props.resources);
   }, []);
 
-  useEffect(
-    () => popInRender()
-    , [openPopIn]
-  )
-
-  useEffect(
-    () => popInRender()
-    , [eventClicked]
-  )
-
-  const handleEventClick = (info) => {
-    console.log(info.event.title)
-    setEventClicked(info)
-    setEventClickedData({title: info.event.title})
-    setOpenPopIn(!openPopIn)
-  }
-
-  const popInRender = () => {
-    const popin = (
-      <div className={`pop-in ${openPopIn ? 'active' : ''}`}> 
-        <h1>{eventClickedData.title}</h1>
-        <button onClick={handleRemove}>SUPP</button>
-      </div>
-    )
-    ReactDOM.render(popin, document.getElementById('popin'));
-  }
-
+  const handleEventClick = info => {
+    setEventClicked(info.event);
+    setEventClickedData(info.event._def);
+    setEditedEvent({
+      title: info.event._def.title,
+      agent1: info.event._def.resourceIds[0],
+      agent2: info.event._def.resourceIds[1],
+      dateStart: info.event.start,
+      dateEnd: info.event.end
+    });
+    setOpenPopIn(!openPopIn);
+  };
 
   const handleRemove = () => {
     console.log(eventClicked);
-    eventClicked.event.remove()
-    setOpenPopIn(!openPopIn)
-  }
+    eventClicked.remove();
+    setOpenPopIn(!openPopIn);
+  };
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -91,10 +82,85 @@ function Planning() {
     }
   };
 
+  const handleEditEvent = e => {
+    e.preventDefault();
+    console.log("le form senvoie");
+
+    let editedTitle = editedEvent.title;
+    let editedBinome = [editedEvent.agent1, editedEvent.agent2];
+    let editedDateStart = editedEvent.dateStart;
+    let editedDateEnd = editedEvent.dateEnd;
+
+    eventClicked.setResources(editedBinome);
+    eventClicked.setDates(editedDateStart, editedDateEnd);
+    setOpenPopIn(!openPopIn);
+
+  };
 
   return (
     <div className="test">
-      <div id="popin"></div>
+      {openPopIn && (
+        <div id="popin">
+          <div className={`pop-in ${openPopIn ? "active" : ""}`}>
+            <h1>{eventClickedData.title}</h1>
+            <form onSubmit={handleEditEvent}>
+              <select
+                value={editedEvent.agent1}
+                onChange={e =>
+                  setEditedEvent({
+                    ...editedEvent,
+                    agent1: e.target.value
+                  })
+                }
+              >
+                <option>Selectionnez agent 1</option>
+                {resourcesList.map((item, index) => (
+                  <option key={index} value={item.id}>
+                    {item.title}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={editedEvent.agent2}
+                onChange={e =>
+                  setEditedEvent({
+                    ...editedEvent,
+                    agent2: e.target.value
+                  })
+                }
+              >
+                <option>Selectionnez agent 2</option>
+                {resourcesList.map((item, index) => (
+                  <option key={index} value={item.id}>
+                    {item.title}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="date"
+                placeholder="Date de début"
+                onChange={e => setEditedEvent({
+                  ...editedEvent,
+                  dateStart: e.target.value
+                })}
+                value={editedEvent.dateStart}
+              />  
+              <input
+                type="date"
+                placeholder="Date de fin"
+                onChange={e => setEditedEvent({
+                  ...editedEvent,
+                  dateEnd: e.target.value
+                })}
+                value={editedEvent.dateEnd}
+              />
+              <button type="submit">EDITER</button>
+            </form>
+
+            <button onClick={handleRemove}>SUPP</button>
+          </div>
+        </div>
+      )}
       <h1>PLANNING</h1>
       <div className="formContainer">
         <form onSubmit={handleSubmit}>
@@ -133,6 +199,7 @@ function Planning() {
         <FullCalendar
           ref={teamPlanning}
           defaultView="resourceTimelineWeek"
+          resourceAreaWidth="5%"
           eventClick={handleEventClick}
           header={{
             left: "prev,next today",
@@ -167,17 +234,17 @@ function Planning() {
           events={[
             {
               id: 1,
-              title: 'jran',
-              resourceIds: ['a', 'd'],
-              start: '2020-01-28',
-              end: '2020-01-30'
+              title: "Hôtel de la cloche",
+              resourceIds: ["a", "d"],
+              start: "2020-01-28",
+              end: "2020-01-30"
             },
             {
               id: 2,
-              title: 'lol',
-              resourceIds: ['a', 'b'],
-              start: '2020-01-27',
-              end: '2020-01-28'
+              title: "Hôtel luxe ***",
+              resourceIds: ["a", "b"],
+              start: "2020-01-27",
+              end: "2020-01-28"
             }
           ]}
         />
