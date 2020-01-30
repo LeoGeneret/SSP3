@@ -155,11 +155,9 @@ const generate = async () => {
 
     const visits = await Visite.bulkCreate(binomes.map(binomesItem => {
         
-        let mustStartAt = moment().startOf("week")
-        let visited_at = mustStartAt.clone().add(faker.random.number(4), "day")
+        let visited_at = moment().week(0).add(faker.random.number(4), "day")
 
-        let startDay = visited_at.clone().hour(9)
-        let time_start = startDay.clone().add(faker.random.number(9), "hour")
+        let time_start = visited_at.clone().hour(9).add(faker.random.number(9), "hour")
         let time_end = time_start.clone().add(faker.random.number(3), "hour")
 
         return {
