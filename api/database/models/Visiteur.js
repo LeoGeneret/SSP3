@@ -132,7 +132,7 @@ module.exports = (sequelize, DataTypes) => {
         if(Object.values(fields).some(fieldsItem => fieldsItem === undefined || fieldsItem === null || fieldsItem === "")){
             results.error = {
                 code: 400,
-                message: "BAD REQUEST - one param is null"
+                message: "BAD REQUEST - one param is null" + JSON.stringify(fields)
             }
             results.status = 400
         } else {
