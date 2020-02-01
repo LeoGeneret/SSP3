@@ -35,7 +35,7 @@ app.use((req, res, next) => {
  * ROUTES
  */
 
-const apiRoutes = require("./api.routes")(app)
+const apiRoutes = require("./api.routes")(app, sequelize)
 
 app.listen(PORT, () => console.log("API IS RUNNING ON PORT " + PORT))
 

@@ -1,4 +1,4 @@
-module.exports = app => {
+module.exports = (app, sequelize) => {
     
     app.get("/", async (req, res) => {
         return res.send({api_ssp3_is_runnning: true})
