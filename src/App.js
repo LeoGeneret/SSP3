@@ -16,7 +16,6 @@ function App() {
   return (
     <Router>
       <div>
-        <Header />
         <Switch>
           <Route path="/login">
             <Login />
