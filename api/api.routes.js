@@ -1,7 +1,123 @@
-module.exports = (app, sequelize) => {
+const jwt = require("jsonwebtoken")
+const xss = require("xss")
+
+// duration in seconds
+const TOKEN_EXPIRY = 60 * 60 * 24
+
+module.exports = (app, sequelize, express) => {
+
+    const checkToken = async (req, res, next) => {
+
+        let results = {
+            error: false,
+            status: 200,
+            data: null,
+        }
+
+        let token = req.header("Authorization") && req.header("Authorization").replace("Bearer ", "")
+        let verifiedToken = null
+        
+        // if token parsed
+        if(token && token.length){
+            jwt.verify(token, process.env.API_SECRET, (err, decoded) => {
+
+                if(err){
+                    return;
+                }
+
+                verifiedToken = decoded
+            })
+        } else {
+            results.error = {
+                code: 400,
+                message: "BAD REQUEST - token not found in Authorization: Bearer <token>"
+            }
+            results.status = 400
+        }
+
+        // if token invalid
+        if(!verifiedToken){
+            results.error = {
+                code: 401,
+                message: "Unauthorized - token is invalid or has expired"
+            }
+            results.status = 401
+        }
+
+        if(results.error){
+            return res.status(results.status).send(results)
+        } else {
+            req.token = verifiedToken
+            return next()
+        }
+    }
+
+    const checkUserRole = (roles = []) => async (req, res, next) => {
+
+        let results = {
+            error: false,
+            status: 200,
+            data: null,
+        }
+
+        if(req.token){
+            if(!roles.includes(req.token.role)){
+                results.error = {
+                    code: 403,
+                    message: "FORBIDDEN - Access denied for role {" + req.token.role + "}"
+                }
+                results.status = 403
+            }
+        } else {
+            results.error = {
+                code: 401,
+                message: "Unauthorized - token is invalid or has expired"
+            }
+            results.status = 401
+        }
+
+        if(results.error){
+            return res.status(results.status).send(results)
+        } else {
+            return next()
+        }
+    }
     
     app.get("/", async (req, res) => {
         return res.send({api_ssp3_is_runnning: true})
+    })
+
+    app.get("/check_token", checkToken, checkUserRole(["planner", "visitor"]), async (req, res) => {
+        res.send(req.token)
+    })
+
+    app.post("/authenticate", async (req, res) => {
+    
+        const email = req.body.email && xss(req.body.email) || null
+        const password = req.body.password && xss(req.body.password) || null
+
+        const results = await sequelize.models.User.authenticate(email, password)
+
+        // user is authenticated -> create token
+        if(results.data){
+
+            const token = jwt.sign({
+                id: results.data.id,
+                role: results.data.role,
+            }, process.env.API_SECRET, {
+                expiresIn: TOKEN_EXPIRY
+            })
+
+            return res.send({
+                ...results,
+                data: {
+                    token: token
+                }
+            })
+            
+        } 
+
+        return res.status(results.status).send(results)
     })
 
     /**

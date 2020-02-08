@@ -7,7 +7,6 @@ require("dotenv").config()
  */
 const express = require("express")
 const app = express()
-const bodyParser = require("body-parser")
 
 /**
  * Utils
@@ -35,7 +34,7 @@ app.use((req, res, next) => {
  * ROUTES
  */
 
-const apiRoutes = require("./api.routes")(app, sequelize)
+const apiRoutes = require("./api.routes")(app, sequelize, express)
 
 app.listen(PORT, () => console.log("API IS RUNNING ON PORT " + PORT))
 

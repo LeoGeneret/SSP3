@@ -25,6 +25,7 @@ const Voiture = sequelize.import("./models/Voiture.js")
 const Rapport = sequelize.import("./models/Rapport.js")
 const VisiteurAbsence = sequelize.import("./models/VisiteurAbsence.js")
 const Binome = sequelize.import("./models/Binome.js")
+const User = sequelize.import("./models/User.js")
 
 /**
  * Database relationship
@@ -66,6 +67,10 @@ Binome.belongsTo(Visiteur, {as: "visiteur_2", foreignKey: "visiteur_id_2"})
 // Visiteur <-> VisiteurAbsence
 Visiteur.hasMany(VisiteurAbsence, {as: "absences", foreignKey: "visiteur_id"})
 
+// User <-> Visiteur
+User.hasOne(Visiteur, {as: "visiteur", foreignKey: "user_id"})
+
+
 
 sequelize.models = {
   Secteur,
@@ -76,6 +81,7 @@ sequelize.models = {
   Visite,
   VisiteurAbsence,
   Binome,
+  User
 }
 
 module.exports = sequelize
