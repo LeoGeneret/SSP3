@@ -91,6 +91,13 @@ const generate = async () => {
         }
     }))
 
+    // generate one planner
+    const userPlanner = await User.create({
+        email: "planner@spp3.email",
+        password: "0000",
+        role: "planner"
+    })
+
     console.log("#######")
     console.log("HAS GENERATED " + users.length + " users")
     console.log("#######")

@@ -1,8 +1,24 @@
+/** CORES */
 const jwt = require("jsonwebtoken")
 const xss = require("xss")
 
+let crypto
+try {
+  crypto = require('crypto')
+} catch (err) {
+  console.log('crypto support is disabled!', err);
+}
+
+/** UTILS */
+const mailer = require("./email/email")
+const ApiUtils = require("./api.utils")
+
+
+/** CONSTANTS */
+
 // duration in seconds
-const TOKEN_EXPIRY = 60 * 60 * 24
+const TOKEN_ACCESS_EXPIRY = 60 * 60 * 24
+const TOKEN_RESET_PASSWORD_EXPIRY = 60 * 60 * 24
 
 module.exports = (app, sequelize, express) => {
 
@@ -19,29 +35,21 @@ module.exports = (app, sequelize, express) => {
         
         // if token parsed
         if(token && token.length){
-            jwt.verify(token, process.env.API_SECRET, (err, decoded) => {
 
-                if(err){
-                    return;
-                }
-
-                verifiedToken = decoded
-            })
+            const verifyTokenResults = ApiUtils.verifyToken(token, process.env.API_SECRET)
+            
+            if(verifyTokenResults.data){
+                verifiedToken = verifyTokenResults.data
+            } else {
+                results = verifyTokenResults
+            }
+            
         } else {
             results.error = {
                 code: 400,
                 message: "BAD REQUEST - token not found in Authorization: Bearer <token>"
             }
             results.status = 400
-        }
-
-        // if token invalid
-        if(!verifiedToken){
-            results.error = {
-                code: 401,
-                message: "Unauthorized - token is invalid or has expired"
-            }
-            results.status = 401
         }
 
         if(results.error){
@@ -84,14 +92,74 @@ module.exports = (app, sequelize, express) => {
     }
     
     app.get("/", async (req, res) => {
-        return res.send({api_ssp3_is_runnning: true})
+        return res.send({api_ssp3_is_runnning: req.hostname})
     })
 
-    app.get("/check_token", checkToken, checkUserRole(["planner", "visitor"]), async (req, res) => {
-        res.send(req.token)
+    /**
+     * ####################################
+     * #################################### /auth
+     * ####################################
+     */
+    app.post("/auth/forgot_password", async (req, res) => {
+
+        let results = {
+            error: false,
+            status: 200,
+            data: null,
+        }
+
+        // body
+        const email = req.body.email && xss(req.body.email) || null
+
+
+        /** Creating token reset password */
+        let resetTokenValue = null
+
+        try {
+            resetTokenValue = jwt.sign({
+
+            }, process.env.EMAIL_SECRET, {
+                expiresIn: TOKEN_RESET_PASSWORD_EXPIRY
+            })
+        } catch (error) {
+            results.error = {
+                code: 502,
+                message: "BAD GATEWAY - error on generating reset token"
+            }
+            results.status = 502
+        }
+
+        if(resetTokenValue){
+
+            results = await sequelize.models.User.createTokenResetPassword(email, resetTokenValue)
+
+            if(results.data){
+                // not waiting for mail to be sent
+                mailer.send(
+                    "zkeny@outlook.fr",
+                    "[TEMP] SSP3 - Reset your password",
+                    __dirname + "/email/templates/reset-password.html",
+                    {
+                        "@name": "John Doe",
+                        "@title": "Reset your password",
+                        "@token": results.data.token_reset_password
+                    }
+                ).then(createdMail => {
+                    console.log("Email has been sent")
+                })
+                .catch(errorSendingMail => {
+                    console.log("Error while sending email", errorSendingMail)
+                })
+
+                // we dont want to send the user id as response
+                results.data = null
+            }
+        }
+
+        return res.status(results.status).send(results)
     })
 
-    app.post("/authenticate", async (req, res) => {
+    app.post("/auth/signin", async (req, res) => {
     
         const email = req.body.email && xss(req.body.email) || null
         const password = req.body.password && xss(req.body.password) || null
@@ -105,7 +173,7 @@ module.exports = (app, sequelize, express) => {
                 id: results.data.id,
                 role: results.data.role,
             }, process.env.API_SECRET, {
-                expiresIn: TOKEN_EXPIRY
+                expiresIn: TOKEN_ACCESS_EXPIRY
             })
 
             return res.send({
@@ -118,6 +186,31 @@ module.exports = (app, sequelize, express) => {
         } 
 
         return res.status(results.status).send(results)
+    })
+    
+    app.post("/auth/reset", async (req, res) => {
+
+        let results = {
+            error: false,
+            status: 200,
+            data: null,
+        }
+
+        // params
+        const password = (req.body.password && xss(req.body.password)) || null
+        const token = (req.body.token && xss(req.body.token)) || null
+
+        
+        const findTokenResults = await sequelize.models.User.findTokenResetPassword(token)
+
+        if(findTokenResults.error){
+            results = findTokenResults
+        } else {
+            results = await sequelize.models.User.resetPassword(findTokenResults.data.user_id, password)
+        }
+        
+        return res.status(results.status).send(results)
+
     })
 
     /**

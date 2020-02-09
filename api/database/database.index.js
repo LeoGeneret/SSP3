@@ -17,6 +17,14 @@ const sequelize = new Sequelize(
   } 
 )
 
+sequelize.authenticate({logging: false})
+.then(() => {
+  console.log("## DATABASE IS RUNNING")
+})
+.catch(err => {
+  console.log("## DATABASE IS NOT RUNNING", err)
+})
+
 const Secteur = sequelize.import("./models/Secteur.js")
 const Visiteur = sequelize.import("./models/Visiteur.js")
 const Visite = sequelize.import("./models/Visite.js")
@@ -81,7 +89,7 @@ sequelize.models = {
   Visite,
   VisiteurAbsence,
   Binome,
-  User
+  User,
 }
 
 module.exports = sequelize
