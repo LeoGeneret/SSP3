@@ -7,6 +7,7 @@ const sequelize = require("./database.index")
  * HELPERS
  */
 const moment = require('moment')
+const bcrypt = require("bcrypt")
 const faker = require('faker')
 faker.locale = "fr"
 
@@ -86,7 +87,7 @@ const generate = async () => {
     const users = await User.bulkCreate(Helpers.loop(VISITEUR_COUNT, () => {
         return {
             email: faker.internet.email(),
-            password: "1234",
+            password: bcrypt.hashSync("1234", 10),
             role: "visitor"
         }
     }))
@@ -94,7 +95,7 @@ const generate = async () => {
     // generate one planner
     const userPlanner = await User.create({
         email: "planner@spp3.email",
-        password: "0000",
+        password: bcrypt.hashSync("0000", 10),
         role: "planner"
     })
 

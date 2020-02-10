@@ -1,5 +1,6 @@
 
 const jwt = require("jsonwebtoken")
+const bcrypt = require("bcrypt")
 const ApiUtils = require("../../api.utils")
 
 module.exports = (sequelize, DataTypes) => {
@@ -248,13 +249,32 @@ module.exports = (sequelize, DataTypes) => {
 
         try{
             let user = await User.findOne({
-                attributes: ["id", "role"],
+                attributes: ["id", "role", "password"],
                 where: {
                     email,
-                    password
                 }
             })
-            results.data = user.get()
+
+            let isSamePassword = false
+
+            // user found > compare passwords
+            if(user){
+                isSamePassword = await bcrypt.compare(password, user.get("password"))
+            }
+
+            // no user matched or password incorrect
+            if(!user || (user && !isSamePassword)){
+                results.error = {
+                    message: "NOT FOUND - email or password is incorrect",
+                    code: 404
+                }
+                results.status = 404
+            } else {
+                results.data = {
+                    id: user.get("id"),
+                    role: user.get("role"),
+                }
+            }
         } catch(AuthenticateError){
             console.log({AuthenticateError})
             results.error = {
