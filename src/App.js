@@ -4,6 +4,7 @@ import "./scss/App.scss";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import Home from './pages/Home';
+import Sidebar from './shared/Sidebar';
 import ListView from './pages/ListView';
 import Header from "./shared/Header";
 // import Planning from "./pages/Planning";
@@ -17,9 +18,10 @@ import Planning from "./pages/Planning"
 
 function App() {
   return (
+    <div id="App">
     <Router>
-      <div>
-        <Header />
+    <Sidebar />
+      <div className="content">
         <Switch>
           <Route path="/login">
             <Login />
@@ -42,6 +44,8 @@ function App() {
         </Switch>
       </div>
     </Router>
+
+    </div>
   );
 }
 

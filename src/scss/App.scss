@@ -3,10 +3,14 @@
 @import '~@fullcalendar/resource-timeline/main.css';
 @import '~@fullcalendar/timeline/main.css';
 
-
+@import './base/reset';
 @import './base/vars';
 @import './base/mixins';
 @import './base/layouts';
+@import './base/icomoon';
+
+// SHARED
+@import '../shared/sidebar.scss';
 
 .pop-in {
   position: absolute;
@@ -21,3 +25,14 @@
 .active {
   display: block;
 }
+
+#App {
+  display: flex;
+  flex-wrap: nowrap;
+  background-color: $main-grey;
+}
+
+ a {
+   text-decoration: none;
+   color: black;
+ }
