@@ -175,16 +175,16 @@ module.exports = (sequelize, DataTypes) => {
                     
                 } else {
                     results.error = {
-                        message: "NOT FOUND - token not found",
-                        code: 404
+                        message: "Unauthorized - token invalid",
+                        code: 401
                     }
-                    results.status = 404
+                    results.status = 401
                 }
     
             } catch (error) {
                 results.error = {
                     code: 502,
-                    message: "BAD GATEWAY - error on authenticating user"
+                    message: "BAD GATEWAY - error on verifying token_reset_password"
                 }
                 results.status = 502
             }
@@ -202,9 +202,11 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         try {
+
+            const hashedPassword = await bcrypt.hash(password, 10)
             
             const modified = await User.update({
-                password: password,
+                password: hashedPassword,
                 token_reset_password: null
             }, {
                 where: {
@@ -265,10 +267,10 @@ module.exports = (sequelize, DataTypes) => {
             // no user matched or password incorrect
             if(!user || (user && !isSamePassword)){
                 results.error = {
-                    message: "NOT FOUND - email or password is incorrect",
-                    code: 404
+                    message: "Unauthorized - email or password is incorrect",
+                    code: 401
                 }
-                results.status = 404
+                results.status = 401
             } else {
                 results.data = {
                     id: user.get("id"),

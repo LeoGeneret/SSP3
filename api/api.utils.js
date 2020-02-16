@@ -20,5 +20,9 @@ module.exports = {
         }
 
         return results
+    },
+
+    signToken: async (payload = {}, secret, expireIn) => {
+        //
     }
 }

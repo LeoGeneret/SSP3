@@ -87,6 +87,7 @@ const generate = async () => {
     const users = await User.bulkCreate(Helpers.loop(VISITEUR_COUNT, () => {
         return {
             email: faker.internet.email(),
+            // must use async in production
             password: bcrypt.hashSync("1234", 10),
             role: "visitor"
         }

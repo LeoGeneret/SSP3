@@ -30,11 +30,10 @@ module.exports = (app, sequelize, express) => {
             data: null,
         }
 
-        let token = req.header("Authorization") && req.header("Authorization").replace("Bearer ", "")
+        let token = req.header("x-access-token")
         let verifiedToken = null
         
-        // if token parsed
-        if(token && token.length){
+        if(token){
 
             const verifyTokenResults = ApiUtils.verifyToken(token, process.env.API_SECRET)
             
@@ -47,7 +46,7 @@ module.exports = (app, sequelize, express) => {
         } else {
             results.error = {
                 code: 400,
-                message: "BAD REQUEST - token not found in Authorization: Bearer <token>"
+                message: "BAD REQUEST - token not found in header"
             }
             results.status = 400
         }
@@ -93,6 +92,15 @@ module.exports = (app, sequelize, express) => {
     
     app.get("/", async (req, res) => {
         return res.send({api_ssp3_is_runnning: req.hostname})
+    })
+
+
+    app.get("/send-email", async (req, res) => {
+
+        await mailer.send("zkeny@outlook.fr", "Test envoei avec SES", __dirname + "/email/templates/reset-password.html")
+            .then(mail => {
+                res.json(mail)
+            })
     })
 
     /**
