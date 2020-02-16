@@ -1,5 +1,6 @@
 import React from "react";
 import "../scss/App.scss";
+import { Link } from "react-router-dom";
 
 function Login() {
   return (
@@ -8,7 +9,9 @@ function Login() {
         <form className="form-login">
           <input type="text" placeholder="Nom d'utilisateur"></input>
           <input type="text" placeholder="Mot de passe"></input>
+          <Link className="btn-pwd" to="/EditPwd">Mot de passe oublié ?</Link>
           <button className="btn-create" type="submit">Se connecter</button>
+          <span className="d-none pwd-danger">Mot de passe / Email incorrect.</span>
         </form>
       </div>
       <div className="col-8">

@@ -24,6 +24,9 @@
   }
 }
 
+.form-edit-pwd {
+  height: 450px;
+}
 
 
 .btn-create {
@@ -40,4 +43,15 @@
   color: $color-white;
 
   cursor: pointer;
+}
+
+.btn-pwd {
+  color: $color-dark-grey;
+
+  cursor: pointer;
+}
+
+.pwd-danger {
+  color: $color-danger;
+  font-size: 14px;
 }

@@ -9,8 +9,8 @@ import Header from "./shared/Header";
 import Planning from "./pages/Planning";
 import Login from "./pages/Login";
 import ListVehicles from "./pages/ListVehicles";
-import ListHotels from "./pages/ListHotels"
-
+import ListHotels from "./pages/ListHotels";
+import EditPwd from "./pages/EditPwd";
 
 function App() {
   return (
@@ -19,6 +19,9 @@ function App() {
         <Switch>
           <Route path="/login">
             <Login />
+          </Route>
+          <Route path="/EditPwd">
+            <EditPwd />
           </Route>
           <Route path="/hotels">
             <ListHotels />
