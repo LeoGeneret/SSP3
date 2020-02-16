@@ -4,14 +4,14 @@
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(
   
-  "ssp3", 
+  process.env.DB_NAME, 
 
-  "root", 
+  process.env.DB_USER, 
 
-  "", 
+  process.env.DB_PASSWORD, 
 
   {
-    host: "localhost",
+    host: process.env.DB_HOST,
     dialect: 'mysql',
     logging: console.log,
   } 

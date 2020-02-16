@@ -52,7 +52,7 @@ const generate = async () => {
 
     const secteurs = await Secteur.bulkCreate(SECTEUR_LIST.map((secteur_intem) => {
         return {
-            intitule_secteur: secteur_intem,
+            label: secteur_intem,
         }
     }))
 
