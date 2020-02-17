@@ -4,12 +4,6 @@
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(
 
-  // 'ssp3',
-
-  // 'root',
-
-  // 'root',
-
   process.env.DB_NAME,
 
   process.env.DB_USER,
