@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import ReactDOM from "react-dom";
+import utils from "../utils";
 import "../scss/App.scss";
 import FullCalendar from "@fullcalendar/react";
 import resourceTimeline from "@fullcalendar/resource-timeline";
@@ -14,7 +15,6 @@ function Planning() {
   const [agent2, setAgent2] = useState("");
   const [dateStart, setDateStart] = useState("");
   const [dateEnd, setDateEnd] = useState("");
-  const [resourcesList, setResourcesList] = useState([]);
   const [openPopIn, setOpenPopIn] = useState(false);
   const [eventClicked, setEventClicked] = useState({});
   const [eventClickedData, setEventClickedData] = useState({});
@@ -25,15 +25,27 @@ function Planning() {
     dateStart: "",
     dateEnd: ""
   });
+  const [ressources, setRessources] = useState([]);
 
   useEffect(() => {
     // get FullCalendar API
     let calendarApi = teamPlanning.current.getApi();
     setTeamPlanningRef(calendarApi);
 
-    // Access resources
-    setResourcesList(teamPlanning.current.props.resources);
+    //Acces Visiteur
+    utils.fetchReadyData("/visiteur").then(requester => {
+      if (requester.error) {
+        console.log(requester.error);
+      } else {
+        setRessources(requester.data.visiteurs);
+        console.log(ressources);
+      }
+    });
+
+
   }, []);
+
+
 
   const handleEventClick = info => {
     setEventClicked(info.event);
@@ -114,9 +126,9 @@ function Planning() {
                 }
               >
                 <option>Selectionnez agent 1</option>
-                {resourcesList.map((item, index) => (
+                {ressources.map((item, index) => (
                   <option key={index} value={item.id}>
-                    {item.title}
+                    {item.nom}
                   </option>
                 ))}
               </select>
@@ -130,23 +142,23 @@ function Planning() {
                 }
               >
                 <option>Selectionnez agent 2</option>
-                {resourcesList.map((item, index) => (
+                {ressources.map((item, index) => (
                   <option key={index} value={item.id}>
-                    {item.title}
+                    {item.nom}
                   </option>
                 ))}
               </select>
               <input
-                type="date"
+                type="datetime-local"
                 placeholder="Date de début"
                 onChange={e => setEditedEvent({
                   ...editedEvent,
                   dateStart: e.target.value
                 })}
                 value={editedEvent.dateStart}
-              />  
+              />
               <input
-                type="date"
+                type="datetime-local"
                 placeholder="Date de fin"
                 onChange={e => setEditedEvent({
                   ...editedEvent,
@@ -166,28 +178,28 @@ function Planning() {
         <form onSubmit={handleSubmit}>
           <select value={agent1} onChange={e => setAgent1(e.target.value)}>
             <option>Selectionnez agent 1</option>
-            {resourcesList.map((item, index) => (
+            {ressources.map((item, index) => (
               <option key={index} value={item.id}>
-                {item.title}
+                {item.nom}
               </option>
             ))}
           </select>
           <select value={agent2} onChange={e => setAgent2(e.target.value)}>
             <option>Selectionnez agent 2</option>
-            {resourcesList.map((item, index) => (
+            {ressources.map((item, index) => (
               <option key={index} value={item.id}>
-                {item.title}
+                {item.nom}
               </option>
             ))}
           </select>
           <input
-            type="date"
+            type="datetime-local"
             placeholder="Date de début"
             onChange={e => setDateStart(e.target.value)}
             value={dateStart}
           />
           <input
-            type="date"
+            type="datetime-local"
             placeholder="Date de fin"
             onChange={e => setDateEnd(e.target.value)}
             value={dateEnd}
@@ -199,35 +211,26 @@ function Planning() {
         <FullCalendar
           ref={teamPlanning}
           defaultView="resourceTimelineWeek"
-          resourceAreaWidth="5%"
+          resourceAreaWidth="15%"
+          // minTime="09:00:00"
+          // maxTime="21:00:00"
+          // slotDuration="24:00:00"
+          slotLabelFormat={[{
+            weekday: 'short'
+          },
+          {
+            hour: 'numeric'
+          }]}
           eventClick={handleEventClick}
           header={{
             left: "prev,next today",
             center: "title",
-            right: "dayGridMonth,timeGridWeek,timeGridDay,listWeek"
+            right: "resourceTimelineDay, resourceTimelineWeek"
           }}
-          resources={[
-            {
-              id: "a",
-              title: "Adrien"
-            },
-            {
-              id: "b",
-              title: "Léo"
-            },
-            {
-              id: "c",
-              title: "Keny"
-            },
-            {
-              id: "d",
-              title: "Paul"
-            },
-            {
-              id: "e",
-              title: "Andy"
-            }
-          ]}
+          resources={ressources.map(resource => ({
+            id: resource.id,
+            title: resource.nom
+          }))}
           plugins={[resourceTimeline]}
           schedulerLicenseKey="GPL-My-Project-Is-O  pen-Source"
           weekends={false}
