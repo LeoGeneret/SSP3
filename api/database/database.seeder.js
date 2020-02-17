@@ -7,6 +7,7 @@ const sequelize = require("./database.index")
  * HELPERS
  */
 const moment = require('moment')
+const bcrypt = require("bcrypt")
 const faker = require('faker')
 faker.locale = "fr"
 
@@ -36,7 +37,8 @@ const {
     Voiture,
     VisiteurAbsence,
     Binome,
-    Secteur
+    Secteur,
+    User
 } = sequelize.models
 
 
@@ -82,13 +84,34 @@ const generate = async () => {
     console.log("#######")
 
 
-    const visiteurs = await Visiteur.bulkCreate(Helpers.loop(VISITEUR_COUNT, () => {
+    const users = await User.bulkCreate(Helpers.loop(VISITEUR_COUNT, () => {
+        return {
+            email: faker.internet.email(),
+            // must use async in production
+            password: bcrypt.hashSync("1234", 10),
+            role: "visitor"
+        }
+    }))
+
+    // generate one planner
+    const userPlanner = await User.create({
+        email: "planner@spp3.email",
+        password: bcrypt.hashSync("0000", 10),
+        role: "planner"
+    })
+
+    console.log("#######")
+    console.log("HAS GENERATED " + users.length + " users")
+    console.log("#######")
+
+    const visiteurs = await Visiteur.bulkCreate(users.map(usersItem => {
         return {
             nom: faker.name.firstName() + " " + faker.name.lastName(),
             adresse: faker.address.streetAddress(),
             code_postal: faker.address.zipCode(),
             ville: faker.address.city(),
             secteur_id : faker.random.arrayElement(secteurs).get("id"),
+            user_id: usersItem.get("id"),
         }
     }))
 
