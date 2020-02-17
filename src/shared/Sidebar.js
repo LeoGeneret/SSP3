@@ -1,31 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import "../scss/App.scss";
 
-import { Link } from "react-router-dom";
+import { NavLink} from "react-router-dom";
 
 function Sidebar() {
   return (
     <div id="Sidebar">
       <div>
         <div className="profile">
-          <div className="userImg"></div>
-          <div>Mathilde Jackson</div>
+          <div className="user">
+            <div className="userImg"></div>
+            <div className="userInfos">
+              <div className="userName">Mathilde Jackson</div>
+              <div className="userStatus">Administrateur</div>
+            </div>
+          </div>
+          <div className="Btn myAccount">Mon Compte</div>
         </div>
         <nav>
-          <ul>
-            <li>
-              <div className="icon icon-home"></div>
-              <Link to="/">Accueil</Link>
-            </li>
-            <li>
-              <div className="icon icon-agents"></div>
-              <Link to="/list">Liste des agents</Link>
-            </li>
-            <li>
-              <div className="icon icon-planning"></div>
-              <Link to="/planning">Les plannings</Link>
-            </li>
-          </ul>
+          <NavLink exact to="/">
+            <div className="icon icon-home"></div>
+            <p>Accueil</p>
+          </NavLink>
+          <NavLink to="/list">
+            <div className="icon icon-agents"></div>
+            <p>Liste des agents</p>
+          </NavLink>
+          <NavLink to="/planning">
+            <div className="icon icon-planning"></div>
+            <p>Les plannings</p>
+          </NavLink>
         </nav>
       </div>
 
