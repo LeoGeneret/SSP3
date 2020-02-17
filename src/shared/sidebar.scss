@@ -8,27 +8,68 @@
     flex-direction: column;
     justify-content: space-between;
 
-    .profile {
-        display: flex;
-        flex-wrap: nowrap;
-        width: 100%;
-        align-items: center;
 
-        .userImg {
-            height:50px;
-            width: 50px;
-            border-radius: 25px;
-            background-color: $main-grey;
-            margin-right: 10px;
+    .profile {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.24);
+        padding-bottom: 27px;
+
+        .user {
+            display: flex;
+            flex-wrap: nowrap;
+            width: 100%;
+            align-items: center;
+            margin-bottom: 15px;
+    
+            .userImg {
+                height:50px;
+                width: 50px;
+                border-radius: 10px;
+                background-color: $main-grey;
+                margin-right: 10px;
+            }
+    
+            .userInfos {
+                display: flex;
+                flex-direction: column;
+                
+                .userName {
+                    font-weight: bold;
+                }
+            }
+    
+        }
+        
+        .myAccount {
+            border: 1px solid rgba(0, 0, 0, 0.24);
+            border-radius: 4px;
+            padding: 10px 20px;
+            text-align: center;
+            color: grey;
+            font-size: 14px;
+            cursor: pointer;
+
         }
     }
-
     nav {
-        li {
+        padding: 15px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.24);
+        a {
             display: flex;
+            align-items: center;
+            padding: 12px 0;
+            color: $bluelink;
+
+            &.active {
+                color: $yellow;
+
+                .icon:before {
+                    color: $greydark;
+                }
+            }
 
             .icon {
-                font-size: 25px;
+                font-size: 20px;
+                margin-right: 20px;
             }
         }
     }
