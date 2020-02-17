@@ -3,18 +3,24 @@
  */
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(
-  
-  process.env.DB_NAME, 
 
-  process.env.DB_USER, 
+  // 'ssp3',
 
-  process.env.DB_PASSWORD, 
+  // 'root',
+
+  // 'root',
+
+  process.env.DB_NAME,
+
+  process.env.DB_USER,
+
+  process.env.DB_PASSWORD,
 
   {
     host: process.env.DB_HOST,
     dialect: 'mysql',
     logging: console.log,
-  } 
+  }
 )
 
 sequelize.authenticate({logging: false})
@@ -40,40 +46,40 @@ const User = sequelize.import("./models/User.js")
  */
 
 // // Visite <-> Hotel
-Hotel.hasMany(Visite, {as: "hotel_visites", foreignKey: "hotel_id"})
-Visite.belongsTo(Hotel, {as: "hotel", foreignKey: "hotel_id"})
+Hotel.hasMany(Visite, { as: "hotel_visites", foreignKey: "hotel_id" })
+Visite.belongsTo(Hotel, { as: "hotel", foreignKey: "hotel_id" })
 
 // // Visite <-> Voiture
-Voiture.hasMany(Visite, {as: "voiture_visites", foreignKey: "voiture_id"}) // @OPTI - useless?
-Visite.belongsTo(Voiture, {as: "voiture", foreignKey: "voiture_id"})
+Voiture.hasMany(Visite, { as: "voiture_visites", foreignKey: "voiture_id" }) // @OPTI - useless?
+Visite.belongsTo(Voiture, { as: "voiture", foreignKey: "voiture_id" })
 
 // // Visite <-> Binome
-Binome.hasMany(Visite, {as: "binome_visites", foreignKey: "binome_id"})
-Visite.belongsTo(Binome, {as: "binome", foreignKey: "binome_id"})
+Binome.hasMany(Visite, { as: "binome_visites", foreignKey: "binome_id" })
+Visite.belongsTo(Binome, { as: "binome", foreignKey: "binome_id" })
 
 // // Visite <-> Rapport
-Rapport.hasOne(Visite, {as: "rapport_visites", foreignKey: "rapport_id"})
-Visite.belongsTo(Rapport, {as: "rapport", foreignKey: "rapport_id"})
+Rapport.hasOne(Visite, { as: "rapport_visites", foreignKey: "rapport_id" })
+Visite.belongsTo(Rapport, { as: "rapport", foreignKey: "rapport_id" })
 
 // Secteur <-> Visiteur
-Secteur.hasMany(Visiteur, {as: "visiteur_secteur", foreignKey: "secteur_id"})
-Visiteur.belongsTo(Secteur, {as: "visiteurs", foreignKey: "secteur_id"})
+Secteur.hasMany(Visiteur, { as: "visiteur_secteur", foreignKey: "secteur_id" })
+Visiteur.belongsTo(Secteur, { as: "visiteurs", foreignKey: "secteur_id" })
 
 
 // Secteur <-> Hotel
-Secteur.hasMany(Hotel, {as: "hotel_secteur", foreignKey: "secteur_id"})
-Hotel.belongsTo(Secteur, {as: "hotels", foreignKey: "secteur_id"})
+Secteur.hasMany(Hotel, { as: "hotel_secteur", foreignKey: "secteur_id" })
+Hotel.belongsTo(Secteur, { as: "hotels", foreignKey: "secteur_id" })
 
 // Binome <-> Visiteur 1
-Visiteur.hasMany(Binome, {as: "binome_1", foreignKey: "visiteur_id_1"})
-Binome.belongsTo(Visiteur, {as: "visiteur_1", foreignKey: "visiteur_id_1"})
+Visiteur.hasMany(Binome, { as: "binome_1", foreignKey: "visiteur_id_1" })
+Binome.belongsTo(Visiteur, { as: "visiteur_1", foreignKey: "visiteur_id_1" })
 
 // Binome <-> Visiteur 2
-Visiteur.hasMany(Binome, {as: "binome_2", foreignKey: "visiteur_id_2"})
-Binome.belongsTo(Visiteur, {as: "visiteur_2", foreignKey: "visiteur_id_2"})
+Visiteur.hasMany(Binome, { as: "binome_2", foreignKey: "visiteur_id_2" })
+Binome.belongsTo(Visiteur, { as: "visiteur_2", foreignKey: "visiteur_id_2" })
 
 // Visiteur <-> VisiteurAbsence
-Visiteur.hasMany(VisiteurAbsence, {as: "absences", foreignKey: "visiteur_id"})
+Visiteur.hasMany(VisiteurAbsence, { as: "absences", foreignKey: "visiteur_id" })
 
 // User <-> Visiteur
 User.hasOne(Visiteur, {as: "visiteur", foreignKey: "user_id"})

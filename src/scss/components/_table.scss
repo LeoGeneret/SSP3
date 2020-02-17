@@ -1,0 +1,31 @@
+.table-header {
+  font-weight: 700;
+
+  *[class^="col-"] {
+    margin: 10px 20px;
+  }
+}
+
+.table-container {
+  *[class^="col-"] {
+    margin: 10px 20px;
+    padding: 10px 0;
+  }
+}
+
+.table-header,
+.table-container {
+  font-size: 14px;
+
+  .row {
+    border-bottom: solid 1px $color-grey;
+  }
+}
+
+.header-list {
+  *[class^="icon-"] {
+    font-size: 30px;
+    margin-right: 10px;
+  }
+  font-size: 14px;
+}
