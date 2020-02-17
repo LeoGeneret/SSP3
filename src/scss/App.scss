@@ -1,12 +1,16 @@
+/* CALENDAR */
 @import '~@fullcalendar/core/main.css';
 @import '~@fullcalendar/daygrid/main.css';
 @import '~@fullcalendar/resource-timeline/main.css';
 @import '~@fullcalendar/timeline/main.css';
 
-
+/* BASE */
 @import './base/vars';
 @import './base/mixins';
 @import './base/layouts';
+
+/* COMPONENTS */
+@import './components/forms';
 
 .pop-in {
   position: absolute;
@@ -20,4 +24,8 @@
 
 .active {
   display: block;
+}
+
+.logo {
+  height: 30px;
 }

@@ -1,0 +1,57 @@
+.form-login {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  width: 70%;
+  height: 300px;
+
+
+  input {
+    width: 100%;
+
+    border: none;
+    border-bottom: solid 2px $color-grey;
+
+    line-height: 2rem;
+    font-family: $font-primary;
+    font-size: 16px;
+
+    &:focus {
+      outline: none;
+      border-color: $color-dark-grey;
+    }
+  }
+}
+
+.form-edit-pwd {
+  height: 450px;
+}
+
+
+.btn-create {
+  padding: 10px 25px;
+  width: 150px;
+
+  border: none;
+  border-radius: 5px;
+  background-color: $color-info;
+
+  font-family: $font-primary;
+  font-size: 13px;
+  font-weight: 700;
+  color: $color-white;
+
+  cursor: pointer;
+}
+
+.btn-pwd {
+  color: $color-dark-grey;
+
+  cursor: pointer;
+}
+
+.pwd-danger {
+  color: $color-danger;
+  font-size: 14px;
+}

@@ -12,17 +12,18 @@ import ListVehicles from "./pages/ListVehicles";
 import ListHotels from "./pages/ListHotels"
 
 import Planning from "./pages/Planning"
-
-// connect api
+import EditPwd from "./pages/EditPwd";
 
 function App() {
   return (
     <Router>
       <div>
-        <Header />
         <Switch>
           <Route path="/login">
             <Login />
+          </Route>
+          <Route path="/EditPwd">
+            <EditPwd />
           </Route>
           <Route path="/hotels">
             <ListHotels />
