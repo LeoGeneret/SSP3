@@ -5,9 +5,14 @@
 @import '~@fullcalendar/timeline/main.css';
 
 /* BASE */
+@import './base/reset';
 @import './base/vars';
 @import './base/mixins';
 @import './base/layouts';
+@import './base/icomoon';
+
+// SHARED
+@import '../shared/sidebar.scss';
 
 /* COMPONENTS */
 @import './components/forms';
@@ -29,3 +34,13 @@
 .logo {
   height: 30px;
 }
+#App {
+  display: flex;
+  flex-wrap: nowrap;
+  background-color: $main-grey;
+}
+
+ a {
+   text-decoration: none;
+   color: black;
+ }
