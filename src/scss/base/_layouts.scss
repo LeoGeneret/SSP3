@@ -4,9 +4,19 @@ body {
   padding: 0;
 }
 
+h1 {
+  margin: 30px 0 10px 20px;
+  font-size: 34px;
+}
+
 .row {
   position: relative;
+  align-items: center;
   display: flex;
+}
+
+.justify-center {
+  justify-content: center;
 }
 
 .d-flex {
@@ -14,6 +24,12 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+}
+
+
+
+.content {
+  width: calc(100% - 310px);
 }
 
 .col-12 {
@@ -36,10 +52,26 @@ body {
   width: 25%;
 }
 
+.col-2 {
+  width: 20%;
+}
+
 .bg-blue {
-  background-color: $color-info;
+  color: $color-white;
+  font-weight: 600;
+  background-color: $color-info !important;
 }
 
 .d-none {
   display: none;
+}
+
+.card {
+  margin: 20px;
+  padding: 10px;
+  min-height: 50px;
+  width: 100%;
+
+  border-radius: 10px;
+  background-color: $color-white;
 }
