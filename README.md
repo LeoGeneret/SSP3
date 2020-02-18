@@ -1,9 +1,27 @@
-### `yarn api`
+# Available services
+- app
+- api
+- database
+- phpmyadmin
+# Available scripts
+## Run dev environnement
 
-Runs the api.<br/>
-Open [http://localhost:3002](http://localhost:3002) to view it in the browser.
+````
+docker-compose -f docker-compose-dev.yml up
+````
 
-### `yarn start`
+It starts : 
+- app on port 3000
+- api on port 3002
+- database on port 3306
+- phpmyadmin on port 8080
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Run specific command in a running service
+````
+docker-compose -f docker-compose-dev.yml exec <service-name> <command>
+````
+
+Exemple with command to fill database with data 
+````
+docker-compose -f docker-compose-dev.yml exec api npm run db-seed
+````
