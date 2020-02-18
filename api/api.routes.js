@@ -281,8 +281,11 @@ module.exports = (app, sequelize, express) => {
         // query
         const offset = (req.query.offset && Number(req.query.offset)) || undefined
         const limit = (req.query.limit && Number(req.query.limit)) || undefined
+        // use a int boolean
+        const noLimit = (req.query.no_limit && Number(req.query.no_limit)) || undefined
+        const attributes = req.query.attributes || undefined
 
-        const results = await sequelize.models.Visiteur.getAll(offset, limit)
+        const results = await sequelize.models.Visiteur.getAll(offset, limit, attributes, noLimit)
         return res.status(results.status).send(results)
     })
 
@@ -296,6 +299,7 @@ module.exports = (app, sequelize, express) => {
     })
 
     app.put("/visiteur/create", async (req, res) => {
+
         const results = await sequelize.models.Visiteur.createVisiteur({
             nom: req.body.nom,
             adresse: req.body.adresse,
@@ -368,6 +372,20 @@ module.exports = (app, sequelize, express) => {
             ville: req.body.ville,
             code_postal: req.body.code_postal
         })
+        return res.status(results.status).send(results)
+    })
+
+    /**
+     * ####################################
+     * #################################### /planning
+     * ####################################
+     */
+    app.get("/planning", async (req, res) => {
+
+        // query
+        const date = req.query.date || null
+
+        const results = await sequelize.models.Visite.getPlanning(date)
         return res.status(results.status).send(results)
     })
 

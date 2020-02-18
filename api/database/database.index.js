@@ -78,6 +78,7 @@ Visiteur.hasMany(VisiteurAbsence, { as: "absences", foreignKey: "visiteur_id" })
 
 // User <-> Visiteur
 User.hasOne(Visiteur, {as: "visiteur", foreignKey: "user_id"})
+Visiteur.belongsTo(User, {as: "user_related", foreignKey: "user_id"})
 
 
 

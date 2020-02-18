@@ -28,6 +28,12 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
 
+        priority: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+        },
+
         // status @WAIT
 
     }, {

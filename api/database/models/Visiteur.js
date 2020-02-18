@@ -1,4 +1,6 @@
 
+// const bcrypt = require("bcrypt")
+
 module.exports = (sequelize, DataTypes) => {
 
     const Visiteur = sequelize.define('visiteur', {
@@ -29,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     })
 
 
-    Visiteur.getAll = async (offset = 0, limit = 5) => {
+    Visiteur.getAll = async (offset = 0, limit = 5, attributes = undefined, noLimit = false) => {
         
         let results = {
             error: false,
@@ -37,33 +39,43 @@ module.exports = (sequelize, DataTypes) => {
             data: null
         }
 
+        if(attributes){
+            attributes = attributes.split(",")
+        }
+
         let visiteurs = null
 
         try {
             visiteurs = await Visiteur.findAll({
-                offset: offset * limit,
-                limit: limit
+                attributes: attributes,
+                offset: noLimit ? undefined : (offset * limit),
+                limit: noLimit ? undefined : (limit)
             })
 
             if(visiteurs){
 
                 let item_count = await Visiteur.count()
 
-                results.data = {
-                    pagination: {
+                results.data = {}
+
+                // response is limited so we need pagination
+                if(!noLimit){
+                    results.data.pagination = {
                         item_count: item_count,
                         page_current: offset,
                         page_count: Math.ceil(item_count / limit)
-                    },
-                    visiteurs: visiteurs
+                    }
                 }
+
+                results.data.visiteurs = visiteurs
             }
 
         } catch (GetAllVisiteurError) {
             console.error({GetAllVisiteurError})
             results.error = {
                 code: 502,
-                message: "BAD GATEWAY - error on fetching ressources"
+                message: "BAD GATEWAY - error on fetching visiteurs",
+                extra_message: attributes ? ("you specified attributes=" + attributes.toString()) : undefined
             }
             results.status = 502
         }
@@ -137,7 +149,19 @@ module.exports = (sequelize, DataTypes) => {
             results.status = 400
         } else {
             try {
-                visiteur = await Visiteur.create(fields)
+
+
+                // TODO - Must create a user related
+                // const hashedPassword = await bcrypt.hash("1234", 10)
+
+                visiteur = await Visiteur.create({
+                    ...fields,
+                    // user: {
+                    //     email: "createdininterface@email.fr",
+                    //     password: hashedPassword,
+                    //     role: "visitor"
+                    // }
+                })
     
                 if(visiteur){
                     results.data = visiteur

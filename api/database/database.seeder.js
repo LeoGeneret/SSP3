@@ -75,6 +75,7 @@ const generate = async () => {
             ville: ville,
             nombre_chambre : faker.random.number(122),
             secteur_id : faker.random.arrayElement(secteurs).get("id"),
+            priority: Math.random() > .95 ? true : false
         }
     }))
 
@@ -176,32 +177,39 @@ const generate = async () => {
     console.log("HAS GENERATED " + binomes.length + "binomes")
     console.log("#######")
 
-    const visits = await Visite.bulkCreate(binomes.map(binomesItem => {
-        
-        let visited_at = moment().week(0).add(faker.random.number(4), "day")
-
-        let time_start = visited_at.clone().hour(9).add(faker.random.number(9), "hour")
-        let time_end = time_start.clone().add(faker.random.number(3), "hour")
-
-        return {
-            binome_id: binomesItem.get("id"),
-            hotel_id: faker.random.arrayElement(hotels).get("id"),
-            voiture_id: faker.random.arrayElement(voitures).get("id"),
-            rapport: {
-                note: faker.random.number(100),
-                commentaire: Math.random() > .5 ? null : faker.lorem.sentences(2)
-            },
-            visited_at: visited_at,
-            time_start: time_start,
-            time_end: time_end,
-        }
-    }), {
-        include: [
-            {
-                association: "rapport"
+    let visits = binomes.map(binomesItem => {
+            
+        return Visite.bulkCreate(Helpers.loop(4, () => {
+    
+            let visited_at = moment()
+                .add(faker.random.number(120) * (Math.random() > .5 ? -1 : 1), "day")
+                .add(faker.random.number(4), "day")
+    
+            let time_start = visited_at.clone().hour(9).add(faker.random.number(9), "hour")
+            let time_end = time_start.clone().add(faker.random.number(3), "hour")
+    
+            return {
+                binome_id: binomesItem.get("id"),
+                hotel_id: faker.random.arrayElement(hotels).get("id"),
+                voiture_id: faker.random.arrayElement(voitures).get("id"),
+                rapport: {
+                    note: faker.random.number(100),
+                    commentaire: Math.random() > .5 ? null : faker.lorem.sentences(2)
+                },
+                visited_at: visited_at,
+                time_start: time_start,
+                time_end: time_end,
             }
-        ]
+        }), {
+            include: [
+                {
+                    association: "rapport"
+                }
+            ]
+        })
     })
+
+    await Promise.all(visits)
 
     console.log("#######")
     console.log("HAS GENERATED " + visits.length + " visits")
