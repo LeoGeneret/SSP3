@@ -173,7 +173,55 @@ function Planning() {
           </div>
         </div>
       )}
-      <h1>PLANNING</h1>
+      <h1>Les plannings</h1>
+      <div className="container-filter card">
+        <h3>Filter par</h3>
+        <div className="row">
+          <div className="col-4">
+            <span>Catégories :</span>
+            <div className="row f-wrap">
+              <input className="input-filter" type="checkbox" id="all" name="all"></input>
+              <label className="btn-filter" for="all">Tous</label>
+
+              <input className="input-filter" type="checkbox" id="urgence" name="urgence"></input>
+              <label className="btn-filter" for="urgence">Urgence</label>
+
+              <input className="input-filter" type="checkbox" id="duration" name="duration"></input>
+              <label className="btn-filter" for="duration">Longue durée</label>
+
+              <input className="input-filter" type="checkbox" id="relance" name="relance"></input>
+              <label className="btn-filter" for="relance">relance</label>
+
+              <input className="input-filter" type="checkbox" id="suspent" name="suspent"></input>
+              <label className="btn-filter" for="suspent">En suspent</label>
+
+              <input className="input-filter" type="checkbox" id="Anomalies" name="Anomalies"></input>
+              <label className="btn-filter" for="Anomalies">Anomalies</label>
+            </div>
+          </div>
+          <div className="col-4">
+            <span>Secteur :</span>
+            <div className="row f-wrap">
+              <input className="input-filter" type="checkbox" id="secteurs" name="secteurs"></input>
+              <label className="btn-filter" for="secteurs">Tous</label>
+
+              <input className="input-filter" type="checkbox" id="paris" name="paris"></input>
+              <label className="btn-filter" for="paris">paris</label>
+
+              <input className="input-filter" type="checkbox" id="92" name="92"></input>
+              <label className="btn-filter" for="92">92</label>
+
+              <input className="input-filter" type="checkbox" id="77-91" name="77-91"></input>
+              <label className="btn-filter" for="77-91">77-91</label>
+
+              <input className="input-filter" type="checkbox" id="93" name="93"></input>
+              <label className="btn-filter" for="93">93</label>
+
+            </div>
+          </div>
+          <div className="col-4"></div>
+        </div>
+      </div>
       <div className="formContainer">
         <form onSubmit={handleSubmit}>
           <select value={agent1} onChange={e => setAgent1(e.target.value)}>
@@ -207,26 +255,39 @@ function Planning() {
           <button type="submit">Ajouter</button>
         </form>
       </div>
-      <div className="calendar-container">
+      <div className="card calendar-container">
         <FullCalendar
+          lang="fr"
           ref={teamPlanning}
           defaultView="resourceTimelineWeek"
           resourceAreaWidth="15%"
           // minTime="09:00:00"
           // maxTime="21:00:00"
-          // slotDuration="24:00:00"
+          slotDuration="24:00:00"
           slotLabelFormat={[{
-            weekday: 'short'
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short'
           },
           {
             hour: 'numeric'
           }]}
           eventClick={handleEventClick}
           header={{
-            left: "prev,next today",
+            left: "prev,next",
             center: "title",
             right: "resourceTimelineDay, resourceTimelineWeek"
           }}
+          views={{
+            week: {
+              titleFormat: { day: '2-digit', month: 'long' }
+            }
+          }}
+          resourceColumns={[
+            {
+              labelText: 'Visiteurs'
+            } 
+          ]}
           resources={ressources.map(resource => ({
             id: resource.id,
             title: resource.nom

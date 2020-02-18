@@ -26,9 +26,12 @@ h1 {
   height: 100vh;
 }
 
-
+.f-wrap {
+  flex-wrap: wrap;
+}
 
 .content {
+  margin-left: 250px;
   width: calc(100% - 310px);
 }
 
@@ -69,9 +72,45 @@ h1 {
 .card {
   margin: 20px;
   padding: 10px;
-  min-height: 50px;
+  min-height: 33%;
   width: 100%;
 
   border-radius: 10px;
   background-color: $color-white;
+}
+
+.container-filter {
+  span {
+    padding: 10px;
+    font-size: 10px;
+  }
+}
+
+//calendar 
+.calendar-container {
+  h2 {
+    font-size: 16px;
+  }
+
+  .fc-cell-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    span {
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+
+
+  .fc-button-group {
+    button {
+      margin-left: 1px;
+      padding: 3px;
+      background-color: $color-info;
+      border: none;
+    }
+  }
 }
