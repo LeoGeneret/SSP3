@@ -10,7 +10,7 @@ class Binome {
         var visiteursSecteurDeux = [this.visiteur1, this.visiteur2, this.visiteur4];
     }
 
-
+    
     create(){
         let binome = [];
         

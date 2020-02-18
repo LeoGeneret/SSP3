@@ -33,7 +33,8 @@
     "eject": "react-scripts eject",
     "api": "nodemon api/api.index.js",
     "seeder": "node api/database/database.seeder.js",
-    "sync": "node api/database/database.sync.js"
+    "sync": "node api/database/database.sync.js",
+    "testAlgo": "node api/Algo/Visites.js"
   },
   "eslintConfig": {
     "extends": "react-app"
