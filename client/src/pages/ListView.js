@@ -92,7 +92,7 @@ function ListView(props) {
   return (
     <div>
       <h1>Liste des agents</h1>
-      <div className>
+      <div>
         <div className="card row header-list">
 
           <div className="row justify-center col-4">
