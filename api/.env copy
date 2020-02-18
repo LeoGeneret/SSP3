@@ -1,0 +1,12 @@
+NODE_ENV=development
+DB_HOST=localhost
+DB_NAME=ssp3
+DB_USER=
+DB_PASSWORD=
+API_SECRET=
+EMAIL_SECRET=
+MAIL_LOGIN=jwp7bw3ypsxhc3n6@ethereal.email
+MAIL_USER=jwp7bw3ypsxhc3n6@ethereal.email
+MAIL_PASSWORD=g8qC37Fxx5PhT9HrzA
+MAIL_SERVICE_PORT=587
+MAIL_SERVICE_HOST=smtp.ethereal.email

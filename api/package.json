@@ -1,0 +1,25 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "main": "api.index.js",
+  "license": "MIT",
+  "scripts": {
+    "start-dev": "node_modules/nodemon/bin/nodemon.js api.index.js",
+    "db-seed": "node database/database.seeder.js",
+    "db-sync": "node database/database.sync.js"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.8",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "faker": "^4.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
+    "mysql2": "^2.1.0",
+    "node-sass": "^4.13.1",
+    "nodemailer": "^6.4.2",
+    "nodemon": "^2.0.2",
+    "sequelize": "^5.21.3",
+    "xss": "^1.0.6"
+  }
+}
