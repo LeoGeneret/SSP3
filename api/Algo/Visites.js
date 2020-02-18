@@ -49,8 +49,15 @@ class Visites {
         return listeHotels
     }
 
-    prioriteSelonNote(){
-        
+    async prioriteSelonNote(){
+        var listeHotelsSelonNote = await sequelize.models.Hotel.findAll({
+            order: [
+                [{association: "hotel_visites"},"rapport_id", "ASC"]
+            ],
+            include: [{
+                association: "hotel_visites"
+            }]
+        })
     }
 
     creerVisites() {
