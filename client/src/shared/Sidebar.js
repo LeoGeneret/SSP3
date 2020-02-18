@@ -30,6 +30,10 @@ function Sidebar() {
             <div className="icon icon-planning"></div>
             <p>Les plannings</p>
           </NavLink>
+          <NavLink to="/hotels">
+            <div className="icon icon-planning"></div>
+            <p>Les hôtels</p>
+          </NavLink>
         </nav>
       </div>
 
