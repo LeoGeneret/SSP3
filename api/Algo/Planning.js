@@ -1,4 +1,15 @@
+const sequelize = require('../database/database.index')
+
+const listeHotels = sequelize.models.Hotel.findAll({});
+const listeVisiteurs = sequelize.models.Visiteur.findAll({});
+
+
+
+hotel.get('nom')
+
+
 class Planning {
+
 
     constructor(){
         this.binome = new Binome();
@@ -8,6 +19,7 @@ class Planning {
     genererPlanning() {
         this.createBinomes();
         this.createVisites();
+
     }
 
     createBinomes(){
@@ -18,4 +30,7 @@ class Planning {
     createVisites(){
         this.visite.create();
     }
+
+
+
 }
