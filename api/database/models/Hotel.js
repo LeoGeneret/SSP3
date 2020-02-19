@@ -84,6 +84,49 @@ module.exports = (sequelize, DataTypes) => {
 
     const Op = require("sequelize").Op
 
+    Hotel.getHotel = async (housingId) => {
+
+        let results = {
+            error: false,
+            status: 200,
+            data: null
+        }
+
+        let hotel = null
+
+        try {
+
+            hotel = await Hotel.findByPk(housingId, {
+                attributes: ["nom", "adresse", "ville", "code_postal", "nombre_chambre"],
+                include: [
+                    {
+                        association: "secteur",
+                        attributes: ["id", "label"]
+                    }
+                ]
+            })
+
+            if (hotel) {
+                results.data = hotel
+            } else {
+                results.error = {
+                    message: "NOT FOUND - hotel not found"
+                }
+                results.status = 404
+            }
+
+        } catch (GetHotelError) {
+            console.error({ GetHotelError })
+            results.error = {
+                code: 502,
+                message: "BAD GATEWAY - error on fetching ressources"
+            }
+            results.status = 502
+        }
+
+        return results
+    }
+
     Hotel.getAll = async (offset = 0, limit = 5, search) => {
 
         let results = {
