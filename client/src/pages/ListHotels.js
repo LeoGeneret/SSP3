@@ -300,14 +300,15 @@ function ListHotels(props) {
                 {list.map((item, index) => {
                   console.log(item);
                   return (
-                    <li  onClick={() => handleEditHotel(item)} className="row" key={item.id}>
+                    <li className="row" key={item.id}>
                       <p className="col-2">{item.nom}</p>
-                      <p className="col-1">{item.secteur_id}</p>
-                      <p className="col-1">4.68</p>
-                      <p className="col-2">04/03/2020</p>
-                      <p className="col-1">Actif</p>
+                      <p className="col-1">{item.secteur.label}</p>
+                      <p className="col-1">{item.note}</p>
+                      <p className="col-2">{item.visited_at}</p>
+                      <p className="col-1">{item.priority}</p>
                       <div className="col-2">
                         <button className="btn-supp" onClick={() => removeList(item.id)}></button>
+                        <button className="btn-edit" onClick={() => handleEditHotel(item)}></button>
                         <span>{item.pagination}</span>
                       </div>
                     </li>
