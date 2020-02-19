@@ -107,6 +107,7 @@ module.exports = (sequelize, DataTypes) => {
                     },
                     hotels: hotels.map(hotelsItem => ({
                         id: hotelsItem.get("id"),
+                        nom: hotelsItem.get("nom"),
                         priority: hotelsItem.get("priority"),
                         secteur: hotelsItem.get("secteur"),
                         visited_at: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0].get("visited_at"),
