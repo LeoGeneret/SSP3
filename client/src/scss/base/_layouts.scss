@@ -15,7 +15,16 @@ h1 {
   display: flex;
 }
 
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  height: 100%;
+}
+
 .justify-center {
+  display: flex;
   justify-content: center;
 }
 
@@ -61,7 +70,7 @@ h1 {
 }
 
 .col-1 {
-  width: 10%;
+  width: 8.3%;
 }
 
 .bg-blue {
