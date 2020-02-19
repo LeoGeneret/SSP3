@@ -287,7 +287,7 @@ function ListHotels(props) {
                   className="col-12"
                   type="number"
                   placeholder="Nombres de chambres"
-                  value={hotelClicked.item.nom}
+                  value={hotelClicked.item.nombre_chambre}
                   onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nombre_chambre: e.target.value } })}
                 ></input>
                 <input
