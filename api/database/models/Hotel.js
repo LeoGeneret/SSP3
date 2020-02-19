@@ -34,8 +34,8 @@ const Format = {
             secteur: hotelsItem.get("secteur"),
             visited_at: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("visited_at"),
             note: hotelsItem.get("hotel_visites") && 
-                hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("rapport") &&
-                        hotelsItem.get("hotel_visites")[0].get("rapport").get("note"),
+                (hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("rapport") &&
+                        hotelsItem.get("hotel_visites")[0].get("rapport").get("note")) || null,
         }
     }
 }
@@ -210,9 +210,10 @@ module.exports = (sequelize, DataTypes) => {
         } else {
             try {
                 hotel = await Hotel.create(fields)
-
-                if (hotel) {
-                    results.data = hotel
+    
+                if(hotel){
+                    const createdHotel = await Hotel.findByPk(hotel.get("id"), Format.regularHotelAttributes)
+                    results.data = Format.regularHotel(createdHotel)
                     results.status = 201
                 }
             } catch (CreateHotelError) {
