@@ -19,6 +19,7 @@ It starts :
 ## Run specific command in a running service
 ````
 docker-compose -f docker-compose-dev.yml exec <service-name> <command>
+docker-compose -f docker-compose-dev.yml exec api npm run db-seed 
 ````
 
 Exemple with command to fill database with data 
