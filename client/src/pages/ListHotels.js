@@ -85,7 +85,7 @@ function ListHotels(props) {
         console.log(res);
         if (res.error) {
         } else {
-          setList(list.map( itemEdited => {
+          setList(list.map(itemEdited => {
             if (itemEdited.id === res.data.id)
               return res.data
             else
@@ -124,8 +124,9 @@ function ListHotels(props) {
   };
 
   const removeList = id => {
+
     utils
-      .fetchReadyData("/visiteur/" + id + "/delete", {
+      .fetchReadyData("/hotel/" + id + "/delete", {
         method: "DELETE"
       })
       .then(res => {
@@ -158,9 +159,10 @@ function ListHotels(props) {
             </div>
           </div>
         </div> */}
-
-        <NavLink to="/hotels">Liste</NavLink>
-        <NavLink to="/hotels/prior">Prioritaires</NavLink>
+        <div className="nav-hotels row">
+          <NavLink to="/hotels">Liste</NavLink>
+          <NavLink to="/hotels/prior">Prioritaires</NavLink>
+        </div>
         <Switch>
           <Route exact path="/hotels">
             <div className="card">
@@ -286,34 +288,31 @@ function ListHotels(props) {
             <div className="card">
               <div className="table-header">
                 <div className="row">
-                  <div className="col-2">Nom</div>
+                  <div className="col-2">Nom de l'hebergement</div>
                   <div className="col-1">Secteur</div>
                   <div className="col-1">Note logement</div>
                   <div className="col-2">Dernière visite</div>
-                  <div className="col-1">Statut</div>
-                  <div className="col-2">Action</div>
+                  <div className="col-1">Actions</div>
+                  <div className="col-2"></div>
                 </div>
               </div>
               <ul className="table-container">
-                {list.map((item, index) => (
-                  <li className="row" key={item.id}>
-                    <p className="col-2">{item.nom}</p>
-                    <p className="col-1">{item.secteur_id}</p>
-                    <p className="col-1">4.68</p>
-                    <p className="col-2">04/03/2020</p>
-                    <p className="col-1">Actif</p>
-                    <div className="col-2">
-                      <button className="btn-edit" onClick={() => removeList(item.id)}>Supprimer</button>
-                      <button
-                        className="btn-edit"
-                        onClick={() => handleEditHotel(item)}
-                      >
-                        Modifier
-                      </button>
-                      <span>{item.pagination}</span>
-                    </div>
-                  </li>
-                ))}
+                {list.map((item, index) => {
+                  console.log(item);
+                  return (
+                    <li  onClick={() => handleEditHotel(item)} className="row" key={item.id}>
+                      <p className="col-2">{item.nom}</p>
+                      <p className="col-1">{item.secteur_id}</p>
+                      <p className="col-1">4.68</p>
+                      <p className="col-2">04/03/2020</p>
+                      <p className="col-1">Actif</p>
+                      <div className="col-2">
+                        <button className="btn-supp" onClick={() => removeList(item.id)}></button>
+                        <span>{item.pagination}</span>
+                      </div>
+                    </li>
+                  )
+                })}
               </ul>
             </div>
             <div className="pagination">
@@ -345,7 +344,7 @@ function ListHotels(props) {
                     <p className="col-2">04/03/2020</p>
                     <p className="col-1">Actif</p>
                     <div className="col-2">
-                      {/* <button className="btn-edit" onClick={() => removeList(item.id)}>Supprimer</button> */}
+                      <button className="btn-edit" onClick={() => removeList(item.id)}>Supprimer</button>
                       <button
                         className="btn-edit"
                         onClick={() => handleEditHotel()}
