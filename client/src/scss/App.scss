@@ -8,7 +8,7 @@
 @import './base/reset';
 @import './base/vars';
 @import './base/mixins';
-@import './base/layouts'; 
+@import './base/layouts';
 @import './base/icomoon';
 
 /* COMPONENTS */
@@ -34,23 +34,30 @@
   background-color: $main-grey;
 }
 
- a {
-   text-decoration: none;
-   color: black;
- }
+a {
+  text-decoration: none;
+  color: black;
+}
 
 
- .badnote, .goodnote {
-   border-radius: 33px;
-   width: 49px;
-   padding: 5px 5px!important;
-   text-align: center;
- } 
- 
+.badnote,
+.moyennote,
+.goodnote {
+  border-radius: 33px;
+  width: 49px;
+  padding: 5px 5px !important;
+  text-align: center;
+}
+
 .badnote {
   background-color: #ff000061;
-  
- }
+
+}
+
 .goodnote {
   background-color: #33ff0061
- }
+}
+
+.moyennote {
+  background-color: rgba(245, 165, 35, 0.304)
+}

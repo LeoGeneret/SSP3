@@ -8,6 +8,7 @@ function ListHotels(props) {
   const [list, setList] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [openModalCreate, setOpenModalCreate] = useState(false);
+  const [enableEdit, setEnableEdit] = useState(false)
   const [secteurs, setSecteurs] = useState([]);
   const [hotelClicked, sethotelClicked] = useState({
     nom: "",
@@ -198,6 +199,8 @@ function ListHotels(props) {
         </div> */}
         <div className="nav-hotels row">
         </div>
+
+        {/*CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE*/}
         {openModalCreate && (
           <div className="modal-container">
             <div className="pop-in_edit modal-content shadow">
@@ -251,7 +254,7 @@ function ListHotels(props) {
                 ></input>
                 <select
                   className="col-12"
-                  required value={null}
+                  required
                   onChange={e => setValue({ ...value, secteur_id: Number.parseInt(e.target.value) })}>
                   <option value="">Secteurs</option>
                   {secteurs.map((secteur) => {
@@ -270,13 +273,17 @@ function ListHotels(props) {
         )}
 
 
-
+        {/*EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT*/}
         {openModal && (
           <div className="modal-container">
             <div className="pop-in_edit modal-content shadow">
               <h2>Modifier un hotel</h2>
+              <span className="btn-edit-enable icon-edit"
+                onClick={() => setEnableEdit(!enableEdit)}>
+              </span>
               <form className="flex-column" onSubmit={handleSubmitEdit}>
                 <input
+                  disabled={enableEdit ? false : "disabled"}
                   className="col-12"
                   type="text"
                   placeholder="Nom"
@@ -284,6 +291,7 @@ function ListHotels(props) {
                   onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nom: e.target.value } })}
                 ></input>
                 <input
+                  disabled={enableEdit ? false : "disabled"}
                   className="col-12"
                   type="number"
                   placeholder="Nombres de chambres"
@@ -291,6 +299,7 @@ function ListHotels(props) {
                   onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nombre_chambre: e.target.value } })}
                 ></input>
                 <input
+                  disabled={enableEdit ? false : "disabled"}
                   className="col-12"
                   type="text"
                   placeholder="Adresse"
@@ -300,6 +309,7 @@ function ListHotels(props) {
                   }
                 ></input>
                 <input
+                  disabled={enableEdit ? false : "disabled"}
                   className="col-12"
                   type="text"
                   placeholder="Ville"
@@ -309,6 +319,7 @@ function ListHotels(props) {
                   }
                 ></input>
                 <input
+                  disabled={enableEdit ? false : "disabled"}
                   className="col-12"
                   type="text"
                   placeholder="CP"
@@ -318,6 +329,8 @@ function ListHotels(props) {
                   }
                 ></input>
                 <select
+                  disabled={enableEdit ? false : "disabled"}
+                  defaultValue={hotelClicked.item.secteur.id}
                   className="col-12"
                   required value={null}
                   onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, secteur_id: e.target.value } })}
@@ -342,7 +355,7 @@ function ListHotels(props) {
             <div className="row">
               <div className="col-4">Nom de l'hebergement</div>
               <div className="col-2">Code postal</div>
-              <div className="col-1">Note logement</div>
+              <div className="col-1">Dernière note</div>
               <div className="col-2">Dernière visite</div>
               <div className="col-1">Actions</div>
               <div className="col-2"></div>
@@ -354,7 +367,7 @@ function ListHotels(props) {
                 <li className="row" key={item.id}>
                   <p className="col-4">{item.nom}</p>
                   <p className="col-2">{item.code_postal}</p>
-                  <p className={`col-1 ${item.last_note <= 30 ? 'badnote' : 'goodnote'}`}>{item.last_note}</p>
+                  <p className={`col-1 ${item.last_note <= 30 ? 'badnote' : item.last_note <= 40 ? 'moyennote' : 'goodnote'}`}>{item.last_note}</p>
                   <p className="col-2">{moment(item.last_visited_at).format('DD/MM/YYYY')}</p>
                   <button onClick={togglePriority(item)} className={'col-1 btn-priority ' + (item.priority ? 'priority-active' : '')}>Urgent</button>
                   <div className="col-2 justify-center">
