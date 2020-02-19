@@ -5,7 +5,6 @@ const Op = require('sequelize').Op
 const Format = {
 
     regularHotelAttributes: {
-        attributes: ["id", "priority", "nom", "code_postal", "nombre_chambre"],
         include: [
             {
                 association: "secteur",
@@ -36,6 +35,8 @@ const Format = {
             code_postal: hotelsItem.get("code_postal"),
             priority: hotelsItem.get("priority"),
             secteur: hotelsItem.get("secteur"),
+            ville: hotelsItem.get("ville"),
+            adresse: hotelsItem.get("adresse"),
             nombre_chambre: hotelsItem.get("nombre_chambre"),
             last_visited_at: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("visited_at"),
             last_note: hotelsItem.get("hotel_visites") && 
