@@ -2,6 +2,9 @@ const sequelize = require("../database/database.index")
 const moment = require('moment')
 const Op = require('sequelize').Op
 
+/*
+    DOIT ETER RACCORD AVEC Hotel.js
+*/
 const Format = {
 
     regularHotelAttributes: {
