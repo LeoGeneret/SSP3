@@ -89,6 +89,7 @@ function ListHotels(props) {
   }
 
   const handleSubmitEdit = (e) => {
+    setOpenModal(!openModal);
     e.preventDefault();
     utils
       .fetchReadyData(`/hotel/${hotelClicked.item.id}/update`, {
