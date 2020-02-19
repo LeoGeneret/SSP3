@@ -305,7 +305,7 @@ function ListHotels(props) {
                       <p className="col-1">{item.secteur.label}</p>
                       <p className="col-1">{item.note}</p>
                       <p className="col-2">{item.visited_at}</p>
-                      <p className="col-1">{item.priority}</p>
+                      <p className={'col-1 btn-priority' + (item.priority ? 'priority-active' : '' )}>Prioritaire</p>
                       <div className="col-2">
                         <button className="btn-supp" onClick={() => removeList(item.id)}></button>
                         <button className="btn-edit" onClick={() => handleEditHotel(item)}></button>
