@@ -1,0 +1,38 @@
+.calendar-container {
+  position: relative;
+
+  h2 {
+    font-size: 16px;
+  }
+
+  .fc-view-container {
+    height: 55vh;
+    overflow-x: scroll !important;
+  }
+
+  .fc-cell-text {
+    text-align: center !important;
+  }
+
+  .fc-cell-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    span {
+      padding: 10px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+
+
+  .fc-button-group {
+    button {
+      margin-left: 1px;
+      padding: 3px;
+      background-color: $color-info;
+      border: none;
+    }
+  }
+}
