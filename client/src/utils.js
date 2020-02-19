@@ -1,6 +1,6 @@
 const utils = {
   fetchReadyData(uri, options = {}) {
-    return fetch("http://localhost:3002" + uri, options)
+    return fetch(process.env.REACT_APP_API_ENDPOINT + uri, options)
       .then(res => res.json())
   }
 };

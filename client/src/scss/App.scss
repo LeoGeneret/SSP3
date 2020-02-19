@@ -11,23 +11,14 @@
 @import './base/layouts'; 
 @import './base/icomoon';
 
-// SHARED
-@import '../shared/sidebar.scss';
-
 /* COMPONENTS */
+@import './components/sidebar';
 @import './components/forms';
 @import './components/table';
 @import './components/modals';
+@import './components/calendar';
 
-.pop-in {
-  position: absolute;
-  display: none;
-  width: 200px;
-  height: 200px;
-  background-color: red;
-  z-index: 10;
-  right: 0;
-}
+.pop-in {}
 
 .active {
   display: block;
@@ -36,6 +27,7 @@
 .logo {
   height: 30px;
 }
+
 #App {
   display: flex;
   flex-wrap: nowrap;
