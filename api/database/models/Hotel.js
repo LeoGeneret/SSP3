@@ -69,7 +69,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
 
-        priority: {
+        priority: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,
@@ -115,7 +115,7 @@ module.exports = (sequelize, DataTypes) => {
 
             hotels = await Hotel.findAll(queryParameters)
 
-            if(hotels){
+            if (hotels) {
 
                 let item_count = await Hotel.count(queryParameters)
 
@@ -130,7 +130,7 @@ module.exports = (sequelize, DataTypes) => {
             }
 
         } catch (GetAllHotelError) {
-            console.error({GetAllHotelError})
+            console.error({ GetAllHotelError })
             results.error = {
                 code: 502,
                 message: "BAD GATEWAY - error on fetching ressources"
@@ -142,10 +142,10 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     Hotel.deleteHotel = async (hotelId = null) => {
-        
-        if(hotelId === null) {
+
+        if (hotelId === null) {
             return {
-                error:{
+                error: {
                     message: "BAD REQUEST - you must specify hotelId",
                     code: 400
                 },
@@ -168,7 +168,7 @@ module.exports = (sequelize, DataTypes) => {
                     id: hotelId
                 }
             })
-            if(hotel === 0){
+            if (hotel === 0) {
                 results.error = {
                     code: 404,
                     message: "NOT FOUND - no hotel found"
@@ -179,7 +179,7 @@ module.exports = (sequelize, DataTypes) => {
                 results.data = "deleted"
             }
         } catch (DeleteHotelError) {
-            console.error({DeleteHotelError})
+            console.error({ DeleteHotelError })
             results.error = {
                 code: 502,
                 message: "BAD GATEWAY - error on deleting ressource"
@@ -187,7 +187,7 @@ module.exports = (sequelize, DataTypes) => {
             results.status = 502
         }
 
-        console.log({afterQuery: results})
+        console.log({ afterQuery: results })
 
         return results
     }
@@ -201,7 +201,7 @@ module.exports = (sequelize, DataTypes) => {
 
         let hotel = null
 
-        if(Object.values(fields).some(fieldsItem => fieldsItem === undefined || fieldsItem === null || fieldsItem === "")){
+        if (Object.values(fields).some(fieldsItem => fieldsItem === undefined || fieldsItem === null || fieldsItem === "")) {
             results.error = {
                 code: 400,
                 message: "BAD REQUEST - one param is null" + JSON.stringify(fields)
@@ -217,7 +217,7 @@ module.exports = (sequelize, DataTypes) => {
                     results.status = 201
                 }
             } catch (CreateHotelError) {
-                console.error({CreateHotelError})
+                console.error({ CreateHotelError })
                 results.error = {
                     code: 502,
                     message: "BAD GATEWAY - error on creating ressource"
@@ -236,11 +236,11 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         let hotel = null
-        let nextHotel = {...hotelInfo}
-                
+        let nextHotel = { ...hotelInfo }
+
         // Remove undifined keys
         Object.keys(nextHotel).forEach(key => (nextHotel[key] === null || nextHotel[key] === "" || nextHotel[key] === undefined) && delete nextHotel[key])
-        
+
         try {
 
             // verifiy existence
@@ -249,7 +249,7 @@ module.exports = (sequelize, DataTypes) => {
             })
 
             // if found perform an update
-            if(foundHotel){
+            if (foundHotel) {
                 await Hotel.update(nextHotel, {
                     where: {
                         id: hotelId
@@ -265,14 +265,14 @@ module.exports = (sequelize, DataTypes) => {
                 results.status = 404
             }
         } catch (UpdateHotelError) {
-            console.error({UpdateHotelError})
+            console.error({ UpdateHotelError })
             results.error = {
                 code: 502,
                 message: "BAD GATEWAY - error on updating ressource"
             }
             results.status = 502
         }
-        
+
         return results
     }
 
