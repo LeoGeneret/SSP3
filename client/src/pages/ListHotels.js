@@ -123,7 +123,7 @@ function ListHotels(props) {
       if (requester.error) {
         console.log(requester.error);
       } else {
-        setList(requester.data.hotels);
+        setList(requester.data.list);
         setPagination(requester.data.pagination);
         console.log(requester);
       }

@@ -242,7 +242,16 @@ module.exports = (app, sequelize, express) => {
     app.get("/hotel", async (req, res) => {
         const results = await apiAlgo.prioriteSelonNote()
         return res.status(results.status).json(results)
-    })   
+    })  
+    
+    app.get("/hotel/:id", async (req, res) => {
+
+        // query
+        const hotelId = (req.params.id && Number(req.params.id)) || undefined
+
+        const results = await sequelize.models.Hotel.getHotel(hotelId)
+        return res.status(results.status).json(results)
+    })  
 
     app.delete("/hotel/:id/delete", async (req, res) => {
         
@@ -258,7 +267,9 @@ module.exports = (app, sequelize, express) => {
             code_postal: req.body.code_postal,
             ville: req.body.ville,
             nombre_chambre: req.body.nombre_chambre,
-            secteur_id: req.body.secteur_id
+            secteur_id: req.body.secteur_id,
+            raport: req.body.raport,
+            note: req.body.note,
         })
         return res.status(results.status).json(results)
     })
