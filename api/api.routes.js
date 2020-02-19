@@ -12,6 +12,7 @@ try {
 /** UTILS */
 const mailer = require("./email/email")
 const ApiUtils = require("./api.utils")
+const apiAlgo = require("./Algo/Algo")
 
 
 /** CONSTANTS */
@@ -52,7 +53,7 @@ module.exports = (app, sequelize, express) => {
         }
 
         if(results.error){
-            return res.status(results.status).send(results)
+            return res.status(results.status).json(results)
         } else {
             req.token = verifiedToken
             return next()
@@ -84,12 +85,12 @@ module.exports = (app, sequelize, express) => {
         }
 
         if(results.error){
-            return res.status(results.status).send(results)
+            return res.status(results.status).json(results)
         } else {
             return next()
         }
     }
-    
+
     app.get("/", async (req, res) => {
         return res.send({api_ssp3_is_runnning: req.hostname})
     })
@@ -164,7 +165,7 @@ module.exports = (app, sequelize, express) => {
             }
         }
 
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     app.post("/auth/signin", async (req, res) => {
@@ -193,7 +194,7 @@ module.exports = (app, sequelize, express) => {
             
         } 
 
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
     
     app.post("/auth/reset", async (req, res) => {
@@ -217,7 +218,7 @@ module.exports = (app, sequelize, express) => {
             results = await sequelize.models.User.resetPassword(findTokenResults.data.user_id, password)
         }
         
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
 
     })
 
@@ -226,22 +227,28 @@ module.exports = (app, sequelize, express) => {
      * #################################### /hotel
      * ####################################
      */
+
+    // app.get("/hotel", async (req, res) => {
+        
+    //     // query
+    //     const offset = (req.query.offset && Number(req.query.offset)) || undefined
+    //     const limit = (req.query.limit && Number(req.query.limit)) || undefined
+    //     const search = req.query.search || undefined
+        
+    //     const results = await sequelize.models.Hotel.getAll(offset, limit, search)
+    //     return res.status(results.status).json(results)
+    // })
+
     app.get("/hotel", async (req, res) => {
-        
-        // query
-        const offset = (req.query.offset && Number(req.query.offset)) || undefined
-        const limit = (req.query.limit && Number(req.query.limit)) || undefined
-        const search = req.query.search || undefined
-        
-        const results = await sequelize.models.Hotel.getAll(offset, limit, search)
-        return res.status(results.status).send(results)
-    })
+        const results = await apiAlgo.prioriteSelonNote()
+        return res.status(results.status).json(results)
+    })   
 
     app.delete("/hotel/:id/delete", async (req, res) => {
         
         const hotelId = (req.params.id && Number(req.params.id)) || undefined
         const results = await sequelize.models.Hotel.deleteHotel(hotelId)
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     app.put("/hotel/create", async (req, res) => {
@@ -253,7 +260,7 @@ module.exports = (app, sequelize, express) => {
             nombre_chambre: req.body.nombre_chambre,
             secteur_id: req.body.secteur_id
         })
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     app.patch("/hotel/:id/update", async (req, res) => {
@@ -270,7 +277,7 @@ module.exports = (app, sequelize, express) => {
             secteur_id: req.body.secteur_id,
             priority: req.body.priority,
         })
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     /**
@@ -288,7 +295,7 @@ module.exports = (app, sequelize, express) => {
         const attributes = req.query.attributes || undefined
 
         const results = await sequelize.models.Visiteur.getAll(offset, limit, attributes, noLimit)
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     app.delete("/visiteur/:id/delete", async (req, res) => {
@@ -297,7 +304,7 @@ module.exports = (app, sequelize, express) => {
         const visiteurId = (req.params.id && Number(req.params.id)) || undefined
 
         const results = await sequelize.models.Visiteur.deleteVisiteur(visiteurId)
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     app.put("/visiteur/create", async (req, res) => {
@@ -309,7 +316,7 @@ module.exports = (app, sequelize, express) => {
             code_postal: req.body.code_postal,
             secteur_id: req.body.secteur_id
         })
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     app.patch("/visiteur/:id/update", async (req, res) => {
@@ -324,7 +331,7 @@ module.exports = (app, sequelize, express) => {
             code_postal: req.body.code_postal,
             secteur_id: req.body.secteur_id
         })
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
 
@@ -340,7 +347,7 @@ module.exports = (app, sequelize, express) => {
         const limit = (req.query.limit && Number(req.query.limit)) || undefined
 
         const results = await sequelize.models.Voiture.getAll(offset, limit)
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     app.delete("/voiture/:id/delete", async (req, res) => {
@@ -348,7 +355,7 @@ module.exports = (app, sequelize, express) => {
         const voitureId = (req.params.id && Number(req.params.id)) || undefined
         const results = await sequelize.models.Voiture.deleteVoiture(voitureId)
 
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     app.put("/voiture/create", async (req, res) => {
@@ -359,7 +366,7 @@ module.exports = (app, sequelize, express) => {
             ville: req.body.ville,
             code_postal: req.body.code_postal
         })
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     app.patch("/voiture/:id/update", async (req, res) => {
@@ -374,7 +381,7 @@ module.exports = (app, sequelize, express) => {
             ville: req.body.ville,
             code_postal: req.body.code_postal
         })
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     /**
@@ -388,7 +395,7 @@ module.exports = (app, sequelize, express) => {
         const date = req.query.date || null
 
         const results = await sequelize.models.Visite.getPlanning(date)
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     /**
@@ -403,14 +410,14 @@ module.exports = (app, sequelize, express) => {
         const limit = (req.query.limit && Number(req.query.limit)) || undefined
 
         const results = await sequelize.models.Visite.getAll(offset, limit)
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     app.delete("/visite/:id/delete", async (req, res) => {
 
         const visiteId = (req.params.id && Number(req.params.id)) || undefined
         const results = await sequelize.models.Visite.deleteVisite(visiteId)
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     app.patch("/visite/:id/update", async (req, res) => {
@@ -427,7 +434,7 @@ module.exports = (app, sequelize, express) => {
             binome_id: req.body.binome_id,
             //@WAIT - rajouter rapport_note, rapport_comment
         })
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     app.put("/visite/create", async (req, res) => {
@@ -440,7 +447,7 @@ module.exports = (app, sequelize, express) => {
             binome_id: req.body.binome_id,
             //@WAIT - rajouter rapport_note, rapport_comment
         })
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
         /**
@@ -450,14 +457,14 @@ module.exports = (app, sequelize, express) => {
      */
     app.get("/secteur", async (req, res) => {
         const results = await sequelize.models.Secteur.getAll()
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     app.put("/secteur/create", async (req, res) => {
         const results = await sequelize.models.Secteur.createSecteur({
             label: req.body.label,
         })
-        return res.status(results.status).send(results)
+        return res.status(results.status).json(results)
     })
 
     return app

@@ -35,15 +35,6 @@ app.use((req, res, next) => {
  */
 
 const apiRoutes = require("./api.routes")(app, sequelize, express)
-const apiAlgo = require("./Algo/Visites")
-
-app.get("/algotest", async (req, res) => {
-
-    var varTest = await apiAlgo.prioriteSelonDerniereVisite()
-    return res.json(varTest)
-})
-
-
 
 app.listen(PORT, () => console.log("## API IS RUNNING ON PORT " + PORT))
 
