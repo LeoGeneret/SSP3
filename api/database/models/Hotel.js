@@ -1,4 +1,28 @@
 
+const PARAMETERS_TO_DISPLAY_REGULAR_HOTEL = {
+    attributes: ["id", "priority", "nom"],
+    include: [
+        {
+            association: "secteur",
+            attributes: ["id", "label"]
+        },
+        {
+            association: "hotel_visites",
+            attributes: ["visited_at", "rapport_id"],
+            separate: true,
+            order: [
+                ["visited_at", "DESC"]
+            ],
+            limit: 1,
+            include: [
+                {
+                    association: "rapport",
+                    attributes: ["note"]
+                }
+            ]
+        }
+    ]
+}
 module.exports = (sequelize, DataTypes) => {
 
     const Hotel = sequelize.define('hotel', {
@@ -28,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
 
-        priority: {
+        priority: {
             type: DataTypes.BOOLEAN,
             allowNull: false,
             defaultValue: false,
@@ -58,28 +82,7 @@ module.exports = (sequelize, DataTypes) => {
             let queryParameters = {
                 offset: offset * limit,
                 limit: limit,
-                attributes: ["id", "priority", "nom"],
-                include: [
-                    {
-                        association: "secteur",
-                        attributes: ["id", "label"]
-                    },
-                    {
-                        association: "hotel_visites",
-                        attributes: ["visited_at", "rapport_id"],
-                        separate: true,
-                        order: [
-                            ["visited_at", "DESC"]
-                        ],
-                        limit: 1,
-                        include: [
-                            {
-                                association: "rapport",
-                                attributes: ["note"]
-                            }
-                        ]
-                    }
-                ],
+                ...PARAMETERS_TO_DISPLAY_REGULAR_HOTEL,
 
                 // add search parameters if search is defined
                 ...(
@@ -95,7 +98,7 @@ module.exports = (sequelize, DataTypes) => {
 
             hotels = await Hotel.findAll(queryParameters)
 
-            if(hotels){
+            if (hotels) {
 
                 let item_count = await Hotel.count(queryParameters)
 
@@ -111,15 +114,15 @@ module.exports = (sequelize, DataTypes) => {
                         priority: hotelsItem.get("priority"),
                         secteur: hotelsItem.get("secteur"),
                         visited_at: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("visited_at"),
-                        note: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0] &&
-                                hotelsItem.get("hotel_visites")[0].get("rapport") &&
-                                    hotelsItem.get("hotel_visites")[0].get("rapport").get("note"),
+                        note: hotelsItem.get("hotel_visites") &&
+                            hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("rapport") &&
+                            hotelsItem.get("hotel_visites")[0].get("rapport").get("note"),
                     }))
                 }
             }
 
         } catch (GetAllHotelError) {
-            console.error({GetAllHotelError})
+            console.error({ GetAllHotelError })
             results.error = {
                 code: 502,
                 message: "BAD GATEWAY - error on fetching ressources"
@@ -131,10 +134,10 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     Hotel.deleteHotel = async (hotelId = null) => {
-        
-        if(hotelId === null) {
+
+        if (hotelId === null) {
             return {
-                error:{
+                error: {
                     message: "BAD REQUEST - you must specify hotelId",
                     code: 400
                 },
@@ -157,7 +160,7 @@ module.exports = (sequelize, DataTypes) => {
                     id: hotelId
                 }
             })
-            if(hotel === 0){
+            if (hotel === 0) {
                 results.error = {
                     code: 404,
                     message: "NOT FOUND - no hotel found"
@@ -168,7 +171,7 @@ module.exports = (sequelize, DataTypes) => {
                 results.data = "deleted"
             }
         } catch (DeleteHotelError) {
-            console.error({DeleteHotelError})
+            console.error({ DeleteHotelError })
             results.error = {
                 code: 502,
                 message: "BAD GATEWAY - error on deleting ressource"
@@ -176,7 +179,7 @@ module.exports = (sequelize, DataTypes) => {
             results.status = 502
         }
 
-        console.log({afterQuery: results})
+        console.log({ afterQuery: results })
 
         return results
     }
@@ -190,7 +193,7 @@ module.exports = (sequelize, DataTypes) => {
 
         let hotel = null
 
-        if(Object.values(fields).some(fieldsItem => fieldsItem === undefined || fieldsItem === null || fieldsItem === "")){
+        if (Object.values(fields).some(fieldsItem => fieldsItem === undefined || fieldsItem === null || fieldsItem === "")) {
             results.error = {
                 code: 400,
                 message: "BAD REQUEST - one param is null" + JSON.stringify(fields)
@@ -199,13 +202,13 @@ module.exports = (sequelize, DataTypes) => {
         } else {
             try {
                 hotel = await Hotel.create(fields)
-    
-                if(hotel){
+
+                if (hotel) {
                     results.data = hotel
                     results.status = 201
                 }
             } catch (CreateHotelError) {
-                console.error({CreateHotelError})
+                console.error({ CreateHotelError })
                 results.error = {
                     code: 502,
                     message: "BAD GATEWAY - error on creating ressource"
@@ -224,36 +227,42 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         let hotel = null
-        let nextHotel = {...hotelInfo}
-                
+        let nextHotel = { ...hotelInfo }
+
         // Remove undifined keys
         Object.keys(nextHotel).forEach(key => (nextHotel[key] === null || nextHotel[key] === "" || nextHotel[key] === undefined) && delete nextHotel[key])
-        
+
         try {
-            [hotelModifiedCount,] = await Hotel.update(nextHotel, {
-                where: {
-                    id: hotelId
-                }
+
+            // verifiy existence
+            let foundHotel = await Hotel.findByPk(hotelId, {
+                attributes: ["id"]
             })
 
-            if(hotelModifiedCount === 1){
-                results.data = await Hotel.findByPk(hotelId)
+            // if found perform an update
+            if (foundHotel) {
+                await Hotel.update(nextHotel, {
+                    where: {
+                        id: hotelId
+                    }
+                })
+
+                results.data = await Hotel.findByPk(hotelId, PARAMETERS_TO_DISPLAY_REGULAR_HOTEL)
             } else {
                 results.error = {
-                    code: 404,
                     message: "NOT FOUND - no hotel found"
                 }
                 results.status = 404
             }
         } catch (UpdateHotelError) {
-            console.error({UpdateHotelError})
+            console.error({ UpdateHotelError })
             results.error = {
                 code: 502,
                 message: "BAD GATEWAY - error on updating ressource"
             }
             results.status = 502
         }
-        
+
         return results
     }
 
