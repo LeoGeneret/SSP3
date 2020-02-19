@@ -65,6 +65,28 @@ function ListHotels(props) {
       });
   };
 
+  const togglePriority = (item) => () => {
+    utils
+      .fetchReadyData(`/hotel/${item.id}/update`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          priority: !item.priority
+        }),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(res => {
+        console.log(res);
+        if (res.error) {
+        } else {
+          setList(list.map(itemEdited => {
+            if (itemEdited.id === res.data.id)
+              return res.data
+            else
+              return itemEdited
+          }))
+        }
+      });
+  }
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
@@ -77,6 +99,7 @@ function ListHotels(props) {
           ville: hotelClicked.item.ville,
           code_postal: hotelClicked.item.code_postal,
           nombre_chambre: hotelClicked.item.nombre_chambre,
+          priority: hotelClicked.item.priority,
           secteur_id: Number.parseInt(hotelClicked.item.secteur_id)
         }),
         headers: { "Content-Type": "application/json" }
@@ -119,8 +142,6 @@ function ListHotels(props) {
       ...hotelClicked,
       item: item
     })
-
-
   };
 
   const removeList = id => {
@@ -305,10 +326,10 @@ function ListHotels(props) {
                       <p className="col-1">{item.secteur.label}</p>
                       <p className="col-1">{item.note}</p>
                       <p className="col-2">{item.visited_at}</p>
-                      <p className={'col-1 btn-priority' + (item.priority ? 'priority-active' : '' )}>Prioritaire</p>
+                      <button onClick={togglePriority(item)} className={'col-1 btn-priority ' + (item.priority ? 'priority-active' : '')}>Prioritaire</button>
                       <div className="col-2">
-                        <button className="btn-supp" onClick={() => removeList(item.id)}></button>
-                        <button className="btn-edit" onClick={() => handleEditHotel(item)}></button>
+                        <span className="btn icon-supp" onClick={() => removeList(item.id)}></span>
+                        <span className="btn icon-edit" onClick={() => handleEditHotel(item)}></span>
                         <span>{item.pagination}</span>
                       </div>
                     </li>

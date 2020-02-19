@@ -1,3 +1,11 @@
+.btn {
+  padding: 5px;
+  font-size: 18px;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
 button {
   &:hover {
     cursor: pointer;
@@ -163,7 +171,14 @@ button {
   font-size: 12px;
   text-align: center;
   border-radius: 5px;
+  border: none;
+  cursor: pointer;
 }
+
+.priority-active {
+  background-color: $yellow;
+}
+
 .btn-supp {
   width: 20px;
   height: 20px;
