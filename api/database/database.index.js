@@ -63,7 +63,9 @@ Visiteur.belongsTo(Secteur, { as: "visiteurs", foreignKey: "secteur_id" })
 
 // Secteur <-> Hotel
 Secteur.hasMany(Hotel, { as: "hotel_secteur", foreignKey: "secteur_id" })
-Hotel.belongsTo(Secteur, { as: "hotels", foreignKey: "secteur_id" })
+// Hotel.belongsTo(Secteur, { as: "hotels", foreignKey: "secteur_id" })
+Hotel.belongsTo(Secteur, { as: "secteur", foreignKey: "secteur_id" })
+
 
 // Binome <-> Visiteur 1
 Visiteur.hasMany(Binome, { as: "binome_1", foreignKey: "visiteur_id_1" })

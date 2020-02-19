@@ -39,7 +39,7 @@ const apiAlgo = require("./Algo/Visites")
 
 app.get("/algotest", async (req, res) => {
 
-    var varTest = await apiAlgo.prioriteSelonDerniereVisite()
+    var varTest = await apiAlgo.prioriteSelonNote()
     return res.json(varTest)
 })
 
