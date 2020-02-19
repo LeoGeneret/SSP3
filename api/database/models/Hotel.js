@@ -1,4 +1,28 @@
 
+const PARAMETERS_TO_DISPLAY_REGULAR_HOTEL = {
+    attributes: ["id", "priority", "nom"],
+    include: [
+        {
+            association: "secteur",
+            attributes: ["id", "label"]
+        },
+        {
+            association: "hotel_visites",
+            attributes: ["visited_at", "rapport_id"],
+            separate: true,
+            order: [
+                ["visited_at", "DESC"]
+            ],
+            limit: 1,
+            include: [
+                {
+                    association: "rapport",
+                    attributes: ["note"]
+                }
+            ]
+        }
+    ]
+}
 module.exports = (sequelize, DataTypes) => {
 
     const Hotel = sequelize.define('hotel', {
@@ -58,28 +82,7 @@ module.exports = (sequelize, DataTypes) => {
             let queryParameters = {
                 offset: offset * limit,
                 limit: limit,
-                attributes: ["id", "priority", "nom"],
-                include: [
-                    {
-                        association: "secteur",
-                        attributes: ["id", "label"]
-                    },
-                    {
-                        association: "hotel_visites",
-                        attributes: ["visited_at", "rapport_id"],
-                        separate: true,
-                        order: [
-                            ["visited_at", "DESC"]
-                        ],
-                        limit: 1,
-                        include: [
-                            {
-                                association: "rapport",
-                                attributes: ["note"]
-                            }
-                        ]
-                    }
-                ],
+                ...PARAMETERS_TO_DISPLAY_REGULAR_HOTEL,
 
                 // add search parameters if search is defined
                 ...(
@@ -110,9 +113,9 @@ module.exports = (sequelize, DataTypes) => {
                         nom: hotelsItem.get("nom"),
                         priority: hotelsItem.get("priority"),
                         secteur: hotelsItem.get("secteur"),
-                        visited_at: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0].get("visited_at"),
+                        visited_at: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("visited_at"),
                         note: hotelsItem.get("hotel_visites") && 
-                                hotelsItem.get("hotel_visites")[0].get("rapport") &&
+                            hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("rapport") &&
                                     hotelsItem.get("hotel_visites")[0].get("rapport").get("note"),
                     }))
                 }
@@ -230,17 +233,23 @@ module.exports = (sequelize, DataTypes) => {
         Object.keys(nextHotel).forEach(key => (nextHotel[key] === null || nextHotel[key] === "" || nextHotel[key] === undefined) && delete nextHotel[key])
         
         try {
-            [hotelModifiedCount,] = await Hotel.update(nextHotel, {
-                where: {
-                    id: hotelId
-                }
+
+            // verifiy existence
+            let foundHotel = await Hotel.findByPk(hotelId, {
+                attributes: ["id"]
             })
 
-            if(hotelModifiedCount === 1){
-                results.data = await Hotel.findByPk(hotelId)
+            // if found perform an update
+            if(foundHotel){
+                await Hotel.update(nextHotel, {
+                    where: {
+                        id: hotelId
+                    }
+                })
+
+                results.data = await Hotel.findByPk(hotelId, PARAMETERS_TO_DISPLAY_REGULAR_HOTEL)
             } else {
                 results.error = {
-                    code: 404,
                     message: "NOT FOUND - no hotel found"
                 }
                 results.status = 404
