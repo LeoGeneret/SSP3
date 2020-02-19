@@ -1,3 +1,5 @@
+const Op = require("sequelize").Op
+const moment = require("moment")
 
 module.exports = (sequelize, DataTypes) => {
 
@@ -23,7 +25,93 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: false
     })
 
+    const Visiteur = sequelize.models.visiteur
+
     // Fetchers
+
+
+    Visite.getPlanning = async date => {
+
+        const DATE_VALID_FORMAT = "YYYY-MM-DD"
+        const DATE_VALID_FORMAT_REGEX = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/
+
+        let results = {
+            error: false,
+            status: 200,
+            data: null
+        }
+
+        if(date !== null){
+
+            let momentDate = moment(date, DATE_VALID_FORMAT)
+
+            // if match format date and is a correct date (i.e !30 fevrier, !2000-35-01)
+            if(DATE_VALID_FORMAT_REGEX.test(date) && momentDate.isValid()){
+
+                let visites = null
+        
+                try {
+        
+                    visites = await Visite.findAll({
+                        attributes: ["id", "hotel_id", "time_start", "time_end"],
+                        include: [
+                            {
+                                association: "hotel",
+                            },
+                            {
+                                association: "binome",
+                            }
+                        ],
+                        where: {
+                            visited_at: {
+                                [Op.between]: [
+                                    // OPTI - from dimanche to samedi ???
+                                    momentDate.clone().weekday(1),
+                                    momentDate.clone().weekday(7),
+                                ]
+                            }
+                        }
+                    })
+        
+                    results.data = {
+                        reference: momentDate,
+                        events: visites.map(visitesItems => ({
+                            id: visitesItems.get("id").toString(),
+                            start: moment(visitesItems.get("time_start")),
+                            end: moment(visitesItems.get("time_end")),
+                            title: visitesItems.get("hotel").get("nom"),
+                            resourcesIds: [
+                                visitesItems.get("binome").get("visiteur_id_1").toString(),
+                                visitesItems.get("binome").get("visiteur_id_2").toString(),
+                            ],
+                        }))
+                    }
+        
+                } catch (GetPlanningError) {
+                    console.error({GetPlanningError})
+                    results.error = {
+                        code: 502,
+                        message: "BAD GATEWAY - error on fetching planning"
+                    }
+                    results.status = 502
+                }
+
+            } else {
+                results.status = 400
+                results.error = {
+                    message: "BAD REQUEST - invalid date (format must be " + DATE_VALID_FORMAT + ")"
+                }
+            }
+        } else {
+            results.status = 400
+            results.error = {
+                message: "BAD REQUEST - date is null"
+            }
+        }
+
+        return results
+
+    }
 
     Visite.getAll = async (offset = 0, limit = 5) => {
         
@@ -60,7 +148,7 @@ module.exports = (sequelize, DataTypes) => {
                         attributes: ["id", "ville"]
                     },
                     {
-                        association: "visite",
+                        association: "voiture",
                         attributes: ["id", "type"]
                     },
                     {

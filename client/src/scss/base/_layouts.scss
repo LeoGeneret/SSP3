@@ -119,3 +119,13 @@ h1 {
     }
   }
 }
+
+.nav-hotels {
+  margin-left: 20px;
+  a {
+    padding: 10px;
+    &.active {
+      border-bottom: solid 2px $color-info;
+    }
+  }
+}
