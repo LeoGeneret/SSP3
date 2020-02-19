@@ -6,6 +6,7 @@ import { Switch, NavLink, Route, Router } from "react-router-dom";
 function ListHotels(props) {
   const [list, setList] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [secteurs, setSecteurs] = useState([]);
   const [hotelClicked, sethotelClicked] = useState({
     nom: "",
     adresse: "",
@@ -31,10 +32,8 @@ function ListHotels(props) {
   });
 
   const handleSubmit = e => {
-    let id = hotelClicked.item.id
-    console.log(id);
-
     e.preventDefault();
+      
     utils
       .fetchReadyData("/hotel/create", {
         method: "PUT",
@@ -128,6 +127,16 @@ function ListHotels(props) {
         console.log(requester);
       }
     });
+
+    //secteurs
+    utils.fetchReadyData("/secteur").then(requester => {
+      if (requester.error) {
+        console.log(requester.error);
+      } else {
+        setSecteurs(requester.data);
+        console.log(requester);
+      }
+    });
   }, []);
 
   const addTodo = name => {
@@ -187,7 +196,7 @@ function ListHotels(props) {
         <Switch>
           <Route exact path="/hotels">
             <div className="card">
-              <form className="form-create row" onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="form-create row">
                 <input
                   className="col-2"
                   type="text"
@@ -234,19 +243,15 @@ function ListHotels(props) {
                     setValue({ ...value, nombre_chambre: e.target.value })
                   }
                 ></input>
-                <input
-                  className="col-1"
-                  type="number"
-                  min="0"
-                  max="1"
-                  required
-                  placeholder="Secteur"
-                  value={value.secteur_id}
-                  onChange={e =>
-                    setValue({ ...value, secteur_id: Number(e.target.value) })
-                  }
-                ></input>
-                <button className="col-2 btn-edit bg-blue">AJOUTER</button>
+                <select onChange={e => setValue({ ...value, secteur_id: Number.parseInt(e.target.value)})}>
+                  {secteurs.map((secteur) => {
+                    return (
+                      <option key={secteur.id} value={secteur.id}>{secteur.label}</option>
+                    )
+                  })}
+                </select>
+
+                <button className="col-2 btn-edit bg-blue">AJOUTERr</button>
               </form>
             </div>
 
@@ -283,15 +288,7 @@ function ListHotels(props) {
                       sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, code_postal: e.target.value } })
                     }
                   ></input>
-                  <input
-                    type="number"
-                    placeholder="Nb chambres"
-                    value={hotelClicked.item.nombre_chambre}
-                    onChange={e =>
-                      sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nombre_chambre: e.target.value } })
-                    }
-                  ></input>
-                  <input
+                  {/* <input
                     type="number"
                     min="0"
                     max="1"
@@ -300,7 +297,8 @@ function ListHotels(props) {
                     onChange={e =>
                       sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, secteur_id: e.target.value } })
                     }
-                  ></input>
+                  ></input> */}
+
                   <button>METTRE A JOUR</button>
                 </form>
               </div>
@@ -319,7 +317,6 @@ function ListHotels(props) {
               </div>
               <ul className="table-container">
                 {list.map((item, index) => {
-                  console.log(item);
                   return (
                     <li className="row" key={item.id}>
                       <p className="col-2">{item.nom}</p>
@@ -382,7 +379,7 @@ function ListHotels(props) {
           </Route>
         </Switch>
       </div>
-    </div>
+    </div >
   );
 }
 
