@@ -1,6 +1,7 @@
 .btn {
   padding: 5px;
   font-size: 18px;
+
   &:hover {
     cursor: pointer;
   }
@@ -169,7 +170,7 @@ select {
   display: none;
 }
 
-.input-filter:checked + label {
+.input-filter:checked+label {
   background-color: $color-info;
   color: $color-white;
 }
@@ -214,6 +215,7 @@ select {
   background-color: $color-danger;
   border: none;
 }
+
 .btn-add-visit {
   position: fixed;
   top: 80%;
@@ -230,22 +232,26 @@ select {
   }
 
 
-span {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 16px;
-  height: 2px;
+  span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 16px;
+    height: 2px;
 
-  transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
 
-  background-color: $color-white;
+    background-color: $color-white;
+  }
+
+
+  span:nth-child(2) {
+    transform: rotate(-90deg);
+    top: 24px;
+    left: 17px;
+  }
 }
 
-
-span:nth-child(2) {
-  transform: rotate(-90deg);
-  top: 24px;
-  left: 17px;
-}
+.btn-large {
+  width: 100%;
 }
