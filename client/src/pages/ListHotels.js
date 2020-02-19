@@ -269,6 +269,8 @@ function ListHotels(props) {
 
         )}
 
+
+
         {openModal && (
           <div className="modal-container">
             <div className="pop-in_edit modal-content shadow">
@@ -280,6 +282,13 @@ function ListHotels(props) {
                   placeholder="Nom"
                   value={hotelClicked.item.nom}
                   onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nom: e.target.value } })}
+                ></input>
+                <input
+                  className="col-12"
+                  type="number"
+                  placeholder="Nombres de chambres"
+                  value={hotelClicked.item.nom}
+                  onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nombre_chambre: e.target.value } })}
                 ></input>
                 <input
                   className="col-12"
@@ -332,7 +341,7 @@ function ListHotels(props) {
           <div className="table-header">
             <div className="row">
               <div className="col-4">Nom de l'hebergement</div>
-              <div className="col-2">Secteur</div>
+              <div className="col-2">Code postal</div>
               <div className="col-1">Note logement</div>
               <div className="col-2">Dernière visite</div>
               <div className="col-1">Actions</div>
@@ -344,9 +353,9 @@ function ListHotels(props) {
               return (
                 <li className="row" key={item.id}>
                   <p className="col-4">{item.nom}</p>
-                  <p className="col-2">{item.secteur.label}</p>
-                  <p className={`col-1 ${item.note <= 30 ? 'badnote' : 'goodnote'}`}>{item.note}</p>
-                  <p className="col-2">{moment(item.visited_at).format('DD/MM/YYYY')}</p>
+                  <p className="col-2">{item.code_postal}</p>
+                  <p className={`col-1 ${item.last_note <= 30 ? 'badnote' : 'goodnote'}`}>{item.last_note}</p>
+                  <p className="col-2">{moment(item.last_visited_at).format('DD/MM/YYYY')}</p>
                   <button onClick={togglePriority(item)} className={'col-1 btn-priority ' + (item.priority ? 'priority-active' : '')}>Urgent</button>
                   <div className="col-2 justify-center">
                     <span className="btn icon-edit" onClick={() => handleEditHotel(item)}></span>
