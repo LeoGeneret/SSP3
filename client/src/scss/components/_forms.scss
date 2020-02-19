@@ -20,6 +20,33 @@ select {
   border: none;
 }
 
+.formContainer {
+  position: fixed;
+  right: 30px;
+  top: 40%;
+
+  padding: 10px;
+  background-color: $color-grey;
+  border-radius: 10px;
+  z-index: 101;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    height: 200px;
+  }
+
+  select {
+    padding: 6px;
+    background-color: $color-white;
+    border: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+  }
+}
+
 .form-login {
   display: flex;
   flex-direction: column;
@@ -27,7 +54,6 @@ select {
   align-items: center;
   width: 70%;
   height: 300px;
-
 
   input {
     width: 100%;
@@ -67,7 +93,6 @@ select {
   }
 }
 
-
 .btn-create {
   padding: 10px 25px;
   width: 150px;
@@ -80,6 +105,7 @@ select {
   font-size: 13px;
   font-weight: 700;
   color: $color-white;
+  text-align: center;
 
   cursor: pointer;
 }
@@ -96,7 +122,7 @@ select {
   border-radius: 5px;
   border: none;
 
-  transition: .3s;
+  transition: 0.3s;
 
   &:hover {
     background-color: $color-dark-grey;
@@ -138,13 +164,12 @@ select {
   }
 }
 
-
 // Planning
 .input-filter {
   display: none;
 }
 
-.input-filter:checked+label {
+.input-filter:checked + label {
   background-color: $color-info;
   color: $color-white;
 }
@@ -157,7 +182,7 @@ select {
   border-radius: 5px;
   border: none;
 
-  transition: .3s;
+  transition: 0.3s;
 
   font-size: 9px;
   text-transform: uppercase;
@@ -188,4 +213,39 @@ select {
   height: 20px;
   background-color: $color-danger;
   border: none;
+}
+.btn-add-visit {
+  position: fixed;
+  top: 80%;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background-color: $color-info;
+  border-radius: 50%;
+  z-index: 100;
+
+  &:hover {
+    background-color: $bluelink;
+    cursor: pointer;
+  }
+
+
+span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 2px;
+
+  transform: translate(-50%, -50%);
+
+  background-color: $color-white;
+}
+
+
+span:nth-child(2) {
+  transform: rotate(-90deg);
+  top: 24px;
+  left: 17px;
+}
 }

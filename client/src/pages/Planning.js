@@ -3,7 +3,9 @@ import ReactDOM from "react-dom";
 import utils from "../utils";
 import "../scss/App.scss";
 import FullCalendar from "@fullcalendar/react";
+import frLocale from '@fullcalendar/core/locales/fr';
 import resourceTimeline from "@fullcalendar/resource-timeline";
+import interactionPlugin from "@fullcalendar/interaction";
 
 function Planning() {
   //REFS
@@ -16,6 +18,7 @@ function Planning() {
   const [dateStart, setDateStart] = useState("");
   const [dateEnd, setDateEnd] = useState("");
   const [openPopIn, setOpenPopIn] = useState(false);
+  const [openPopInCreate, setopenPopInCreate] = useState(false);
   const [eventClicked, setEventClicked] = useState({});
   const [eventClickedData, setEventClickedData] = useState({});
   const [editedEvent, setEditedEvent] = useState({
@@ -45,7 +48,9 @@ function Planning() {
 
   }, []);
 
-
+  const handleEventClickCreate = () => {
+    setopenPopInCreate(!openPopInCreate)
+  };
 
   const handleEventClick = info => {
     setEventClicked(info.event);
@@ -68,6 +73,7 @@ function Planning() {
 
   const handleSubmit = e => {
     e.preventDefault();
+    setopenPopInCreate(!openPopInCreate)
 
     let newBinome = [agent1, agent2];
     let newDateStart = dateStart;
@@ -112,9 +118,8 @@ function Planning() {
   return (
     <div className="test">
       {openPopIn && (
-        <div id="popin">
+        <div className="formContainer" id="popin">
           <div className={`pop-in ${openPopIn ? "active" : ""}`}>
-            <h1>{eventClickedData.title}</h1>
             <form onSubmit={handleEditEvent}>
               <select
                 value={editedEvent.agent1}
@@ -166,10 +171,10 @@ function Planning() {
                 })}
                 value={editedEvent.dateEnd}
               />
-              <button type="submit">EDITER</button>
+              <button className="btn-create" type="submit">Modifier</button>
             </form>
 
-            <button onClick={handleRemove}>SUPP</button>
+            <button className="btn-create bg-danger" onClick={handleRemove}>Supprimer</button>
           </div>
         </div>
       )}
@@ -222,57 +227,61 @@ function Planning() {
           <div className="col-4"></div>
         </div>
       </div>
-      <div className="formContainer">
-        <form onSubmit={handleSubmit}>
-          <select value={agent1} onChange={e => setAgent1(e.target.value)}>
-            <option>Selectionnez agent 1</option>
-            {ressources.map((item, index) => (
-              <option key={index} value={item.id}>
-                {item.nom}
-              </option>
-            ))}
-          </select>
-          <select value={agent2} onChange={e => setAgent2(e.target.value)}>
-            <option>Selectionnez agent 2</option>
-            {ressources.map((item, index) => (
-              <option key={index} value={item.id}>
-                {item.nom}
-              </option>
-            ))}
-          </select>
-          <input
-            type="datetime-local"
-            placeholder="Date de début"
-            onChange={e => setDateStart(e.target.value)}
-            value={dateStart}
-          />
-          <input
-            type="datetime-local"
-            placeholder="Date de fin"
-            onChange={e => setDateEnd(e.target.value)}
-            value={dateEnd}
-          />
-          <button type="submit">Ajouter</button>
-        </form>
-      </div>
+      {openPopInCreate && (
+        <div className="formContainer">
+          <form onSubmit={handleSubmit}>
+            <select value={agent1} onChange={e => setAgent1(e.target.value)}>
+              <option>Selectionnez agent 1</option>
+              {ressources.map((item, index) => (
+                <option key={index} value={item.id}>
+                  {item.nom}
+                </option>
+              ))}
+            </select>
+            <select value={agent2} onChange={e => setAgent2(e.target.value)}>
+              <option>Selectionnez agent 2</option>
+              {ressources.map((item, index) => (
+                <option key={index} value={item.id}>
+                  {item.nom}
+                </option>
+              ))}
+            </select>
+            <input
+              type="datetime-local"
+              placeholder="Date de début"
+              onChange={e => setDateStart(e.target.value)}
+              value={dateStart}
+            />
+            <input
+              type="datetime-local"
+              placeholder="Date de fin"
+              onChange={e => setDateEnd(e.target.value)}
+              value={dateEnd}
+            />
+            <button className="btn-create" type="submit">Ajouter</button>
+          </form>
+        </div>
+      )}
       <div className="card calendar-container">
         <FullCalendar
-          lang="fr"
+          locale={'fr'}
           ref={teamPlanning}
           defaultView="resourceTimelineWeek"
           resourceAreaWidth="15%"
-          // minTime="09:00:00"
-          // maxTime="21:00:00"
-          slotDuration="24:00:00"
-          slotLabelFormat={[{
-            weekday: 'long',
-            day: 'numeric',
-            month: 'short'
-          },
-          {
-            hour: 'numeric'
-          }]}
+          minTime="09:00:00"
+          maxTime="21:00:00"
+          // slotDuration="24:00:00"
+          // slotLabelFormat={[{
+          //   weekday: 'long',
+          //   day: 'numeric',
+          //   month: 'short'
+          // },
+          // {
+          //   hour: 'numeric'
+          // }]}
           eventClick={handleEventClick}
+          editable={true}
+          droppable={true}
           header={{
             left: "prev,next",
             center: "title",
@@ -286,13 +295,13 @@ function Planning() {
           resourceColumns={[
             {
               labelText: 'Visiteurs'
-            } 
+            }
           ]}
           resources={ressources.map(resource => ({
             id: resource.id,
             title: resource.nom
           }))}
-          plugins={[resourceTimeline]}
+          plugins={[resourceTimeline, interactionPlugin]}
           schedulerLicenseKey="GPL-My-Project-Is-O  pen-Source"
           weekends={false}
           events={[
@@ -312,6 +321,10 @@ function Planning() {
             }
           ]}
         />
+        <div onClick={handleEventClickCreate} className="btn-add-visit shadow">
+          <span></span>
+          <span></span>
+        </div>
       </div>
     </div>
   );

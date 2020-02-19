@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../scss/App.scss";
 
-import { NavLink} from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 function Sidebar() {
   return (
@@ -22,7 +22,7 @@ function Sidebar() {
             <div className="icon icon-home"></div>
             <p>Accueil</p>
           </NavLink>
-          <NavLink to="/list">
+          <NavLink to="/agents">
             <div className="icon icon-agents"></div>
             <p>Liste des agents</p>
           </NavLink>
@@ -36,8 +36,8 @@ function Sidebar() {
           </NavLink>
         </nav>
       </div>
-
-      <div className="Btn signOut">Se deconnecter</div>
+      <div className="btn-create shadow">Creer un planning</div>
+      <div className="btn-create bg-danger shadow">Se deconnecter</div>
     </div>
   );
 }
