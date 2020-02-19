@@ -58,6 +58,28 @@ module.exports = (sequelize, DataTypes) => {
             let queryParameters = {
                 offset: offset * limit,
                 limit: limit,
+                attributes: ["id", "priority", "nom"],
+                include: [
+                    {
+                        association: "secteur",
+                        attributes: ["id", "label"]
+                    },
+                    {
+                        association: "hotel_visites",
+                        attributes: ["visited_at", "rapport_id"],
+                        separate: true,
+                        order: [
+                            ["visited_at", "DESC"]
+                        ],
+                        limit: 1,
+                        include: [
+                            {
+                                association: "rapport",
+                                attributes: ["note"]
+                            }
+                        ]
+                    }
+                ],
 
                 // add search parameters if search is defined
                 ...(
@@ -83,7 +105,15 @@ module.exports = (sequelize, DataTypes) => {
                         page_current: offset,
                         page_count: Math.ceil(item_count / limit)
                     },
-                    hotels: hotels
+                    hotels: hotels.map(hotelsItem => ({
+                        id: hotelsItem.get("id"),
+                        priority: hotelsItem.get("priority"),
+                        secteur: hotelsItem.get("secteur"),
+                        visited_at: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0].get("visited_at"),
+                        note: hotelsItem.get("hotel_visites") && 
+                                hotelsItem.get("hotel_visites")[0].get("rapport") &&
+                                    hotelsItem.get("hotel_visites")[0].get("rapport").get("note"),
+                    }))
                 }
             }
 

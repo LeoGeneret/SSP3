@@ -193,7 +193,7 @@ const generate = async () => {
                 hotel_id: faker.random.arrayElement(hotels).get("id"),
                 voiture_id: faker.random.arrayElement(voitures).get("id"),
                 rapport: {
-                    note: faker.random.number(100),
+                    note: faker.random.number(60),
                     commentaire: Math.random() > .5 ? null : faker.lorem.sentences(2)
                 },
                 visited_at: visited_at,
