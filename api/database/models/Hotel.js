@@ -1,28 +1,45 @@
 
-const PARAMETERS_TO_DISPLAY_REGULAR_HOTEL = {
-    attributes: ["id", "priority", "nom"],
-    include: [
-        {
-            association: "secteur",
-            attributes: ["id", "label"]
-        },
-        {
-            association: "hotel_visites",
-            attributes: ["visited_at", "rapport_id"],
-            separate: true,
-            order: [
-                ["visited_at", "DESC"]
-            ],
-            limit: 1,
-            include: [
-                {
-                    association: "rapport",
-                    attributes: ["note"]
-                }
-            ]
+const Format = {
+
+    regularHotelAttributes: {
+        attributes: ["id", "priority", "nom"],
+        include: [
+            {
+                association: "secteur",
+                attributes: ["id", "label"]
+            },
+            {
+                association: "hotel_visites",
+                attributes: ["visited_at", "rapport_id"],
+                separate: true,
+                order: [
+                    ["visited_at", "DESC"]
+                ],
+                limit: 1,
+                include: [
+                    {
+                        association: "rapport",
+                        attributes: ["note"]
+                    }
+                ]
+            }
+        ]
+    },
+
+    regularHotel: hotelsItem => {
+        return {
+            id: hotelsItem.get("id"),
+            nom: hotelsItem.get("nom"),
+            priority: hotelsItem.get("priority"),
+            secteur: hotelsItem.get("secteur"),
+            visited_at: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("visited_at"),
+            note: hotelsItem.get("hotel_visites") && 
+                hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("rapport") &&
+                        hotelsItem.get("hotel_visites")[0].get("rapport").get("note"),
         }
-    ]
+    }
 }
+
 module.exports = (sequelize, DataTypes) => {
 
     const Hotel = sequelize.define('hotel', {
@@ -82,7 +99,7 @@ module.exports = (sequelize, DataTypes) => {
             let queryParameters = {
                 offset: offset * limit,
                 limit: limit,
-                ...PARAMETERS_TO_DISPLAY_REGULAR_HOTEL,
+                ...Format.regularHotelAttributes,
 
                 // add search parameters if search is defined
                 ...(
@@ -108,16 +125,7 @@ module.exports = (sequelize, DataTypes) => {
                         page_current: offset,
                         page_count: Math.ceil(item_count / limit)
                     },
-                    hotels: hotels.map(hotelsItem => ({
-                        id: hotelsItem.get("id"),
-                        nom: hotelsItem.get("nom"),
-                        priority: hotelsItem.get("priority"),
-                        secteur: hotelsItem.get("secteur"),
-                        visited_at: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("visited_at"),
-                        note: hotelsItem.get("hotel_visites") && 
-                            hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("rapport") &&
-                                    hotelsItem.get("hotel_visites")[0].get("rapport").get("note"),
-                    }))
+                    hotels: hotels.map(Format.regularHotel)
                 }
             }
 
@@ -247,7 +255,8 @@ module.exports = (sequelize, DataTypes) => {
                     }
                 })
 
-                results.data = await Hotel.findByPk(hotelId, PARAMETERS_TO_DISPLAY_REGULAR_HOTEL)
+                // OPTI - may crash if null
+                results.data = Format.regularHotel(await Hotel.findByPk(hotelId, Format.regularHotelAttributes))
             } else {
                 results.error = {
                     message: "NOT FOUND - no hotel found"
