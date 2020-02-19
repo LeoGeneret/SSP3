@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import utils from "../utils";
 import "../scss/App.scss";
 import { Switch, NavLink, Route, Router } from "react-router-dom";
+import moment from 'moment'
 
 function ListHotels(props) {
   const [list, setList] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [secteurs, setSecteurs] = useState([]);
   const [hotelClicked, sethotelClicked] = useState({
     nom: "",
     adresse: "",
@@ -31,10 +33,8 @@ function ListHotels(props) {
   });
 
   const handleSubmit = e => {
-    let id = hotelClicked.item.id
-    console.log(id);
-
     e.preventDefault();
+
     utils
       .fetchReadyData("/hotel/create", {
         method: "PUT",
@@ -128,6 +128,16 @@ function ListHotels(props) {
         console.log(requester);
       }
     });
+
+    //secteurs
+    utils.fetchReadyData("/secteur").then(requester => {
+      if (requester.error) {
+        console.log(requester.error);
+      } else {
+        setSecteurs(requester.data);
+        console.log(requester);
+      }
+    });
   }, []);
 
   const addTodo = name => {
@@ -181,13 +191,13 @@ function ListHotels(props) {
           </div>
         </div> */}
         <div className="nav-hotels row">
-          <NavLink to="/hotels">Liste</NavLink>
-          <NavLink to="/hotels/prior">Prioritaires</NavLink>
+          <NavLink exact to="/hotels">Liste</NavLink>
+          <NavLink exact to="/hotels/prior">Prioritaires</NavLink>
         </div>
         <Switch>
           <Route exact path="/hotels">
             <div className="card">
-              <form className="form-create row" onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="form-create row">
                 <input
                   className="col-2"
                   type="text"
@@ -234,155 +244,154 @@ function ListHotels(props) {
                     setValue({ ...value, nombre_chambre: e.target.value })
                   }
                 ></input>
-                <input
-                  className="col-1"
-                  type="number"
-                  min="0"
-                  max="1"
-                  required
-                  placeholder="Secteur"
-                  value={value.secteur_id}
-                  onChange={e =>
-                    setValue({ ...value, secteur_id: Number(e.target.value) })
-                  }
-                ></input>
+                <select required value={null} onChange={e => setValue({ ...value, secteur_id: Number.parseInt(e.target.value) })}>
+                  <option value="">Secteurs</option>
+                  {secteurs.map((secteur) => {
+                    return (
+                      <option key={secteur.id} value={secteur.id}>{secteur.label}</option>
+                    )
+                  })}
+                </select>
+
                 <button className="col-2 btn-edit bg-blue">AJOUTER</button>
               </form>
             </div>
 
             {openModal && (
-              <div className="pop-in_edit">
-                <form onSubmit={handleSubmitEdit}>
-                  <input
-                    type="text"
-                    placeholder="Nom"
-                    value={hotelClicked.item.nom}
-                    onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nom: e.target.value } })}
-                  ></input>
-                  <input
-                    type="text"
-                    placeholder="Adresse"
-                    value={hotelClicked.item.adresse}
-                    onChange={e =>
-                      sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, adresse: e.target.value } })
-                    }
-                  ></input>
-                  <input
-                    type="text"
-                    placeholder="Ville"
-                    value={hotelClicked.item.ville}
-                    onChange={e =>
-                      sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, ville: e.target.value } })
-                    }
-                  ></input>
-                  <input
-                    type="text"
-                    placeholder="CP"
-                    value={hotelClicked.item.code_postal}
-                    onChange={e =>
-                      sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, code_postal: e.target.value } })
-                    }
-                  ></input>
-                  <input
-                    type="number"
-                    placeholder="Nb chambres"
-                    value={hotelClicked.item.nombre_chambre}
-                    onChange={e =>
-                      sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nombre_chambre: e.target.value } })
-                    }
-                  ></input>
-                  <input
-                    type="number"
-                    min="0"
-                    max="1"
-                    placeholder="Secteur"
-                    value={hotelClicked.item.secteur_id}
-                    onChange={e =>
-                      sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, secteur_id: e.target.value } })
-                    }
-                  ></input>
-                  <button>METTRE A JOUR</button>
-                </form>
+              <div className="modal-container">
+                <div className="pop-in_edit modal-content shadow">
+                  <h2>Modifier un hotel</h2>
+                  <form className="flex-column" onSubmit={handleSubmitEdit}>
+                    <input
+                      className="col-12"
+                      type="text"
+                      placeholder="Nom"
+                      value={hotelClicked.item.nom}
+                      onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nom: e.target.value } })}
+                    ></input>
+                    <input
+                      className="col-12"
+                      type="text"
+                      placeholder="Adresse"
+                      value={hotelClicked.item.adresse}
+                      onChange={e =>
+                        sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, adresse: e.target.value } })
+                      }
+                    ></input>
+                    <input
+                      className="col-12"
+                      type="text"
+                      placeholder="Ville"
+                      value={hotelClicked.item.ville}
+                      onChange={e =>
+                        sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, ville: e.target.value } })
+                      }
+                    ></input>
+                    <input
+                      className="col-12"
+                      type="text"
+                      placeholder="CP"
+                      value={hotelClicked.item.code_postal}
+                      onChange={e =>
+                        sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, code_postal: e.target.value } })
+                      }
+                    ></input>
+                    <select
+                      className="col-12"
+                      required value={null}
+                      onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, secteur_id: e.target.value } })}
+                    >
+                      <option value="">Secteurs</option>
+                      {secteurs.map((secteur) => {
+                        return (
+                          <option key={secteur.id} value={secteur.id}>{secteur.label}</option>
+                        )
+                      })}
+                    </select>
+
+                    <button className="btn-edit bg-blue">METTRE A JOUR</button>
+                  </form>
+                  <button onClick={() => setOpenModal(!openModal)} className="btn-edit">ANNULER</button>
               </div>
-            )}
+              </div>
+          )}
 
             <div className="card">
-              <div className="table-header">
-                <div className="row">
-                  <div className="col-2">Nom de l'hebergement</div>
-                  <div className="col-1">Secteur</div>
-                  <div className="col-1">Note logement</div>
-                  <div className="col-2">Dernière visite</div>
-                  <div className="col-1">Actions</div>
-                  <div className="col-2"></div>
-                </div>
+            <div className="table-header">
+              <div className="row">
+                <div className="col-4">Nom de l'hebergement</div>
+                <div className="col-2">Secteur</div>
+                <div className="col-1">Note logement</div>
+                <div className="col-2">Dernière visite</div>
+                <div className="col-1">Actions</div>
+                <div className="col-2"></div>
               </div>
-              <ul className="table-container">
-                {list.map((item, index) => {
-                  console.log(item);
-                  return (
-                    <li className="row" key={item.id}>
-                      <p className="col-2">{item.nom}</p>
-                      <p className="col-1">{item.secteur.label}</p>
-                      <p className="col-1">{item.note}</p>
-                      <p className="col-2">{item.visited_at}</p>
-                      <button onClick={togglePriority(item)} className={'col-1 btn-priority ' + (item.priority ? 'priority-active' : '')}>Prioritaire</button>
-                      <div className="col-2">
-                        <span className="btn icon-supp" onClick={() => removeList(item.id)}></span>
-                        <span className="btn icon-edit" onClick={() => handleEditHotel(item)}></span>
-                        <span>{item.pagination}</span>
-                      </div>
-                    </li>
-                  )
-                })}
-              </ul>
             </div>
-            <div className="pagination">
-              <span>
-                Page {} - {}
-              </span>
-              <button className="icon-prev btn-prev"></button>
-              <button className="icon-next btn-next"></button>
-            </div>
-          </Route>
-          <Route to="/hotels/prior">
-            <div className="card">
-              <div className="table-header">
-                <div className="row">
-                  <div className="col-2">Nom</div>
-                  <div className="col-1">Secteur</div>
-                  <div className="col-1">Note logement</div>
-                  <div className="col-2">Dernière visite</div>
-                  <div className="col-1">Statut</div>
-                  <div className="col-2">Action</div>
-                </div>
-              </div>
-              <ul className="table-container">
-                {list.map((item, index) => (
+            <ul className="table-container">
+              {list.map((item, index) => {
+                return (
                   <li className="row" key={item.id}>
-                    <p className="col-2">{item.nom}</p>
-                    <p className="col-1">{item.secteur_id}</p>
-                    <p className="col-1">4.68</p>
-                    <p className="col-2">04/03/2020</p>
-                    <p className="col-1">Actif</p>
-                    <div className="col-2">
-                      <button className="btn-edit" onClick={() => removeList(item.id)}>Supprimer</button>
-                      <button
-                        className="btn-edit"
-                        onClick={() => handleEditHotel()}
-                      >
-                        Modifier
-                      </button>
-                      <span>{item.pagination}</span>
+                    <p className="col-4">{item.nom}</p>
+                    <p className="col-2">{item.secteur.label}</p>
+                    <p className="col-1">{item.note}</p>
+                    <p className="col-2">{moment(item.visited_at).format('DD/MM/YYYY')}</p>
+                    <button onClick={togglePriority(item)} className={'col-1 btn-priority ' + (item.priority ? 'priority-active' : '')}>Prioritaire</button>
+                    <div className="col-2 justify-center">
+                      <span className="btn icon-edit" onClick={() => handleEditHotel(item)}></span>
+                      <span className="btn icon-supp" onClick={() => removeList(item.id)}></span>
                     </div>
+                    <span>{item.pagination}</span>
                   </li>
-                ))}
-              </ul>
-            </div>
+                )
+              })}
+            </ul>
+          </div>
+          <div className="pagination">
+            <span>
+              Page {} - {}
+            </span>
+            <button className="icon-prev btn-prev"></button>
+            <button className="icon-next btn-next"></button>
+          </div>
           </Route>
+        <Route to="/hotels/prior">
+          <div className="card">
+            <div className="table-header">
+              <div className="row">
+                <div className="col-2">Nom</div>
+                <div className="col-1">Secteur</div>
+                <div className="col-1">Note logement</div>
+                <div className="col-2">Dernière visite</div>
+                <div className="col-1">Statut</div>
+                <div className="col-2">Action</div>
+              </div>
+            </div>
+            <ul className="table-container">
+              {list.map((item, index) => (
+                <li className="row" key={item.id}>
+                  <p className="col-2">{item.nom}</p>
+                  <p className="col-1">{item.secteur_id}</p>
+                  <p className="col-1">4.68</p>
+                  <p className="col-2">04/03/2020</p>
+                  <p className="col-1">Actif</p>
+                  <div className="col-2">
+                    <button className="btn-edit" onClick={() => removeList(item.id)}>Supprimer</button>
+                    <button
+                      className="btn-edit"
+                      onClick={() => handleEditHotel()}
+                    >
+                      Modifier
+                      </button>
+                    <span>{item.pagination}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Route>
         </Switch>
-      </div>
     </div>
+    </div >
   );
 }
 
