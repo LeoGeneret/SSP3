@@ -41,8 +41,9 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: false
     })
 
+    const Op = require("sequelize").Op
 
-    Hotel.getAll = async (offset = 0, limit = 5) => {
+    Hotel.getAll = async (offset = 0, limit = 5, search) => {
 
         let results = {
             error: false,
@@ -53,14 +54,28 @@ module.exports = (sequelize, DataTypes) => {
         let hotels = null
 
         try {
-            hotels = await Hotel.findAll({
+
+            let queryParameters = {
                 offset: offset * limit,
-                limit: limit
-            })
+                limit: limit,
+
+                // add search parameters if search is defined
+                ...(
+                    search ? {
+                        where: {
+                            nom: {
+                                [Op.substring]: search
+                            }
+                        }
+                    } : {}
+                )
+            }
+
+            hotels = await Hotel.findAll(queryParameters)
 
             if(hotels){
 
-                let item_count = await Hotel.count()
+                let item_count = await Hotel.count(queryParameters)
 
                 results.data = {
                     pagination: {

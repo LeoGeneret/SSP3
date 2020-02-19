@@ -231,8 +231,9 @@ module.exports = (app, sequelize, express) => {
         // query
         const offset = (req.query.offset && Number(req.query.offset)) || undefined
         const limit = (req.query.limit && Number(req.query.limit)) || undefined
-
-        const results = await sequelize.models.Hotel.getAll(offset, limit)
+        const search = req.query.search || undefined
+        
+        const results = await sequelize.models.Hotel.getAll(offset, limit, search)
         return res.status(results.status).send(results)
     })
 
