@@ -22,7 +22,7 @@ function Sidebar() {
             <div className="icon icon-home"></div>
             <p>Accueil</p>
           </NavLink>
-          <NavLink to="/list">
+          <NavLink to="/agents">
             <div className="icon icon-agents"></div>
             <p>Liste des agents</p>
           </NavLink>

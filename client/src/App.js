@@ -5,7 +5,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 
 import Home from './pages/Home';
 import Sidebar from './shared/Sidebar';
-import ListView from './pages/ListView';
+import ListAgent from './pages/ListAgent';
 import Header from "./shared/Header";
 // import Planning from "./pages/Planning";
 import Login from "./pages/Login";
@@ -37,8 +37,8 @@ function App() {
           <Route path="/planning">
             <Planning />
           </Route>
-          <Route path="/list">
-            <ListView />
+          <Route path="/agents">
+            <ListAgent />
           </Route>
           <Route path="/">
             <Home />
