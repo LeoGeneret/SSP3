@@ -31,6 +31,9 @@ function ListHotels(props) {
   });
 
   const handleSubmit = e => {
+    let id = hotelClicked.item.id
+    console.log(id);
+
     e.preventDefault();
     utils
       .fetchReadyData("/hotel/create", {
@@ -62,6 +65,36 @@ function ListHotels(props) {
       });
   };
 
+
+  const handleSubmitEdit = (e) => {
+    e.preventDefault();
+    utils
+      .fetchReadyData(`/hotel/${hotelClicked.item.id}/update`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          nom: hotelClicked.item.nom,
+          adresse: hotelClicked.item.adresse,
+          ville: hotelClicked.item.ville,
+          code_postal: hotelClicked.item.code_postal,
+          nombre_chambre: hotelClicked.item.nombre_chambre,
+          secteur_id: Number.parseInt(hotelClicked.item.secteur_id)
+        }),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(res => {
+        console.log(res);
+        if (res.error) {
+        } else {
+          setList(list.map( itemEdited => {
+            if (itemEdited.id === res.data.id)
+              return res.data
+            else
+              return itemEdited
+          }))
+        }
+      });
+  };
+
   useEffect(() => {
     utils.fetchReadyData("/hotel").then(requester => {
       if (requester.error) {
@@ -84,15 +117,10 @@ function ListHotels(props) {
     console.log(item.id)
     sethotelClicked({
       ...hotelClicked,
-      nom: item.nom,
-      adresse: item.adresse,
-      ville: item.ville,
-      code_postal: item.code_postal,
-      nombre_chambre: item.nombre_chambre,
-      secteur_id: item.secteur_id 
+      item: item
     })
-    
-    
+
+
   };
 
   const removeList = id => {
@@ -201,43 +229,43 @@ function ListHotels(props) {
 
             {openModal && (
               <div className="pop-in_edit">
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmitEdit}>
                   <input
                     type="text"
                     placeholder="Nom"
-                    value={hotelClicked.nom}
-                    onChange={e => sethotelClicked({ ...hotelClicked, nom: e.target.value })}
+                    value={hotelClicked.item.nom}
+                    onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nom: e.target.value } })}
                   ></input>
                   <input
                     type="text"
                     placeholder="Adresse"
-                    value={hotelClicked.adresse}
+                    value={hotelClicked.item.adresse}
                     onChange={e =>
-                      sethotelClicked({ ...hotelClicked, adresse: e.target.value })
+                      sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, adresse: e.target.value } })
                     }
                   ></input>
                   <input
                     type="text"
                     placeholder="Ville"
-                    value={hotelClicked.ville}
+                    value={hotelClicked.item.ville}
                     onChange={e =>
-                      sethotelClicked({ ...hotelClicked, ville: e.target.value })
+                      sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, ville: e.target.value } })
                     }
                   ></input>
                   <input
                     type="text"
                     placeholder="CP"
-                    value={hotelClicked.code_postal}
+                    value={hotelClicked.item.code_postal}
                     onChange={e =>
-                      sethotelClicked({ ...hotelClicked, code_postal: e.target.value })
+                      sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, code_postal: e.target.value } })
                     }
                   ></input>
                   <input
                     type="number"
                     placeholder="Nb chambres"
-                    value={hotelClicked.nombre_chambre}
+                    value={hotelClicked.item.nombre_chambre}
                     onChange={e =>
-                      sethotelClicked({ ...hotelClicked, nombre_chambre: e.target.value })
+                      sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nombre_chambre: e.target.value } })
                     }
                   ></input>
                   <input
@@ -245,9 +273,9 @@ function ListHotels(props) {
                     min="0"
                     max="1"
                     placeholder="Secteur"
-                    value={hotelClicked.secteur_id}
+                    value={hotelClicked.item.secteur_id}
                     onChange={e =>
-                      sethotelClicked({ ...hotelClicked, secteur_id: e.target.value })
+                      sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, secteur_id: e.target.value } })
                     }
                   ></input>
                   <button>METTRE A JOUR</button>
