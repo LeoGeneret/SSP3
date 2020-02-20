@@ -305,7 +305,10 @@ module.exports = (sequelize, DataTypes) => {
                 visite = await Visite.create(fields)
     
                 if(visite){
-                    results.data = visite
+
+                    const createdVisite = await Visite.findByPk(visite.get("id"), Format.regularVisiteAttributes)
+
+                    results.data = Format.regularVisiteFormat(createdVisite)
                     results.status = 201
                 }
             } catch (CreateVisiteError) {

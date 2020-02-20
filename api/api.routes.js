@@ -433,7 +433,6 @@ module.exports = (app, sequelize, express) => {
             time_start: req.body.time_start,
             time_end: req.body.time_end,
             hotel_id: req.body.hotel_id,
-            voiture_id: req.body.voiture_id,
             visiteur_id_1: req.body.visiteur_id_1,
             visiteur_id_2: req.body.visiteur_id_2,
             //@WAIT - rajouter rapport_note, rapport_comment
