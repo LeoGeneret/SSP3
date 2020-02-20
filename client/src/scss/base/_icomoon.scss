@@ -1,10 +1,10 @@
 @font-face {
-  font-family: 'icomoon';
-  src:  url('../../fonts/icomoon.eot?mgsaxo');
-  src:  url('../../fonts/icomoon.eot?mgsaxo#iefix') format('embedded-opentype'),
-    url('../../fonts/icomoon.ttf?mgsaxo') format('truetype'),
-    url('../../fonts/icomoon.woff?mgsaxo') format('woff'),  
-    url('../../fonts/icomoon.svg?mgsaxo#icomoon') format('svg');
+  font-family: 'Julaya';
+  src:  url('../../fonts/Julaya.eot?3zm5wg');
+  src:  url('../../fonts/Julaya.eot?3zm5wg#iefix') format('embedded-opentype'),
+    url('../../fonts/Julaya.ttf?3zm5wg') format('truetype'),
+    url('../../fonts/Julaya.woff?3zm5wg') format('woff'),
+    url('../../fonts/Julaya.svg?3zm5wg#Julaya') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -12,7 +12,7 @@
 
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'icomoon' !important;
+  font-family: 'Julaya' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;
@@ -25,42 +25,96 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-shield:before {
+  content: "\e900";
+}
 .icon-edit:before {
+  content: "\e901";
+}
+.icon-add:before {
+  content: "\e902";
+}
+.icon-calendar:before {
+  content: "\e904";
+}
+.icon-check:before {
+  content: "\e905";
+}
+.icon-copy:before {
+  content: "\e908";
+}
+.icon-delete:before {
+  content: "\e907";
+}
+.icon-support:before {
   content: "\e909";
 }
-.icon-valid:before {
-  content: "\e907";
-  color: #109cf1;
+.icon-info:before {
+  content: "\e90f";
 }
-.icon-supp:before {
-  content: "\e908";
-  color: #eb5757;
+.icon-arrow-left:before {
+  content: "\e910";
 }
-.icon-prev:before {
-  content: "\e905";
-  color: #fff;
-}
-.icon-next:before {
-  content: "\e906";
-  color: #fff;
+.icon-arrow-right:before {
+  content: "\e911";
 }
 .icon-planning:before {
-  content: "\e900";
-  color: #c2cfe0;
+  content: "\e912";
 }
-.icon-vehicles:before {
-  content: "\e901";
-  color: #c2cfe0;
+.icon-dashboard:before {
+  content: "\e913";
 }
-.icon-home:before {
-  content: "\e902";
-  color: #c2cfe0;
+.icon-lock:before {
+  content: "\e915";
+}
+.icon-upload:before {
+  content: "\e916";
+}
+.icon-pending:before {
+  content: "\e917";
+}
+.icon-user:before {
+  content: "\e918";
+}
+.icon-arrow-down:before {
+  content: "\e91b";
+}
+.icon-arrow-up:before {
+  content: "\e91c";
+}
+.icon-more-horiz:before {
+  content: "\e91d";
+}
+.icon-more-vert:before {
+  content: "\e91e";
+}
+.icon-add1:before {
+  content: "\e90a";
+}
+.icon-place:before {
+  content: "\e906";
+}
+.icon-close:before {
+  content: "\e91f";
+}
+.icon-magnifying-glass:before {
+  content: "\e920";
+}
+.icon-download:before {
+  content: "\e933";
+}
+.icon-gear:before {
+  content: "\e953";
 }
 .icon-agents:before {
-  content: "\e903";
-  color: #c2cfe0;
+  content: "\e95b";
 }
-.icon-hotels:before {
-  content: "\e904";
-  color: #c2cfe0;
+.icon-notification:before {
+  content: "\e93d";
+}
+.icon-alert-filled:before {
+  content: "\e93e";
+}
+.icon-alert-outline:before {
+  content: "\e93f";
 }

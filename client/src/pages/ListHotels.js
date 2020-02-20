@@ -7,15 +7,11 @@ import moment from 'moment'
 function ListHotels(props) {
   const [list, setList] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [openModalCreate, setOpenModalCreate] = useState(false);
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [enableEdit, setEnableEdit] = useState(false);
   const [secteurs, setSecteurs] = useState([]);
-  const [hotelClicked, sethotelClicked] = useState({
-    nom: "",
-    adresse: "",
-    ville: "",
-    code_postal: "",
-    nombre_chambre: "",
-    secteur_id: ""
-  });
+  const [hotelClicked, sethotelClicked] = useState({});
 
   const [value, setValue] = useState({
     nom: "",
@@ -34,6 +30,7 @@ function ListHotels(props) {
 
   const handleSubmit = e => {
     e.preventDefault();
+    setOpenModalCreate(!openModalCreate);
 
     utils
       .fetchReadyData("/hotel/create", {
@@ -86,6 +83,10 @@ function ListHotels(props) {
           }))
         }
       });
+  }
+
+  const handleEventClickCreate = () => {
+    setOpenModalCreate(!openModalCreate);
   }
 
   const handleSubmitEdit = (e) => {
@@ -148,59 +149,56 @@ function ListHotels(props) {
 
   const handleEditHotel = (item) => {
     setOpenModal(!openModal);
-    console.log(item.id)
     sethotelClicked({
       ...hotelClicked,
       item: item
     })
   };
 
-  const removeList = id => {
+  const handleDeleteHotel = (item) => {
+    sethotelClicked({
+      ...hotelClicked,
+      item: item,
+      modalDelete: true
 
+    })
+  }
+
+  const removeList = (e) => {
+    setOpenModalDelete(!openModalDelete);
     utils
-      .fetchReadyData("/hotel/" + id + "/delete", {
+      .fetchReadyData(`/hotel/${hotelClicked.item.id}/delete`, {
         method: "DELETE"
       })
       .then(res => {
         if (res.data) {
           const newValue = [...list];
-          const removedItemIndex = newValue.findIndex(item => item.id === id);
+          const removedItemIndex = newValue.findIndex(item => hotelClicked.item.id === item.id);
           newValue.splice(removedItemIndex, 1);
           setList(newValue);
+
         }
-        console.log(res);
+        sethotelClicked({
+          ...hotelClicked,
+          modalDelete: false
+        })
       });
   };
   return (
     <div>
       <h1>Liste des hôtels</h1>
       <div>
-        {/* <div className="card row header-list">
-          <div className="row justify-center col-4">
-            <div className="icon-agents"></div>
-            <div>40 salariés</div>
-          </div>
-          <div className="row justify-center col-4">
-            <div className="icon-agents"></div>
-            <div>Secteur</div>
-          </div>
-          <div className="row justify-center col-4">
-            <div className="icon-agents"></div>
-            <div>
-              120 chambres utilisés<br></br> depuis janvier
-            </div>
-          </div>
-        </div> */}
         <div className="nav-hotels row">
-          <NavLink exact to="/hotels">Liste</NavLink>
-          <NavLink exact to="/hotels/prior">Prioritaires</NavLink>
         </div>
-        <Switch>
-          <Route exact path="/hotels">
-            <div className="card">
-              <form onSubmit={handleSubmit} className="form-create row">
+
+        {/*CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE*/}
+        {openModalCreate && (
+          <div className="modal-container">
+            <div className="pop-in_edit modal-content shadow">
+              <h2>Créer un hotel</h2>
+              <form className="flex-column" onSubmit={handleSubmit}>
                 <input
-                  className="col-2"
+                  className="col-12"
                   type="text"
                   required
                   placeholder="Nom"
@@ -208,7 +206,7 @@ function ListHotels(props) {
                   onChange={e => setValue({ ...value, nom: e.target.value })}
                 ></input>
                 <input
-                  className="col-2"
+                  className="col-12"
                   type="text"
                   required
                   placeholder="Adresse"
@@ -218,7 +216,7 @@ function ListHotels(props) {
                   }
                 ></input>
                 <input
-                  className="col-2"
+                  className="col-12"
                   type="text"
                   required
                   placeholder="Ville"
@@ -226,7 +224,7 @@ function ListHotels(props) {
                   onChange={e => setValue({ ...value, ville: e.target.value })}
                 ></input>
                 <input
-                  className="col-2"
+                  className="col-12"
                   type="text"
                   required
                   placeholder="CP"
@@ -236,7 +234,7 @@ function ListHotels(props) {
                   }
                 ></input>
                 <input
-                  className="col-1"
+                  className="col-12"
                   type="number"
                   required
                   placeholder="Nb chambres"
@@ -245,7 +243,86 @@ function ListHotels(props) {
                     setValue({ ...value, nombre_chambre: e.target.value })
                   }
                 ></input>
-                <select required value={null} onChange={e => setValue({ ...value, secteur_id: Number.parseInt(e.target.value) })}>
+                <select
+                  className="col-12"
+                  required
+                  onChange={e => setValue({ ...value, secteur_id: Number.parseInt(e.target.value) })}>
+                  <option value="">Secteurs</option>
+                  {secteurs.map((secteur) => {
+                    return (
+                      <option key={secteur.id} value={secteur.id}>{secteur.label}</option>
+                    )
+                  })}
+                </select>
+                <button className="btn-edit bg-blue">AJOUTER</button>
+                <button onClick={() => setOpenModalCreate(!openModalCreate)} className="btn-edit">ANNULER</button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/*EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT*/}
+        {openModal && (
+          <div className="modal-container">
+            <div className="pop-in_edit modal-content shadow">
+              <h2>Modifier un hotel</h2>
+              <span className="btn-edit-enable icon-edit"
+                onClick={() => setEnableEdit(!enableEdit)}>
+              </span>
+              <form className="flex-column" onSubmit={handleSubmitEdit}>
+                <input
+                  disabled={enableEdit ? false : "disabled"}
+                  className="col-12"
+                  type="text"
+                  placeholder="Nom"
+                  value={hotelClicked.item.nom}
+                  onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nom: e.target.value } })}
+                ></input>
+                <input
+                  disabled={enableEdit ? false : "disabled"}
+                  className="col-12"
+                  type="number"
+                  placeholder="Nombres de chambres"
+                  value={hotelClicked.item.nombre_chambre}
+                  onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nombre_chambre: e.target.value } })}
+                ></input>
+                <input
+                  disabled={enableEdit ? false : "disabled"}
+                  className="col-12"
+                  type="text"
+                  placeholder="Adresse"
+                  value={hotelClicked.item.adresse}
+                  onChange={e =>
+                    sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, adresse: e.target.value } })
+                  }
+                ></input>
+                <input
+                  disabled={enableEdit ? false : "disabled"}
+                  className="col-12"
+                  type="text"
+                  placeholder="Ville"
+                  value={hotelClicked.item.ville}
+                  onChange={e =>
+                    sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, ville: e.target.value } })
+                  }
+                ></input>
+                <input
+                  disabled={enableEdit ? false : "disabled"}
+                  className="col-12"
+                  type="text"
+                  placeholder="CP"
+                  value={hotelClicked.item.code_postal}
+                  onChange={e =>
+                    sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, code_postal: e.target.value } })
+                  }
+                ></input>
+                <select
+                  disabled={enableEdit ? false : "disabled"}
+                  defaultValue={hotelClicked.item.secteur.id}
+                  className="col-12"
+                  required value={null}
+                  onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, secteur_id: e.target.value } })}
+                >
                   <option value="">Secteurs</option>
                   {secteurs.map((secteur) => {
                     return (
@@ -254,143 +331,72 @@ function ListHotels(props) {
                   })}
                 </select>
 
-                <button className="col-2 btn-edit bg-blue">AJOUTER</button>
+                <button className="btn-edit bg-blue">METTRE A JOUR</button>
               </form>
+              <button onClick={() => setOpenModal(!openModal)} className="btn-edit btn-large">ANNULER</button>
             </div>
+          </div>
+        )}
 
-            {openModal && (
+        <div className="card">
+          <div className="table-header">
+            <div className="row">
+              <div className="col-4">Nom de l'hebergement</div>
+              <div className="col-2">Code postal</div>
+              <div className="col-2">Dernière note</div>
+              <div className="col-2">Dernière visite</div>
+              <div className="col-2">Actions</div>
+              <div className="col-1"></div>
+            </div>
+          </div>
+          <ul className="table-container">
+            {list.map((item, index) => {
+              return (
+                <li className="row" key={item.id}>
+                  <p className="col-4">{item.nom}</p>
+                  <p className="col-2">{item.code_postal}</p>
+                  <div className="col-2">
+                    <p className={`${item.last_note <= 30 ? 'badnote' : item.last_note <= 40 ? 'moyennote' : item.last_note == null ? 'item.last_visited_at' : 'goodnote'}`}>
+                      {item.last_note == null ? 'Aucune note' : item.last_note}</p>
+                  </div>
+                  <p className="col-2">{item.last_visited_at == null ? 'Aucune date' : moment(item.last_visited_at).format('DD/MM/YYYY')}</p>
+                  <div className="col-2">
+                    <button onClick={togglePriority(item)} className={'btn-priority ' + (item.priority ? 'priority-active' : '')}>
+                      <span className="icon-alert-outline"></span>
+                      Urgent
+                  </button>
+                  </div>
+                  <div className="col-1 justify-center">
+                    <span className="btn icon-more-horiz" onClick={() => handleEditHotel(item)}></span>
+                    <span className="btn icon-delete" onClick={() => handleDeleteHotel(item)}></span>
+                  </div>
+                </li>
+              )
+            })}
+            {/*DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE*/}
+            {hotelClicked.modalDelete && (
               <div className="modal-container">
-                <div className="pop-in_edit modal-content shadow">
-                  <h2>Modifier un hotel</h2>
-                  <form className="flex-column" onSubmit={handleSubmitEdit}>
-                    <input
-                      className="col-12"
-                      type="text"
-                      placeholder="Nom"
-                      value={hotelClicked.item.nom}
-                      onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nom: e.target.value } })}
-                    ></input>
-                    <input
-                      className="col-12"
-                      type="text"
-                      placeholder="Adresse"
-                      value={hotelClicked.item.adresse}
-                      onChange={e =>
-                        sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, adresse: e.target.value } })
-                      }
-                    ></input>
-                    <input
-                      className="col-12"
-                      type="text"
-                      placeholder="Ville"
-                      value={hotelClicked.item.ville}
-                      onChange={e =>
-                        sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, ville: e.target.value } })
-                      }
-                    ></input>
-                    <input
-                      className="col-12"
-                      type="text"
-                      placeholder="CP"
-                      value={hotelClicked.item.code_postal}
-                      onChange={e =>
-                        sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, code_postal: e.target.value } })
-                      }
-                    ></input>
-                    <select
-                      className="col-12"
-                      required value={null}
-                      onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, secteur_id: e.target.value } })}
-                    >
-                      <option value="">Secteurs</option>
-                      {secteurs.map((secteur) => {
-                        return (
-                          <option key={secteur.id} value={secteur.id}>{secteur.label}</option>
-                        )
-                      })}
-                    </select>
-
-                    <button className="btn-edit bg-blue">METTRE A JOUR</button>
-                  </form>
-                  <button onClick={() => setOpenModal(!openModal)} className="btn-edit">ANNULER</button>
+                <div className="modal-content modal-delete">
+                  <h1>Etes vous sûre de vouloir supprimer cet hôtels ? </h1>
+                  <button className="btn-edit btn-large bg-danger" onClick={() => removeList(hotelClicked.item.id)}>SUPPRIMER</button>
+                  <button className="btn-edit btn-large" onClick={() => sethotelClicked({modalDelete : false})}>ANNULER</button>
               </div>
               </div>
           )}
-
-            <div className="card">
-            <div className="table-header">
-              <div className="row">
-                <div className="col-4">Nom de l'hebergement</div>
-                <div className="col-2">Secteur</div>
-                <div className="col-1">Note logement</div>
-                <div className="col-2">Dernière visite</div>
-                <div className="col-1">Actions</div>
-                <div className="col-2"></div>
-              </div>
-            </div>
-            <ul className="table-container">
-              {list.map((item, index) => {
-                return (
-                  <li className="row" key={item.id}>
-                    <p className="col-4">{item.nom}</p>
-                    <p className="col-2">{item.secteur.label}</p>
-                    <p className={`col-1 ${item.note <= 30 ? 'badnote' : 'goodnote' }`}>{item.note}</p>
-                    <p className="col-2">{moment(item.visited_at).format('DD/MM/YYYY')}</p>
-                    <button onClick={togglePriority(item)} className={'col-1 btn-priority ' + (item.priority ? 'priority-active' : '')}>Prioritaire</button>
-                    <div className="col-2 justify-center">
-                      <span className="btn icon-edit" onClick={() => handleEditHotel(item)}></span>
-                      <span className="btn icon-supp" onClick={() => removeList(item.id)}></span>
-                    </div>
-                    <span>{item.pagination}</span>
-                  </li>
-                )
-              })}
-            </ul>
-          </div>
-          <div className="pagination">
+          </ul>
+      </div>
+      <div onClick={handleEventClickCreate} className="btn-add-visit shadow">
+        <span></span>
+        <span></span>
+      </div>
+      {/* <div className="pagination">
             <span>
               Page {} - {}
             </span>
             <button className="icon-prev btn-prev"></button>
             <button className="icon-next btn-next"></button>
-          </div>
-          </Route>
-        <Route to="/hotels/prior">
-          <div className="card">
-            <div className="table-header">
-              <div className="row">
-                <div className="col-2">Nom</div>
-                <div className="col-1">Secteur</div>
-                <div className="col-1">Note logement</div>
-                <div className="col-2">Dernière visite</div>
-                <div className="col-1">Statut</div>
-                <div className="col-2">Action</div>
-              </div>
-            </div>
-            <ul className="table-container">
-              {list.map((item, index) => (
-                <li className="row" key={item.id}>
-                  <p className="col-2">{item.nom}</p>
-                  <p className="col-1">{item.secteur_id}</p>
-                  <p className="col-1">4.68</p>
-                  <p className="col-2">04/03/2020</p>
-                  <p className="col-1">Actif</p>
-                  <div className="col-2">
-                    <button className="btn-edit" onClick={() => removeList(item.id)}>Supprimer</button>
-                    <button
-                      className="btn-edit"
-                      onClick={() => handleEditHotel()}
-                    >
-                      Modifier
-                      </button>
-                    <span>{item.pagination}</span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Route>
-        </Switch>
+          </div> */}
+
     </div>
     </div >
   );

@@ -6,13 +6,9 @@ import { insertAfterElement } from "@fullcalendar/core";
 function ListAgent(props) {
   const [list, setList] = useState([]);
   const [openModal, setOpenModal] = useState(false);
-  const [agentClicked, setagentClicked] = useState({
-    nom: "",
-    adresse: "",
-    ville: "",
-    code_postal: "",
-    secteur_id: undefined
-  });
+  const [openModalCreate, setOpenModalCreate] = useState(false);
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [agentClicked, setagentClicked] = useState({});
 
   const [value, setValue] = useState({
     nom: "",
@@ -28,8 +24,13 @@ function ListAgent(props) {
     page_count: ""
   });
 
+  const handleEventClickCreate = () => {
+    setOpenModalCreate(!openModalCreate);
+  }
+
   const handleSubmit = e => {
     e.preventDefault();
+    setOpenModalCreate(!openModalCreate);
     utils
       .fetchReadyData("/visiteur/create", {
         method: "PUT",
@@ -69,6 +70,7 @@ function ListAgent(props) {
 
   const handleSubmitEdit = (e) => {
     e.preventDefault();
+    setOpenModal(!openModal);
     utils
       .fetchReadyData(`/visiteur/${agentClicked.item.id}/update`, {
         method: "PATCH",
@@ -84,7 +86,7 @@ function ListAgent(props) {
         console.log(res);
         if (res.error) {
         } else {
-          setList(list.map( itemEdited => {
+          setList(list.map(itemEdited => {
             if (itemEdited.id === res.data.id)
               return res.data
             else
@@ -103,18 +105,33 @@ function ListAgent(props) {
     });
   };
 
-  const removeList = id => {
+  const handleDeleteAgent = (item) => {
+    setagentClicked({
+      ...agentClicked,
+      item: item,
+      modalDelete: true
+    })
+
+  }
+
+  const removeList = (e) => {
+    setOpenModalDelete(!openModalDelete);
+
     utils
-      .fetchReadyData("/visiteur/" + id + "/delete", {
+      .fetchReadyData(`/visiteur/${agentClicked.item.id}/delete`, {
         method: "DELETE"
       })
       .then(res => {
         if (res.data) {
           const newValue = [...list];
-          const removedItemIndex = newValue.findIndex(item => item.id === id);
+          const removedItemIndex = newValue.findIndex(item => agentClicked.item.id === item.id);
           newValue.splice(removedItemIndex, 1);
           setList(newValue);
         }
+        setagentClicked({
+          ...agentClicked,
+          modalDelete: false
+        })
       });
   };
 
@@ -122,104 +139,121 @@ function ListAgent(props) {
     <div>
       <h1>Liste des agents</h1>
       <div>
-        <div className="card row header-list">
-          <div className="row justify-center col-4">
-            <div className="icon-agents"></div>
-            <div>40 salariés</div>
-          </div>
-          <div className="row justify-center col-4">
-            <div className="icon-agents"></div>
-            <div>Secteur</div>
-          </div>
-          <div className="row justify-center col-4">
-            <div className="icon-agents"></div>
-            <div>
-              120 chambres utilisés<br></br> depuis janvier
+        <div className="nav-hotels row">
+        </div>
+
+        {/*CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE*/}
+        {openModalCreate && (
+          <div className="modal-container">
+            <div className="modal-content pop-in_edit shadow">
+              <h2>Créer un agent</h2>
+              <form className="flex-column" onSubmit={handleSubmit}>
+                <input
+                  className="col-12"
+                  type="text"
+                  placeholder="Nom"
+                  onChange={e => setValue({ ...value, nom: e.target.value })}
+                ></input>
+                <input
+                  className="col-12"
+                  type="text"
+                  placeholder="Adresse"
+                  onChange={e => setValue({ ...value, adresse: e.target.value })}
+                ></input>
+                <input
+                  className="col-12"
+                  type="text"
+                  placeholder="Ville"
+                  onChange={e => setValue({ ...value, ville: e.target.value })}
+                ></input>
+                <input
+                  className="col-12"
+                  type="text"
+                  placeholder="CP"
+                  onChange={e =>
+                    setValue({ ...value, code_postal: e.target.value })
+                  }
+                ></input>
+                <input
+                  className="col-12"
+                  type="number"
+                  min="0"
+                  max="1"
+                  placeholder="Secteur"
+                  onChange={e => setValue({ ...value, secteur_id: e.target.value })}
+                ></input>
+                <button className="col-12 btn-edit bg-blue">AJOUTER</button>
+                <button onClick={() => setOpenModalCreate(!openModalCreate)} className="col-12 btn-edit bg-INFO">ANNULER</button>
+              </form>
             </div>
           </div>
-        </div>
-        <div className="card">
-          <form className="form-create row" onSubmit={handleSubmit}>
-            <input
-              className="col-2"
-              type="text"
-              placeholder="Nom"
-              onChange={e => setValue({ ...value, nom: e.target.value })}
-            ></input>
-            <input
-              className="col-2"
-              type="text"
-              placeholder="Adresse"
-              onChange={e => setValue({ ...value, adresse: e.target.value })}
-            ></input>
-            <input
-              className="col-2"
-              type="text"
-              placeholder="Ville"
-              onChange={e => setValue({ ...value, ville: e.target.value })}
-            ></input>
-            <input
-              className="col-2"
-              type="text"
-              placeholder="CP"
-              onChange={e =>
-                setValue({ ...value, code_postal: e.target.value })
-              }
-            ></input>
-            <input
-              className="col-2"
-              type="number"
-              min="0"
-              max="1"
-              placeholder="Secteur"
-              onChange={e => setValue({ ...value, secteur_id: e.target.value })}
-            ></input>
-            <button className="col-2 btn-edit bg-blue">AJOUTER</button>
-          </form>
-        </div>
+        )}
+
+        {/*EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT*/}
         {openModal && (
-          <div className="pop-in_edit">
-            <form onSubmit={handleSubmitEdit}>
-              <input
-                type="text"
-                placeholder="Nom"
-                value={agentClicked.item.nom}   
-                onChange={e =>
-                  setagentClicked({
-                    ...agentClicked,
-                    item: { ...agentClicked.item, nom: e.target.value }
-                  })
-                }
-              ></input>
-              <input
-                type="text"
-                placeholder="Secteur"
-                value={agentClicked.item.secteur_id}   
-                onChange={e =>
-                  setagentClicked({ ...agentClicked, adresse: e.target.value })
-                }
-              ></input>
-              <input
-                type="text"
-                placeholder="Adresse"
-                value={agentClicked.item.adresse}   
-                onChange={e =>
-                  setagentClicked({ ...agentClicked, ville: e.target.value })
-                }
-              ></input>
-              <input
-                type="text"
-                placeholder="Ville"
-                value={agentClicked.item.ville}   
-                onChange={e =>
-                  setagentClicked({
-                    ...agentClicked,
-                    code_postal: e.target.value
-                  })
-                }
-              ></input>
-              <button>METTRE A JOUR</button>
-            </form>
+          <div className="modal-container">
+            <div className="modal-content pop-in_edit shadow">
+              <form className="flex-column" onSubmit={handleSubmitEdit}>
+                <input
+                  className="col-12"
+                  type="text"
+                  placeholder="Nom"
+                  value={agentClicked.item.nom}
+                  onChange={e =>
+                    setagentClicked({
+                      ...agentClicked,
+                      item: {
+                        ...agentClicked.item, nom: e.target.value
+                      }
+                    })
+                  }
+                ></input>
+                <input
+                  className="col-12"
+                  type="text"
+                  placeholder="Secteur"
+                  value={agentClicked.item.secteur_id}
+                  onChange={e =>
+                    setagentClicked({
+                      ...agentClicked,
+                      item: {
+                        ...agentClicked.item, secteur_id: e.target.value
+                      }
+                    })
+                  }
+                ></input>
+                <input
+                  className="col-12"
+                  type="text"
+                  placeholder="Adresse"
+                  value={agentClicked.item.adresse}
+                  onChange={e =>
+                    setagentClicked({
+                      ...agentClicked,
+                      item: {
+                        ...agentClicked.item, adresse: e.target.value
+                      }
+                    })
+                  }
+                ></input>
+                <input
+                  className="col-12"
+                  type="text"
+                  placeholder="Ville"
+                  value={agentClicked.item.ville}
+                  onChange={e =>
+                    setagentClicked({
+                      ...agentClicked,
+                      item: {
+                        ...agentClicked.item, ville: e.target.value
+                      }
+                    })
+                  }
+                ></input>
+                <button className="btn-edit bg-blue">METTRE A JOUR</button>
+              </form>
+              <button onClick={() => setOpenModal(!openModal)} className="btn-edit btn-large">ANNULER</button>
+            </div>
           </div>
         )}
 
@@ -227,40 +261,48 @@ function ListAgent(props) {
           <div className="table-header">
             <div className="row">
               <div className="col-2">Nom</div>
-              <div className="col-1">Secteur</div>
+              <div className="col-2">Secteur</div>
               <div className="col-4">Adresse</div>
               <div className="col-2">Ville</div>
-              <div className="col-2">Actions</div>
+              <div className="col-2"></div>
             </div>
           </div>
           <ul className="table-container">
             {list.map((item, index) => (
               <li className="row" key={item.id}>
                 <p className="col-2">{item.nom}</p>
-                <p className="col-1">{item.secteur_id}</p>
+                <p className="col-2">{item.secteur_id}</p>
                 <p className="col-4">{item.adresse}</p>
                 <p className="col-2">{item.ville}</p>
-                <div className="col-2">
-                  {/* <button className="btn-edit" onClick={() => removeList(item.id)}>Supprimer</button> */}
-                  <button
-                    className="btn-edit"
-                    onClick={() => handleEditAgent(item)}
-                  >
-                    Modifier
-                  </button>
-                  <span>{item.pagination}</span>
+                <div className="col-2 justify-center">
+                  <span className="btn icon-edit" onClick={() => handleEditAgent(item)}></span>
+                  <span className="btn icon-delete" onClick={() => handleDeleteAgent(item)}></span>
                 </div>
               </li>
             ))}
+            {/*DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE*/}
+            {agentClicked.modalDelete && (
+              <div className="modal-container">
+                <div className="modal-content modal-delete">
+                  <h1 className="text-center">Etes vous sûre de vouloir supprimer cet agent ?</h1>
+                  <button className="btn-edit btn-large bg-danger" onClick={() => removeList(agentClicked.item.id)}>SUPPRIMER</button>
+                  <button className="btn-edit btn-large" onClick={() => setagentClicked({ modalDelete: false })}>ANNULER</button>
+                </div>
+              </div>
+            )}
           </ul>
         </div>
-        <div className="pagination">
+        <div onClick={handleEventClickCreate} className="btn-add-visit shadow">
+          <span></span>
+          <span></span>
+        </div>
+        {/* <div className="pagination">
           <span>
             Page {} - {}
           </span>
-          <button className="icon-prev btn-prev"></button>
-          <button className="icon-next btn-next"></button>
-        </div>
+          <button className="icon-arrow-left btn-prev"></button>
+          <button className="icon-arrow-right btn-next"></button>
+        </div> */}
       </div>
     </div>
   );

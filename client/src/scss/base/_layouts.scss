@@ -13,6 +13,8 @@ h1 {
   position: relative;
   align-items: center;
   display: flex;
+
+  width: 100%;
 }
 
 .flex-column {
@@ -73,7 +75,7 @@ h1 {
 }
 
 .col-1 {
-  width: 8.3%;
+  width: 8%;
 }
 
 .bg-blue {
@@ -84,6 +86,7 @@ h1 {
 
 .bg-danger {
   background-color: $color-danger !important;
+  color: $color-white !important;
 }
 
 .d-none {
@@ -150,6 +153,32 @@ h1 {
   }
 }
 
+.text-center {
+  text-align: center;
+}
+
 .shadow {
   box-shadow: 0px 4px 10px rgba(100, 100, 100, 0.363);
+}
+
+.icon-arrow-left,
+.icon-arrow-right {
+  color: $color-white;
+}
+
+.icon-delete {
+  color: $color-danger;
+}
+
+.icon-more-horiz {
+  color: $color-dark-grey;
+
+  &:hover {
+    color: $color-black;
+  }
+}
+
+.icon-alert-outline {
+  padding: 3px;
+  font-size: 14px;
 }
