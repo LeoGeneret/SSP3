@@ -1,13 +1,13 @@
 const utils = {
-  fetchReadyData(uri, options = {}) {
+  fetchReadyData (uri, options = {}) {
     return fetch(process.env.REACT_APP_API_ENDPOINT + uri, options)
       .then(res => res.json())
   }
-};
+}
 
 // function handleErrors(res) {
 
-//   if (!res.ok) { 
+//   if (!res.ok) {
 //     throw res.json();
 //   } else {
 //     try {
@@ -29,5 +29,4 @@ const utils = {
 //   }
 // }
 
-
-export default utils;
+export default utils

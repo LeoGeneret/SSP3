@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import "../scss/App.scss";
+import React from 'react'
+import '../scss/App.scss'
 
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom'
 
-function Sidebar() {
+function Sidebar () {
   return (
     <div id="Sidebar">
       <div>
@@ -39,7 +39,7 @@ function Sidebar() {
       <div className="btn-create shadow">Creer un planning</div>
       <div className="btn-create bg-danger shadow">Se deconnecter</div>
     </div>
-  );
+  )
 }
 
-export default Sidebar;
+export default Sidebar

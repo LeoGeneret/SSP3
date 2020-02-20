@@ -1,40 +1,39 @@
-import React, { useState, useEffect } from "react";
-import utils from "../utils";
-import "../scss/App.scss";
-import { Switch, NavLink, Route, Router } from "react-router-dom";
+import React, { useState, useEffect } from 'react'
+import utils from '../utils'
+import '../scss/App.scss'
 import moment from 'moment'
 
-function ListHotels(props) {
-  const [list, setList] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
-  const [openModalCreate, setOpenModalCreate] = useState(false);
-  const [openModalDelete, setOpenModalDelete] = useState(false);
-  const [enableEdit, setEnableEdit] = useState(false);
-  const [secteurs, setSecteurs] = useState([]);
-  const [hotelClicked, sethotelClicked] = useState({});
+function ListHotels (props) {
+  const [list, setList] = useState([])
+  const [openModal, setOpenModal] = useState(false)
+  const [openModalCreate, setOpenModalCreate] = useState(false)
+  const [openModalDelete, setOpenModalDelete] = useState(false)
+  const [enableEdit, setEnableEdit] = useState(false)
+  const [secteurs, setSecteurs] = useState([])
+  const [hotelClicked, sethotelClicked] = useState({})
 
   const [value, setValue] = useState({
-    nom: "",
-    adresse: "",
-    ville: "",
-    code_postal: "",
-    nombre_chambre: "",
-    secteur_id: ""
-  });
+    nom: '',
+    adresse: '',
+    ville: '',
+    code_postal: '',
+    nombre_chambre: '',
+    secteur_id: ''
+  })
 
-  const [pagination, setPagination] = useState({
-    item_count: "",
-    page_current: "",
-    page_count: ""
-  });
+  const [pagination, setPagination] = useState({/* eslint-disable-line*/
+    item_count: '',
+    page_current: '',
+    page_count: ''
+  })
 
   const handleSubmit = e => {
-    e.preventDefault();
-    setOpenModalCreate(!openModalCreate);
+    e.preventDefault()
+    setOpenModalCreate(!openModalCreate)
 
     utils
-      .fetchReadyData("/hotel/create", {
-        method: "PUT",
+      .fetchReadyData('/hotel/create', {
+        method: 'PUT',
         body: JSON.stringify({
           nom: value.nom,
           adresse: value.adresse,
@@ -43,58 +42,55 @@ function ListHotels(props) {
           nombre_chambre: value.nombre_chambre,
           secteur_id: value.secteur_id
         }),
-        headers: { "Content-Type": "application/json" }
+        headers: { 'Content-Type': 'application/json' }
       })
       .then(res => {
         if (res.error) {
         } else {
-          addTodo(res.data);
+          addTodo(res.data)
           setValue({
             ...value,
-            nom: "",
-            adresse: "",
-            ville: "",
-            code_postal: "",
-            nombre_chambre: "",
-            secteur_id: ""
-          });
+            nom: '',
+            adresse: '',
+            ville: '',
+            code_postal: '',
+            nombre_chambre: '',
+            secteur_id: ''
+          })
         }
-      });
-  };
+      })
+  }
 
   const togglePriority = (item) => () => {
     utils
       .fetchReadyData(`/hotel/${item.id}/update`, {
-        method: "PATCH",
+        method: 'PATCH',
         body: JSON.stringify({
           priority: !item.priority
         }),
-        headers: { "Content-Type": "application/json" }
+        headers: { 'Content-Type': 'application/json' }
       })
       .then(res => {
-        console.log(res);
+        console.log(res)
         if (res.error) {
         } else {
           setList(list.map(itemEdited => {
-            if (itemEdited.id === res.data.id)
-              return res.data
-            else
-              return itemEdited
+            if (itemEdited.id === res.data.id) { return res.data } else { return itemEdited }
           }))
         }
-      });
+      })
   }
 
   const handleEventClickCreate = () => {
-    setOpenModalCreate(!openModalCreate);
+    setOpenModalCreate(!openModalCreate)
   }
 
   const handleSubmitEdit = (e) => {
-    setOpenModal(!openModal);
-    e.preventDefault();
+    setOpenModal(!openModal)
+    e.preventDefault()
     utils
       .fetchReadyData(`/hotel/${hotelClicked.item.id}/update`, {
-        method: "PATCH",
+        method: 'PATCH',
         body: JSON.stringify({
           nom: hotelClicked.item.nom,
           adresse: hotelClicked.item.adresse,
@@ -104,56 +100,53 @@ function ListHotels(props) {
           priority: hotelClicked.item.priority,
           secteur_id: Number.parseInt(hotelClicked.item.secteur_id)
         }),
-        headers: { "Content-Type": "application/json" }
+        headers: { 'Content-Type': 'application/json' }
       })
       .then(res => {
-        console.log(res);
+        console.log(res)
         if (res.error) {
         } else {
           setList(list.map(itemEdited => {
-            if (itemEdited.id === res.data.id)
-              return res.data
-            else
-              return itemEdited
+            if (itemEdited.id === res.data.id) { return res.data } else { return itemEdited }
           }))
         }
-      });
-  };
+      })
+  }
 
   useEffect(() => {
-    utils.fetchReadyData("/hotel").then(requester => {
+    utils.fetchReadyData('/hotel').then(requester => {
       if (requester.error) {
-        console.log(requester.error);
+        console.log(requester.error)
       } else {
-        setList(requester.data.list);
-        setPagination(requester.data.pagination);
-        console.log(requester);
+        setList(requester.data.list)
+        setPagination(requester.data.pagination)
+        console.log(requester)
       }
-    });
+    })
 
-    //secteurs
-    utils.fetchReadyData("/secteur").then(requester => {
+    // secteurs
+    utils.fetchReadyData('/secteur').then(requester => {
       if (requester.error) {
-        console.log(requester.error);
+        console.log(requester.error)
       } else {
-        setSecteurs(requester.data);
-        console.log(requester);
+        setSecteurs(requester.data)
+        console.log(requester)
       }
-    });
-  }, []);
+    })
+  }, [])
 
   const addTodo = name => {
-    const newValue = [...list, name];
-    setList(newValue);
-  };
+    const newValue = [...list, name]
+    setList(newValue)
+  }
 
   const handleEditHotel = (item) => {
-    setOpenModal(!openModal);
+    setOpenModal(!openModal)
     sethotelClicked({
       ...hotelClicked,
       item: item
     })
-  };
+  }
 
   const handleDeleteHotel = (item) => {
     sethotelClicked({
@@ -165,25 +158,24 @@ function ListHotels(props) {
   }
 
   const removeList = (e) => {
-    setOpenModalDelete(!openModalDelete);
+    setOpenModalDelete(!openModalDelete)
     utils
       .fetchReadyData(`/hotel/${hotelClicked.item.id}/delete`, {
-        method: "DELETE"
+        method: 'DELETE'
       })
       .then(res => {
         if (res.data) {
-          const newValue = [...list];
-          const removedItemIndex = newValue.findIndex(item => hotelClicked.item.id === item.id);
-          newValue.splice(removedItemIndex, 1);
-          setList(newValue);
-
+          const newValue = [...list]
+          const removedItemIndex = newValue.findIndex(item => hotelClicked.item.id === item.id)
+          newValue.splice(removedItemIndex, 1)
+          setList(newValue)
         }
         sethotelClicked({
           ...hotelClicked,
           modalDelete: false
         })
-      });
-  };
+      })
+  }
   return (
     <div>
       <h1>Liste des hôtels</h1>
@@ -191,7 +183,7 @@ function ListHotels(props) {
         <div className="nav-hotels row">
         </div>
 
-        {/*CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE*/}
+        {/* CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE */}
         {openModalCreate && (
           <div className="modal-container">
             <div className="pop-in_edit modal-content shadow">
@@ -261,7 +253,7 @@ function ListHotels(props) {
           </div>
         )}
 
-        {/*EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT*/}
+        {/* EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT */}
         {openModal && (
           <div className="modal-container">
             <div className="pop-in_edit modal-content shadow">
@@ -271,7 +263,7 @@ function ListHotels(props) {
               </span>
               <form className="flex-column" onSubmit={handleSubmitEdit}>
                 <input
-                  disabled={enableEdit ? false : "disabled"}
+                  disabled={enableEdit ? false : 'disabled'}
                   className="col-12"
                   type="text"
                   placeholder="Nom"
@@ -279,7 +271,7 @@ function ListHotels(props) {
                   onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nom: e.target.value } })}
                 ></input>
                 <input
-                  disabled={enableEdit ? false : "disabled"}
+                  disabled={enableEdit ? false : 'disabled'}
                   className="col-12"
                   type="number"
                   placeholder="Nombres de chambres"
@@ -287,7 +279,7 @@ function ListHotels(props) {
                   onChange={e => sethotelClicked({ ...hotelClicked, item: { ...hotelClicked.item, nombre_chambre: e.target.value } })}
                 ></input>
                 <input
-                  disabled={enableEdit ? false : "disabled"}
+                  disabled={enableEdit ? false : 'disabled'}
                   className="col-12"
                   type="text"
                   placeholder="Adresse"
@@ -297,7 +289,7 @@ function ListHotels(props) {
                   }
                 ></input>
                 <input
-                  disabled={enableEdit ? false : "disabled"}
+                  disabled={enableEdit ? false : 'disabled'}
                   className="col-12"
                   type="text"
                   placeholder="Ville"
@@ -307,7 +299,7 @@ function ListHotels(props) {
                   }
                 ></input>
                 <input
-                  disabled={enableEdit ? false : "disabled"}
+                  disabled={enableEdit ? false : 'disabled'}
                   className="col-12"
                   type="text"
                   placeholder="CP"
@@ -317,7 +309,7 @@ function ListHotels(props) {
                   }
                 ></input>
                 <select
-                  disabled={enableEdit ? false : "disabled"}
+                  disabled={enableEdit ? false : 'disabled'}
                   defaultValue={hotelClicked.item.secteur.id}
                   className="col-12"
                   required value={null}
@@ -341,7 +333,7 @@ function ListHotels(props) {
         <div className="card">
           <div className="table-header">
             <div className="row">
-              <div className="col-4">Nom de l'hebergement</div>
+              <div className="col-4">Nom de l'hebergement</div> {/* eslint-disable-line*/}
               <div className="col-2">Code postal</div>
               <div className="col-2">Dernière note</div>
               <div className="col-2">Dernière visite</div>
@@ -364,7 +356,7 @@ function ListHotels(props) {
                     <button onClick={togglePriority(item)} className={'btn-priority ' + (item.priority ? 'priority-active' : '')}>
                       <span className="icon-alert-outline"></span>
                       Urgent
-                  </button>
+                    </button>
                   </div>
                   <div className="col-1 justify-center">
                     <span className="btn icon-more-horiz" onClick={() => handleEditHotel(item)}></span>
@@ -373,23 +365,23 @@ function ListHotels(props) {
                 </li>
               )
             })}
-            {/*DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE*/}
+            {/* DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE */}
             {hotelClicked.modalDelete && (
               <div className="modal-container">
                 <div className="modal-content modal-delete">
                   <h1>Etes vous sûre de vouloir supprimer cet hôtels ? </h1>
                   <button className="btn-edit btn-large bg-danger" onClick={() => removeList(hotelClicked.item.id)}>SUPPRIMER</button>
-                  <button className="btn-edit btn-large" onClick={() => sethotelClicked({modalDelete : false})}>ANNULER</button>
+                  <button className="btn-edit btn-large" onClick={() => sethotelClicked({ modalDelete: false })}>ANNULER</button>
+                </div>
               </div>
-              </div>
-          )}
+            )}
           </ul>
-      </div>
-      <div onClick={handleEventClickCreate} className="btn-add-visit shadow">
-        <span></span>
-        <span></span>
-      </div>
-      {/* <div className="pagination">
+        </div>
+        <div onClick={handleEventClickCreate} className="btn-add-visit shadow">
+          <span></span>
+          <span></span>
+        </div>
+        {/* <div className="pagination">
             <span>
               Page {} - {}
             </span>
@@ -397,9 +389,9 @@ function ListHotels(props) {
             <button className="icon-next btn-next"></button>
           </div> */}
 
-    </div>
+      </div>
     </div >
-  );
+  )
 }
 
-export default ListHotels;
+export default ListHotels
