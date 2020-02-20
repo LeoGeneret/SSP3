@@ -179,10 +179,10 @@ const generate = async () => {
 
     let visits = binomes.map(binomesItem => {
             
-        return Visite.bulkCreate(Helpers.loop(4, () => {
+        return Visite.bulkCreate(Helpers.loop(10, () => {
     
             let visited_at = moment()
-                .add(faker.random.number(120) * (Math.random() > .5 ? -1 : 1), "day")
+                .add(faker.random.number(30) * (Math.random() > .5 ? -1 : 1), "day")
                 .add(faker.random.number(4), "day")
     
             let time_start = visited_at.clone().hour(9).add(faker.random.number(9), "hour")

@@ -3,9 +3,10 @@ import ReactDOM from "react-dom";
 import utils from "../utils";
 import "../scss/App.scss";
 import FullCalendar from "@fullcalendar/react";
-import frLocale from '@fullcalendar/core/locales/fr';
+import frLocale from "@fullcalendar/core/locales/fr";
 import resourceTimeline from "@fullcalendar/resource-timeline";
 import interactionPlugin from "@fullcalendar/interaction";
+import moment from "moment";
 
 function Planning() {
   //REFS
@@ -29,27 +30,55 @@ function Planning() {
     dateEnd: ""
   });
   const [ressources, setRessources] = useState([]);
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
     // get FullCalendar API
     let calendarApi = teamPlanning.current.getApi();
     setTeamPlanningRef(calendarApi);
 
-    //Acces Visiteur
-    utils.fetchReadyData("/visiteur").then(requester => {
-      if (requester.error) {
-        console.log(requester.error);
-      } else {
-        setRessources(requester.data.visiteurs);
-        console.log(ressources);
-      }
-    });
+    // GET Visiteur
+    utils
+      .fetchReadyData("/visiteur?no_limit=1&attributes=id,nom")
+      .then(requester => {
+        if (requester.error) {
+          console.log(requester.error);
+        } else {
+          setRessources(
+            requester.data.visiteurs.map(visiteur => {
+              return {
+                id: visiteur.id,
+                title: visiteur.nom
+              };
+            })
+          );
+          console.log(ressources);
+        }
+      });
 
-
+    // GET Events
+    utils
+      .fetchReadyData("/planning?date=" + moment().format("YYYY-MM-DD"))
+      .then(requester => {
+        if (requester.error) {
+          console.log(requester.error);
+        } else {
+          setEvents(
+            requester.data.events.map(event => {
+              return {
+                ...event,
+                start: moment(event.start).format("YYYY-MM-DDTHH:mm:ssZ"),
+                end: moment(event.end).format("YYYY-MM-DDTHH:mm:ssZ"),
+                resourceIds: event.resourcesIds
+              };
+            })
+          );
+        }
+      });
   }, []);
 
   const handleEventClickCreate = () => {
-    setopenPopInCreate(!openPopInCreate)
+    setopenPopInCreate(!openPopInCreate);
   };
 
   const handleEventClick = info => {
@@ -65,6 +94,21 @@ function Planning() {
     setOpenPopIn(!openPopIn);
   };
 
+  const handleDropEvent = (eventDropInfo) => {
+
+    var eventId = eventDropInfo.event.id
+    console.log(eventId)
+
+    // utils.fetchReadyData("/visite/");
+
+    // const eventUpdate = {
+    //   time_start: moment(eventDropInfo.event.start),
+    //   time_end: moment(eventDropInfo.event.end),
+    //   visited_at: eventDropInfo.event.start,
+    //   binome_id: eventDropInfo.event._def.resourceIds
+    // };
+  };
+
   const handleRemove = () => {
     console.log(eventClicked);
     eventClicked.remove();
@@ -73,7 +117,7 @@ function Planning() {
 
   const handleSubmit = e => {
     e.preventDefault();
-    setopenPopInCreate(!openPopInCreate)
+    setopenPopInCreate(!openPopInCreate);
 
     let newBinome = [agent1, agent2];
     let newDateStart = dateStart;
@@ -112,8 +156,8 @@ function Planning() {
     eventClicked.setResources(editedBinome);
     eventClicked.setDates(editedDateStart, editedDateEnd);
     setOpenPopIn(!openPopIn);
-
   };
+  console.log(events);
 
   return (
     <div className="test">
@@ -156,25 +200,33 @@ function Planning() {
               <input
                 type="datetime-local"
                 placeholder="Date de début"
-                onChange={e => setEditedEvent({
-                  ...editedEvent,
-                  dateStart: e.target.value
-                })}
+                onChange={e =>
+                  setEditedEvent({
+                    ...editedEvent,
+                    dateStart: e.target.value
+                  })
+                }
                 value={editedEvent.dateStart}
               />
               <input
                 type="datetime-local"
                 placeholder="Date de fin"
-                onChange={e => setEditedEvent({
-                  ...editedEvent,
-                  dateEnd: e.target.value
-                })}
+                onChange={e =>
+                  setEditedEvent({
+                    ...editedEvent,
+                    dateEnd: e.target.value
+                  })
+                }
                 value={editedEvent.dateEnd}
               />
-              <button className="btn-create" type="submit">Modifier</button>
+              <button className="btn-create" type="submit">
+                Modifier
+              </button>
             </form>
 
-            <button className="btn-create bg-danger" onClick={handleRemove}>Supprimer</button>
+            <button className="btn-create bg-danger" onClick={handleRemove}>
+              Supprimer
+            </button>
           </div>
         </div>
       )}
@@ -185,43 +237,119 @@ function Planning() {
           <div className="col-4">
             <span>Catégories :</span>
             <div className="row f-wrap">
-              <input className="input-filter" type="checkbox" id="all" name="all"></input>
-              <label className="btn-filter" for="all">Tous</label>
+              <input
+                className="input-filter"
+                type="checkbox"
+                id="all"
+                name="all"
+              ></input>
+              <label className="btn-filter" for="all">
+                Tous
+              </label>
 
-              <input className="input-filter" type="checkbox" id="urgence" name="urgence"></input>
-              <label className="btn-filter" for="urgence">Urgence</label>
+              <input
+                className="input-filter"
+                type="checkbox"
+                id="urgence"
+                name="urgence"
+              ></input>
+              <label className="btn-filter" for="urgence">
+                Urgence
+              </label>
 
-              <input className="input-filter" type="checkbox" id="duration" name="duration"></input>
-              <label className="btn-filter" for="duration">Longue durée</label>
+              <input
+                className="input-filter"
+                type="checkbox"
+                id="duration"
+                name="duration"
+              ></input>
+              <label className="btn-filter" for="duration">
+                Longue durée
+              </label>
 
-              <input className="input-filter" type="checkbox" id="relance" name="relance"></input>
-              <label className="btn-filter" for="relance">relance</label>
+              <input
+                className="input-filter"
+                type="checkbox"
+                id="relance"
+                name="relance"
+              ></input>
+              <label className="btn-filter" for="relance">
+                relance
+              </label>
 
-              <input className="input-filter" type="checkbox" id="suspent" name="suspent"></input>
-              <label className="btn-filter" for="suspent">En suspent</label>
+              <input
+                className="input-filter"
+                type="checkbox"
+                id="suspent"
+                name="suspent"
+              ></input>
+              <label className="btn-filter" for="suspent">
+                En suspent
+              </label>
 
-              <input className="input-filter" type="checkbox" id="Anomalies" name="Anomalies"></input>
-              <label className="btn-filter" for="Anomalies">Anomalies</label>
+              <input
+                className="input-filter"
+                type="checkbox"
+                id="Anomalies"
+                name="Anomalies"
+              ></input>
+              <label className="btn-filter" for="Anomalies">
+                Anomalies
+              </label>
             </div>
           </div>
           <div className="col-4">
             <span>Secteur :</span>
             <div className="row f-wrap">
-              <input className="input-filter" type="checkbox" id="secteurs" name="secteurs"></input>
-              <label className="btn-filter" for="secteurs">Tous</label>
+              <input
+                className="input-filter"
+                type="checkbox"
+                id="secteurs"
+                name="secteurs"
+              ></input>
+              <label className="btn-filter" for="secteurs">
+                Tous
+              </label>
 
-              <input className="input-filter" type="checkbox" id="paris" name="paris"></input>
-              <label className="btn-filter" for="paris">paris</label>
+              <input
+                className="input-filter"
+                type="checkbox"
+                id="paris"
+                name="paris"
+              ></input>
+              <label className="btn-filter" for="paris">
+                paris
+              </label>
 
-              <input className="input-filter" type="checkbox" id="92" name="92"></input>
-              <label className="btn-filter" for="92">92</label>
+              <input
+                className="input-filter"
+                type="checkbox"
+                id="92"
+                name="92"
+              ></input>
+              <label className="btn-filter" for="92">
+                92
+              </label>
 
-              <input className="input-filter" type="checkbox" id="77-91" name="77-91"></input>
-              <label className="btn-filter" for="77-91">77-91</label>
+              <input
+                className="input-filter"
+                type="checkbox"
+                id="77-91"
+                name="77-91"
+              ></input>
+              <label className="btn-filter" for="77-91">
+                77-91
+              </label>
 
-              <input className="input-filter" type="checkbox" id="93" name="93"></input>
-              <label className="btn-filter" for="93">93</label>
-
+              <input
+                className="input-filter"
+                type="checkbox"
+                id="93"
+                name="93"
+              ></input>
+              <label className="btn-filter" for="93">
+                93
+              </label>
             </div>
           </div>
           <div className="col-4"></div>
@@ -258,19 +386,22 @@ function Planning() {
               onChange={e => setDateEnd(e.target.value)}
               value={dateEnd}
             />
-            <button className="btn-create" type="submit">Ajouter</button>
+            <button className="btn-create" type="submit">
+              Ajouter
+            </button>
           </form>
         </div>
       )}
       <div className="card calendar-container">
         <FullCalendar
-          locale={'fr'}
+          locale={"fr"}
           ref={teamPlanning}
           defaultView="resourceTimelineWeek"
           resourceAreaWidth="15%"
           minTime="09:00:00"
           maxTime="21:00:00"
-          // slotDuration="24:00:00"
+          schedulerLicenseKey="GPL-My-Project-Is-Open-Source"
+          slotDuration="01:00:00"
           // slotLabelFormat={[{
           //   weekday: 'long',
           //   day: 'numeric',
@@ -289,37 +420,33 @@ function Planning() {
           }}
           views={{
             week: {
-              titleFormat: { day: '2-digit', month: 'long' }
+              titleFormat: { day: "2-digit", month: "long" }
             }
           }}
           resourceColumns={[
             {
-              labelText: 'Visiteurs'
+              labelText: "Visiteurs"
             }
           ]}
-          resources={ressources.map(resource => ({
-            id: resource.id,
-            title: resource.nom
-          }))}
+          resources={ressources}
           plugins={[resourceTimeline, interactionPlugin]}
           schedulerLicenseKey="GPL-My-Project-Is-O  pen-Source"
           weekends={false}
-          events={[
-            {
-              id: 1,
-              title: "Hôtel de la cloche",
-              resourceIds: ["a", "d"],
-              start: "2020-01-28",
-              end: "2020-01-30"
-            },
-            {
-              id: 2,
-              title: "Hôtel luxe ***",
-              resourceIds: ["a", "b"],
-              start: "2020-01-27",
-              end: "2020-01-28"
-            }
-          ]}
+          // events={[
+          //   {
+          //     id: 1,
+          //     title: "Hôtel luxe ***",
+          //     resourceIds: ["1", "2"],
+          //     start: "2020-02-17T10:30:00",
+          //     end: "2020-02-17T11:30:00"
+          //   }
+          // ]}
+          events={events}
+          eventDrop={handleDropEvent}
+          eventResize={function(eventResizeInfo) {
+            console.log("resized");
+            console.log(eventResizeInfo);
+          }}
         />
         <div onClick={handleEventClickCreate} className="btn-add-visit shadow">
           <span></span>
