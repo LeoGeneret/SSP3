@@ -240,7 +240,7 @@ module.exports = (app, sequelize, express) => {
     // })
 
     app.get("/hotel", async (req, res) => {
-        const results = await apiAlgo.prioriteSelonNote()
+        const results = await apiAlgo.getHotelFormated()
         return res.status(results.status).json(results)
     })   
 
@@ -390,13 +390,19 @@ module.exports = (app, sequelize, express) => {
      * ####################################
      */
     app.get("/planning", async (req, res) => {
-
         // query
         const date = req.query.date || null
-
         const results = await sequelize.models.Visite.getPlanning(date)
         return res.status(results.status).json(results)
     })
+
+    app.get("/planning/create", async (req, res) => {
+        const results = await apiAlgo.creerPlanning()
+        return res.status(results.status).json(results)
+    })  
+
+    
+
 
     /**
      * ####################################
