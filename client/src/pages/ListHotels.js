@@ -356,7 +356,7 @@ function ListHotels(props) {
                   <p className="col-4">{item.nom}</p>
                   <p className="col-2">{item.code_postal}</p>
                   <div className="col-2">
-                    <p className={`${item.last_note <= 30 ? 'badnote' : item.last_note <= 40 ? 'moyennote' : item.last_note == null ? 'item.last_visited_at' : 'goodnote'}`}>
+                    <p className={`${item.last_note <= 30 ? 'badnote' : item.last_note <= 40 ? 'moyennote' : item.last_note == null ? 'item.notnote' : 'goodnote'}`}>
                       {item.last_note == null ? 'Aucune note' : item.last_note}</p>
                   </div>
                   <p className="col-2">{item.last_visited_at == null ? 'Aucune date' : moment(item.last_visited_at).format('DD/MM/YYYY')}</p>

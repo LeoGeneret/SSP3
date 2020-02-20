@@ -264,7 +264,8 @@ module.exports = (sequelize, DataTypes) => {
                 })
 
                 // OPTI - may crash if null
-                results.data = Format.regularHotel(await Hotel.findByPk(hotelId, Format.regularHotelAttributes))
+                const createdHotel = await Hotel.findByPk(hotelId, Format.regularHotelAttributes)
+                results.data = Format.regularHotel(createdHotel)
             } else {
                 results.error = {
                     message: "NOT FOUND - no hotel found"

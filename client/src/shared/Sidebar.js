@@ -1,9 +1,19 @@
 import React, { useState } from "react";
 import "../scss/App.scss";
-
+import utils from '../utils'
 import { NavLink } from "react-router-dom";
+import moment from 'moment'
 
 function Sidebar() {
+
+  const createPlanningAction = () => {
+    utils.fetchReadyData("/planning/create?date=" + moment().format("YYYY-MM-DD"), {
+      method: "PUT"
+    }).then(res => {
+      console.log({res})
+    })
+  }
+
   return (
     <div id="Sidebar">
       <div>
@@ -36,7 +46,7 @@ function Sidebar() {
           </NavLink>
         </nav>
       </div>
-      <div className="btn-create shadow">Creer un planning</div>
+      <div onClick={createPlanningAction} className="btn-create shadow">Creer un planning</div>
       <div className="btn-create bg-danger shadow">Se deconnecter</div>
     </div>
   );
