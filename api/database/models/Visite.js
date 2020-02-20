@@ -53,13 +53,10 @@ module.exports = (sequelize, DataTypes) => {
                 try {
         
                     visites = await Visite.findAll({
-                        attributes: ["id", "hotel_id", "time_start", "time_end"],
+                        attributes: ["id", "hotel_id", "time_start", "time_end", "visiteur_id_1", "visiteur_id_2"],
                         include: [
                             {
                                 association: "hotel",
-                            },
-                            {
-                                association: "binome",
                             }
                         ],
                         where: {
@@ -77,12 +74,12 @@ module.exports = (sequelize, DataTypes) => {
                         reference: momentDate,
                         events: visites.map(visitesItems => ({
                             id: visitesItems.get("id").toString(),
-                            start: moment(visitesItems.get("time_start")),
-                            end: moment(visitesItems.get("time_end")),
+                            start: moment(visitesItems.get("time_start")).format("YYYY-MM-DDTHH:mm:ssZ"),
+                            end: moment(visitesItems.get("time_end")).format("YYYY-MM-DDTHH:mm:ssZ"),
                             title: visitesItems.get("hotel").get("nom"),
-                            resourcesIds: [
-                                visitesItems.get("binome").get("visiteur_id_1").toString(),
-                                visitesItems.get("binome").get("visiteur_id_2").toString(),
+                            resourceIds: [
+                                visitesItems.get("visiteur_id_1").toString(),
+                                visitesItems.get("visiteur_id_2").toString(),
                             ],
                         }))
                     }
@@ -127,22 +124,8 @@ module.exports = (sequelize, DataTypes) => {
             visites = await Visite.findAll({
                 offset: offset * limit,
                 limit: limit,
-                attributes: ["id", "visited_at", "time_start", "time_end"],
+                attributes: ["id", "visited_at", "time_start", "time_end", "visiteur_id_1", "visiteur_id_2"],
                 include: [
-                    {
-                        association: "binome",
-                        attributes: ["id"],
-                        include: [
-                            {
-                                association: "visiteur_1",
-                                attributes: ["id", "nom"],
-                            },
-                            {
-                                association: "visiteur_2",
-                                attributes: ["id", "nom"],
-                            },
-                        ]
-                    },
                     {
                         association: "hotel",
                         attributes: ["id", "ville"]

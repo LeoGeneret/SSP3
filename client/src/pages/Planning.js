@@ -99,14 +99,17 @@ function Planning() {
     var eventId = eventDropInfo.event.id
     console.log(eventId)
 
-    // utils.fetchReadyData("/visite/");
+    utils.fetchReadyData(`/visite/${eventId}/update`, {
+      method: "PATCH"
 
-    // const eventUpdate = {
-    //   time_start: moment(eventDropInfo.event.start),
-    //   time_end: moment(eventDropInfo.event.end),
-    //   visited_at: eventDropInfo.event.start,
-    //   binome_id: eventDropInfo.event._def.resourceIds
-    // };
+    });
+
+    const eventUpdate = {
+      time_start: moment(eventDropInfo.event.start),
+      time_end: moment(eventDropInfo.event.end),
+      visited_at: eventDropInfo.event.start,
+      binome_id: eventDropInfo.event._def.resourceIds
+    };
   };
 
   const handleRemove = () => {

@@ -228,28 +228,8 @@ module.exports = (app, sequelize, express) => {
      * ####################################
      */
 
-    // app.get("/hotel", async (req, res) => {
-        
-    //     // query
-    //     const offset = (req.query.offset && Number(req.query.offset)) || undefined
-    //     const limit = (req.query.limit && Number(req.query.limit)) || undefined
-    //     const search = req.query.search || undefined
-        
-    //     const results = await sequelize.models.Hotel.getAll(offset, limit, search)
-    //     return res.status(results.status).json(results)
-    // })
-
     app.get("/hotel", async (req, res) => {
         const results = await apiAlgo.prioriteSelonNote()
-        return res.status(results.status).json(results)
-    })  
-    
-    app.get("/hotel/:id", async (req, res) => {
-
-        // query
-        const hotelId = (req.params.id && Number(req.params.id)) || undefined
-
-        const results = await sequelize.models.Hotel.getHotel(hotelId)
         return res.status(results.status).json(results)
     })  
 
@@ -442,7 +422,8 @@ module.exports = (app, sequelize, express) => {
             time_end: req.body.time_end,
             hotel_id: req.body.hotel_id,
             voiture_id: req.body.voiture_id,
-            binome_id: req.body.binome_id,
+            visiteur_id_1: req.body.visiteur_id_1,
+            visiteur_id_2: req.body.visiteur_id_2,
             //@WAIT - rajouter rapport_note, rapport_comment
         })
         return res.status(results.status).json(results)
@@ -455,7 +436,8 @@ module.exports = (app, sequelize, express) => {
             time_end: req.body.time_end,
             hotel_id: req.body.hotel_id,
             voiture_id: req.body.voiture_id,
-            binome_id: req.body.binome_id,
+            visiteur_id_1: req.body.visiteur_id_1,
+            visiteur_id_2: req.body.visiteur_id_2,
             //@WAIT - rajouter rapport_note, rapport_comment
         })
         return res.status(results.status).json(results)

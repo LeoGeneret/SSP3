@@ -33,7 +33,6 @@ const Hotel = sequelize.import("./models/Hotel.js")
 const Voiture = sequelize.import("./models/Voiture.js")
 const Rapport = sequelize.import("./models/Rapport.js")
 const VisiteurAbsence = sequelize.import("./models/VisiteurAbsence.js")
-const Binome = sequelize.import("./models/Binome.js")
 const User = sequelize.import("./models/User.js")
 
 /**
@@ -48,9 +47,9 @@ Visite.belongsTo(Hotel, { as: "hotel", foreignKey: "hotel_id" })
 Voiture.hasMany(Visite, { as: "voiture_visites", foreignKey: "voiture_id" }) // @OPTI - useless?
 Visite.belongsTo(Voiture, { as: "voiture", foreignKey: "voiture_id" })
 
-// // Visite <-> Binome
-Binome.hasMany(Visite, { as: "binome_visites", foreignKey: "binome_id" })
-Visite.belongsTo(Binome, { as: "binome", foreignKey: "binome_id" })
+// // Visite <-> Visiteur 1 et 2
+Visiteur.hasMany(Visite, {as: "visiteurs_1", foreignKey: "visiteur_id_1"})
+Visiteur.hasMany(Visite, {as: "visiteurs_2", foreignKey: "visiteur_id_2"})
 
 // // Visite <-> Rapport
 Rapport.hasOne(Visite, { as: "rapport_visites", foreignKey: "rapport_id" })
@@ -64,14 +63,6 @@ Visiteur.belongsTo(Secteur, { as: "visiteurs", foreignKey: "secteur_id" })
 // Secteur <-> Hotel
 Secteur.hasMany(Hotel, { as: "hotels_related", foreignKey: "secteur_id" })
 Hotel.belongsTo(Secteur, { as: "secteur", foreignKey: "secteur_id" })
-
-// Binome <-> Visiteur 1
-Visiteur.hasMany(Binome, { as: "binome_1", foreignKey: "visiteur_id_1" })
-Binome.belongsTo(Visiteur, { as: "visiteur_1", foreignKey: "visiteur_id_1" })
-
-// Binome <-> Visiteur 2
-Visiteur.hasMany(Binome, { as: "binome_2", foreignKey: "visiteur_id_2" })
-Binome.belongsTo(Visiteur, { as: "visiteur_2", foreignKey: "visiteur_id_2" })
 
 // Visiteur <-> VisiteurAbsence
 Visiteur.hasMany(VisiteurAbsence, { as: "absences", foreignKey: "visiteur_id" })
@@ -90,7 +81,6 @@ sequelize.models = {
   Rapport,
   Visite,
   VisiteurAbsence,
-  Binome,
   User,
 }
 
