@@ -42,7 +42,7 @@ const {
 
 
 
-const HOTEL_COUNT = 45
+const HOTEL_COUNT = 200
 const VISITEUR_COUNT = 20
 const VOITURE_COUNT = 10
 const SECTEUR_COUNT = 5
