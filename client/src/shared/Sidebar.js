@@ -49,7 +49,7 @@ function Sidebar() {
       <div onClick={createPlanningAction} className="btn-create shadow">Creer un planning</div>
       <div className="btn-create bg-danger shadow">Se deconnecter</div>
     </div>
-  );
+  )
 }
 
-export default Sidebar;
+export default Sidebar

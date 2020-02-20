@@ -1,9 +1,9 @@
-import React from "react";
-import "../scss/App.scss";
+import React from 'react'
+import '../scss/App.scss'
 
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom'
 
-function Header() {
+function Header () {
   return (
     <div>
       <nav>
@@ -20,7 +20,7 @@ function Header() {
         </ul>
       </nav>
     </div>
-  );
+  )
 }
 
-export default Header;
+export default Header

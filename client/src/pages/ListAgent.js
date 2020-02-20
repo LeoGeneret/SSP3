@@ -1,39 +1,38 @@
-import React, { useEffect, useState } from "react";
-import "../scss/App.scss";
-import utils from "../utils";
-import { insertAfterElement } from "@fullcalendar/core";
+import React, { useEffect, useState } from 'react'
+import '../scss/App.scss'
+import utils from '../utils'
 
-function ListAgent(props) {
-  const [list, setList] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
-  const [openModalCreate, setOpenModalCreate] = useState(false);
-  const [openModalDelete, setOpenModalDelete] = useState(false);
-  const [agentClicked, setagentClicked] = useState({});
+function ListAgent (props) {
+  const [list, setList] = useState([])
+  const [openModal, setOpenModal] = useState(false)
+  const [openModalCreate, setOpenModalCreate] = useState(false)
+  const [openModalDelete, setOpenModalDelete] = useState(false)
+  const [agentClicked, setagentClicked] = useState({})
 
   const [value, setValue] = useState({
-    nom: "",
-    adresse: "1 rue Deguerry",
-    ville: "qdsfq",
-    code_postal: "75664",
+    nom: '',
+    adresse: '1 rue Deguerry',
+    ville: 'qdsfq',
+    code_postal: '75664',
     secteur_id: undefined
-  });
+  })
 
-  const [pagination, setPagination] = useState({
-    item_count: "",
-    page_current: "",
-    page_count: ""
-  });
+  const [pagination, setPagination] = useState({ /* eslint-disable-line*/
+    item_count: '',
+    page_current: '',
+    page_count: ''
+  })
 
   const handleEventClickCreate = () => {
-    setOpenModalCreate(!openModalCreate);
+    setOpenModalCreate(!openModalCreate)
   }
 
   const handleSubmit = e => {
-    e.preventDefault();
-    setOpenModalCreate(!openModalCreate);
+    e.preventDefault()
+    setOpenModalCreate(!openModalCreate)
     utils
-      .fetchReadyData("/visiteur/create", {
-        method: "PUT",
+      .fetchReadyData('/visiteur/create', {
+        method: 'PUT',
         body: JSON.stringify({
           nom: value.nom,
           adresse: value.adresse,
@@ -41,69 +40,66 @@ function ListAgent(props) {
           code_postal: value.code_postal,
           secteur_id: value.secteur_id
         }),
-        headers: { "Content-Type": "application/json" }
+        headers: { 'Content-Type': 'application/json' }
       })
       .then(res => {
         if (res.error) {
         } else {
-          addTodo(res.data);
-          setValue("");
+          addTodo(res.data)
+          setValue('')
         }
-      });
-  };
+      })
+  }
 
   useEffect(() => {
-    utils.fetchReadyData("/visiteur").then(requester => {
+    utils.fetchReadyData('/visiteur').then(requester => {
       if (requester.error) {
-        console.log(requester.error);
+        console.log(requester.error)
       } else {
-        setList(requester.data.visiteurs);
-        setPagination(requester.data.pagination);
+        setList(requester.data.visiteurs)
+        setPagination(requester.data.pagination)
       }
-    });
-  }, []);
+    })
+  }, [])
 
   const addTodo = name => {
-    const newValue = [...list, name];
-    setList(newValue);
-  };
+    const newValue = [...list, name]
+    setList(newValue)
+  }
 
   const handleSubmitEdit = (e) => {
-    e.preventDefault();
-    setOpenModal(!openModal);
+    e.preventDefault()
+    setOpenModal(!openModal)
     utils
       .fetchReadyData(`/visiteur/${agentClicked.item.id}/update`, {
-        method: "PATCH",
+        method: 'PATCH',
         body: JSON.stringify({
           nom: agentClicked.item.nom,
           secteur_id: Number.parseInt(agentClicked.item.secteur_id),
           adresse: agentClicked.item.adresse,
-          ville: agentClicked.item.ville,
+          ville: agentClicked.item.ville
         }),
-        headers: { "Content-Type": "application/json" }
+        headers: { 'Content-Type': 'application/json' }
       })
       .then(res => {
-        console.log(res);
+        console.log(res)
         if (res.error) {
         } else {
           setList(list.map(itemEdited => {
-            if (itemEdited.id === res.data.id)
-              return res.data
-            else
-              return itemEdited
+            if (itemEdited.id === res.data.id) { return res.data } else { return itemEdited }
           }))
         }
-      });
-  };
+      })
+  }
 
   const handleEditAgent = (item) => {
-    setOpenModal(!openModal);
+    setOpenModal(!openModal)
     console.log(item.id)
     setagentClicked({
       ...agentClicked,
       item: item
-    });
-  };
+    })
+  }
 
   const handleDeleteAgent = (item) => {
     setagentClicked({
@@ -111,29 +107,28 @@ function ListAgent(props) {
       item: item,
       modalDelete: true
     })
-
   }
 
   const removeList = (e) => {
-    setOpenModalDelete(!openModalDelete);
+    setOpenModalDelete(!openModalDelete)
 
     utils
       .fetchReadyData(`/visiteur/${agentClicked.item.id}/delete`, {
-        method: "DELETE"
+        method: 'DELETE'
       })
       .then(res => {
         if (res.data) {
-          const newValue = [...list];
-          const removedItemIndex = newValue.findIndex(item => agentClicked.item.id === item.id);
-          newValue.splice(removedItemIndex, 1);
-          setList(newValue);
+          const newValue = [...list]
+          const removedItemIndex = newValue.findIndex(item => agentClicked.item.id === item.id)
+          newValue.splice(removedItemIndex, 1)
+          setList(newValue)
         }
         setagentClicked({
           ...agentClicked,
           modalDelete: false
         })
-      });
-  };
+      })
+  }
 
   return (
     <div>
@@ -142,7 +137,7 @@ function ListAgent(props) {
         <div className="nav-hotels row">
         </div>
 
-        {/*CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE*/}
+        {/* CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE */}
         {openModalCreate && (
           <div className="modal-container">
             <div className="modal-content pop-in_edit shadow">
@@ -189,7 +184,7 @@ function ListAgent(props) {
           </div>
         )}
 
-        {/*EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT*/}
+        {/* EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT */}
         {openModal && (
           <div className="modal-container">
             <div className="modal-content pop-in_edit shadow">
@@ -280,7 +275,7 @@ function ListAgent(props) {
                 </div>
               </li>
             ))}
-            {/*DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE*/}
+            {/* DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE */}
             {agentClicked.modalDelete && (
               <div className="modal-container">
                 <div className="modal-content modal-delete">
@@ -305,7 +300,7 @@ function ListAgent(props) {
         </div> */}
       </div>
     </div>
-  );
+  )
 }
 
-export default ListAgent;
+export default ListAgent

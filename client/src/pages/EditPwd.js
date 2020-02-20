@@ -1,7 +1,7 @@
-import React from "react";
-import "../scss/App.scss";
+import React from 'react'
+import '../scss/App.scss'
 
-function EditPwd() {
+function EditPwd () {
   return (
     <div className="row">
       <div className="d-flex col-4">
@@ -18,7 +18,7 @@ function EditPwd() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default EditPwd;
+export default EditPwd

@@ -1,8 +1,8 @@
-import React from "react";
-import "../scss/App.scss";
-import { Link } from "react-router-dom";
+import React from 'react'
+import '../scss/App.scss'
+import { Link } from 'react-router-dom'
 
-function Login() {
+function Login () {
   return (
     <div className="row">
       <div className="d-flex col-4">
@@ -20,7 +20,7 @@ function Login() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Login;
+export default Login
