@@ -7,6 +7,7 @@ import frLocale from "@fullcalendar/core/locales/fr";
 import resourceTimeline from "@fullcalendar/resource-timeline";
 import interactionPlugin from "@fullcalendar/interaction";
 import moment from "moment";
+import ListHotels from "./ListHotels";
 
 function Planning() {
   //REFS
@@ -16,6 +17,7 @@ function Planning() {
   // STATES
   const [agent1, setAgent1] = useState("");
   const [agent2, setAgent2] = useState("");
+  const [hotel, setHotel] = useState("");
   const [dateStart, setDateStart] = useState("");
   const [dateEnd, setDateEnd] = useState("");
   const [openPopIn, setOpenPopIn] = useState(false);
@@ -31,6 +33,7 @@ function Planning() {
   });
   const [ressources, setRessources] = useState([]);
   const [events, setEvents] = useState([]);
+  const [listHotel,  setListHotel] = useState([]);
 
   useEffect(() => {
     // get FullCalendar API
@@ -65,6 +68,16 @@ function Planning() {
           setEvents(requester.data.events);
         }
       });
+
+    // GET HOTELS
+    utils.fetchReadyData("/hotel").then(requester => {
+      if (requester.error) {
+        console.log(requester.error);
+      } else {
+        setListHotel(requester.data.list);
+        console.log(requester);
+      }
+    });
   }, []);
 
   const handleEventClickCreate = () => {
@@ -84,24 +97,46 @@ function Planning() {
     setOpenPopIn(!openPopIn);
   };
 
+
+  // ON DROP EVENT 
   const handleDropEvent = eventDropInfo => {
     var eventId = eventDropInfo.event.id;
+    if (!eventDropInfo.event.end) {
+      eventDropInfo.revert();
+    } else {
+      const eventUpdate = {
+        time_start: moment(eventDropInfo.event.start),
+        time_end: moment(eventDropInfo.event.end),
+        visited_at: moment(eventDropInfo.event.start),
+        visiteur_id_1: eventDropInfo.event._def.resourceIds[0],
+        visiteur_id_2: eventDropInfo.event._def.resourceIds[1]
+      };
+
+      utils
+        .fetchReadyData(`/visite/${eventId}/update`, {
+          method: "PATCH",
+          body: JSON.stringify(eventUpdate),
+          headers: { "Content-Type": "application/json" }
+        })
+        .then(res => console.log(res));
+    }
+  };
+
+  // ON RESIZE EVENT
+  const handleResizeEvent = eventResizeInfo => {
+    var eventId = eventResizeInfo.event.id;
 
     const eventUpdate = {
-      time_start: moment(eventDropInfo.event.start),
-      time_end: moment(eventDropInfo.event.end),
-      visited_at: moment(eventDropInfo.event.start),
-      visiteur_id_1: eventDropInfo.event._def.resourceIds[0],
-      visiteur_id_2: eventDropInfo.event._def.resourceIds[1]
+      time_start: moment(eventResizeInfo.event.start),
+      time_end: moment(eventResizeInfo.event.end)
     };
 
-    utils
-      .fetchReadyData(`/visite/${eventId}/update`, {
-        method: "PATCH",
-        body: JSON.stringify(eventUpdate)
-      })
-      .then(res => console.log(res));
-  };
+    utils.fetchReadyData(`/visite/${eventId}/update`, {
+      method: 'PATCH',
+      body: JSON.stringify(eventUpdate),
+      headers: { "Content-Type": "application/json"}
+    }).then(res => console.log(res));
+  }
 
   const handleRemove = () => {
     eventClicked.remove();
@@ -112,29 +147,51 @@ function Planning() {
     e.preventDefault();
     setopenPopInCreate(!openPopInCreate);
 
-    let newBinome = [agent1, agent2];
-    let newDateStart = dateStart;
-    let newDateEnd = dateEnd;
+    // let newBinome = [agent1, agent2];
+    // let newDateStart = dateStart;
+    // let newDateEnd = dateEnd;
 
-    let newEvent = {
-      title: "Visite",
-      resourceIds: newBinome,
-      start: newDateStart,
-      end: newDateEnd
-    };
+    // let newEvent = {
+    //   title: "Visite",
+    //   resourceIds: newBinome,
+    //   start: newDateStart,
+    //   end: newDateEnd
+    // };
 
-    if (agent1 === "" || agent2 === "")
-      alert("Vous n'avez pas selectionné 2 agents");
-    else if (agent1 === agent2) alert("Vous avez selectionné le même agent");
-    else if (dateStart === "" || dateEnd === "") alert("Il manque une date");
-    else {
-      teamPlanningRef.addEvent(newEvent);
-      // RESET INPUTS
-      setAgent1("");
-      setAgent2("");
-      setDateStart("");
-      setDateEnd("");
+    // if (agent1 === "" || agent2 === "")
+    //   alert("Vous n'avez pas selectionné 2 agents");
+    // else if (agent1 === agent2) alert("Vous avez selectionné le même agent");
+    // else if (dateStart === "" || dateEnd === "") alert("Il manque une date");
+    // else {
+    //   teamPlanningRef.addEvent(newEvent);
+    //   // RESET INPUTS
+    //   setAgent1("");
+    //   setAgent2("");
+    //   setDateStart("");
+    //   setDateEnd("");
+    // }
+
+    var eventCreated = {
+      visiteur_id_1: agent1,
+      visiteur_id_2: agent2,
+      time_start: dateStart,
+      time_end: dateEnd,
+      hotel_id: hotel,
+      visited_at: dateStart
     }
+
+    // var coucou = JSON.stringify(eventCreated)
+    // console.log(coucou);
+
+    utils
+    .fetchReadyData('/visite/create', {
+      method: "PUT",
+      body: JSON.stringify(eventCreated),
+      headers: { "Content-Type": "application/json" }
+    })
+    .then(res => console.log(res));
+
+    
   };
 
   const handleEditEvent = e => {
@@ -348,21 +405,30 @@ function Planning() {
         </div>
       </div>
       {openPopInCreate && (
-        <div className="formContainer">
-          <form onSubmit={handleSubmit}>
-            <select value={agent1} onChange={e => setAgent1(e.target.value)}>
+        <div className="modal-container">
+          <div className="modal-content">
+          <form className='flex-column' onSubmit={handleSubmit}>
+            <select className='col-12' value={agent1} onChange={e => setAgent1(e.target.value)}>
               <option>Selectionnez agent 1</option>
               {ressources.map((item, index) => (
                 <option key={index} value={item.id}>
-                  {item.nom}
+                  {item.title}
                 </option>
               ))}
             </select>
-            <select value={agent2} onChange={e => setAgent2(e.target.value)}>
+            <select className='col-12' value={agent2} onChange={e => setAgent2(e.target.value)}>
               <option>Selectionnez agent 2</option>
               {ressources.map((item, index) => (
                 <option key={index} value={item.id}>
-                  {item.nom}
+                  {item.title}
+                </option>
+              ))}
+            </select>
+            <select className='col-12' value={hotel} onChange={e => setHotel(e.target.value)}>
+              <option>Selectionnez hotel</option>
+              {listHotel.map((item, index) => (
+                <option key={index} value={item.id}>
+                  {item.nom} {item.code_postal}
                 </option>
               ))}
             </select>
@@ -382,6 +448,8 @@ function Planning() {
               Ajouter
             </button>
           </form>
+
+          </div>
         </div>
       )}
       <div className="card calendar-container">
@@ -410,6 +478,7 @@ function Planning() {
             center: "title",
             right: "resourceTimelineDay, resourceTimelineWeek"
           }}
+          disableDragging={true}
           views={{
             week: {
               titleFormat: { day: "2-digit", month: "long" }
@@ -424,21 +493,9 @@ function Planning() {
           plugins={[resourceTimeline, interactionPlugin]}
           schedulerLicenseKey="GPL-My-Project-Is-O  pen-Source"
           weekends={false}
-          // events={[
-          //   {
-          //     id: 1,
-          //     title: "Hôtel luxe ***",
-          //     resourceIds: ["1", "2"],
-          //     start: "2020-02-17T10:30:00",
-          //     end: "2020-02-17T11:30:00"
-          //   }
-          // ]}
           events={events}
           eventDrop={handleDropEvent}
-          eventResize={function(eventResizeInfo) {
-            console.log("resized");
-            console.log(eventResizeInfo);
-          }}
+          eventResize={handleResizeEvent}
         />
         <div onClick={handleEventClickCreate} className="btn-add-visit shadow">
           <span></span>

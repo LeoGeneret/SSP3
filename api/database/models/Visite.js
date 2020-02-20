@@ -250,11 +250,18 @@ module.exports = (sequelize, DataTypes) => {
 
             // if found perform an update
             if (foundVisite) {
-                await Visite.update(nextVisite, {
+                console.log(nextVisite)
+                const aa = await Visite.update(nextVisite, {
                     where: {
                         id: visiteId
                     }
                 })
+
+                console.log("@@@@@")
+                console.log("@@@@@")
+                console.log({aa})
+                console.log("@@@@@")
+                console.log("@@@@@")
 
                 // OPTI - may crash if null
                 results.data = Format.regularVisiteFormat(await Visite.findByPk(visiteId, Format.regularVisiteAttributes))
