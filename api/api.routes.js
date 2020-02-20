@@ -385,8 +385,10 @@ module.exports = (app, sequelize, express) => {
         return res.status(results.status).json(results)
     })
 
-    app.get("/planning/create", async (req, res) => {
-        const results = await apiAlgo.creerPlanning()
+    app.put("/planning/create", async (req, res) => {
+        // query
+        const date = req.query.date || null
+        const results = await apiAlgo.creerPlanning(date)
         return res.status(results.status).json(results)
     })  
 

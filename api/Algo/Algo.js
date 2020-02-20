@@ -73,7 +73,8 @@ class Algo {
         //delai a prendre en compte dans la priorisation
         this.delaiImportant = 12
         this.delaiMoyen = 6
-        this.nombreVistesMaxParJour = 4
+        this.nombreVistesMaxParSemaine = 4
+        this.visitehorraire = [8, 10, 14, 16]
 
     }
 
@@ -199,31 +200,39 @@ class Algo {
         return results
     }
 
-    async creerPlanning(){
+    async creerPlanning(jour){
         let results = {
             error: false,
             status: 200,
             data: null
         }
 
-        //this.prioriteSelonNote()
 
-        var listeDesHotelsAvisiterOrdonnee = await this.prioriteSelonNote()
-        //this.creerVisites(listeDesHotelsAvisiterOrdonnee)
-        var listeTestVisit = await this.creerVisites(listeDesHotelsAvisiterOrdonnee)
-        var listeNewReturn = []
-        listeDesHotelsAvisiterOrdonnee.forEach(function(i){
-            listeNewReturn.push(i.id)
-        })
-        results.data = {
-            list: listeTestVisit//listeNewReturn
+        if(jour){
+
+            var listeDesHotelsAvisiterOrdonnee = await this.prioriteSelonNote()
+            //this.creerVisites(listeDesHotelsAvisiterOrdonnee)
+            var listeTestVisit = await this.creerVisites(listeDesHotelsAvisiterOrdonnee, jour)
+            var listeNewReturn = []
+            listeDesHotelsAvisiterOrdonnee.forEach(function(i){
+                listeNewReturn.push(i.id)
+            })
+            results.data = {
+                list: listeTestVisit//listeNewReturn
+            }
+
+        } else {
+            results.error = {
+                message: "BAD REQUEST - date is not defined"
+            }
+            results.status = 400
         }
 
         return results
     }
 
 
-    async creerVisites(listeDesHotelsAvisiterOrdonnee) {
+    async creerVisites(listeDesHotelsAvisiterOrdonnee, jour) {
         //tant qu'il reste des hotels a visiter et que < a ?
 
         //Visite.cre
@@ -234,7 +243,6 @@ class Algo {
 
         var listeVisiteur = await sequelize.models.Visiteur.getAll(undefined, undefined, undefined, true)
 
-       //console.log(listeVisiteur)
 
        var listeBinomes = []
        var ListeDesVisiteursParSecteur = {}
@@ -244,6 +252,10 @@ class Algo {
        var ListeDesHotelsParSecteur = {}
        var binomesParSecteur = {}
        var binomeSecteur = null
+       var hotelSecteur = null
+       var jourRef = moment(jour)
+       console.log({memfe: jourRef.format("YYYY-MM-DD")})
+       var visites = []
 
 
 
@@ -264,11 +276,11 @@ class Algo {
             })
 
             Object.values(ListeDesVisiteursParSecteur).forEach(function(secteur){
+                if(secteur.length%2 == 1){
+                    secteur.pop()
+                }
                 //console.log(secteur)
                 for(var i = 0; i<secteur.length; i++){
-                    if(secteur.length%2 == 1){
-                        secteur.pop()
-                    }
                     if(i%2 === 0){
                         binomes.push([secteur[i]])
                     }
@@ -294,16 +306,6 @@ class Algo {
         })
 
 
-        var tableauBinomes = await sequelize.models.Binome.bulkCreate(binomes.map(binome => {
-            return {
-                visiteur_id_1: binome[0].get("id"),
-                visiteur_id_2: binome[1].get("id")
-            }
-        }))
-
-
-        //console.log(listeDesHotelsAvisiterOrdonnee.data)
-
         binomes.forEach(function(binomeDansBinomes){
                 
             binomeSecteur = binomeDansBinomes[0].secteur_id
@@ -317,34 +319,60 @@ class Algo {
         })
 
         
-
-        listeDesHotelsAvisiterOrdonnee.forEach(function(hotelToCreate){
-            
-
-
-
-            // if(hotelToCreate.secteur_id){
+        listeDesHotelsAvisiterOrdonnee.forEach(function(hotelAtrier){
                 
-            // }
-            
-            
-            sequelize.models.Visite.create({
-                //num jour, num mois, num annee
-                visited_at: new Date(2020,3,20),
-                //heure debut
-                time_start: moment(),
-                //heure fin
-                time_end: moment(),
-                //idHotel
-                hotel_id: hotelToCreate.id,
-                //idvoiture
-                voiture_id: 2,
-                //idbinome
-                binome_id: 1
-           })
+            hotelSecteur = hotelAtrier.secteur.id
+
+            if(ListeDesHotelsParSecteur[hotelSecteur]){
+                ListeDesHotelsParSecteur[hotelSecteur].push(hotelAtrier)
+            }
+            else{
+                ListeDesHotelsParSecteur[hotelSecteur] = [hotelAtrier]
+            }
         })
 
-        return binomesParSecteur
+
+        Object.keys(binomesParSecteur).forEach((binomesDansSecteur)=>{
+            binomesParSecteur[binomesDansSecteur].forEach((binome)=>{
+
+                var hotelsDansSecteur = ListeDesHotelsParSecteur[binomesDansSecteur]
+                if(hotelsDansSecteur && hotelsDansSecteur.length){
+                    for (var i = 0; i<this.nombreVistesMaxParSemaine; i++){
+                        const jourSemaine = jourRef.clone().weekday(i+1)
+                        for (var j = 0; j<this.visitehorraire.length; j++){
+                            
+                            const hotel = hotelsDansSecteur.shift()
+                            
+                            if(hotel){
+                                const visited_at = jourSemaine.clone().hour(this.visitehorraire[j])
+                                const time_start = visited_at
+                                const time_end = visited_at.clone().add(1, 'hour')
+                                const visiteur_id_1 = binome[0].get("id")
+                                const visiteur_id_2 = binome[1].get("id")
+                                const voiture_id = 1
+                                const hotel_id = hotel.id
+                                visites.push({
+                                    visited_at: visited_at,
+                                    time_start: time_start,
+                                    time_end: time_end,
+                                    hotel_id: hotel_id,
+                                    voiture_id: voiture_id,
+                                    visiteur_id_1: visiteur_id_1,
+                                    visiteur_id_2: visiteur_id_2
+                                })
+                            }
+
+                        }
+                    }
+                }
+                
+            })
+        })
+
+
+        const visitesCreated  = await sequelize.models.Visite.bulkCreate(visites)
+
+        return visitesCreated
 
     }
 }
