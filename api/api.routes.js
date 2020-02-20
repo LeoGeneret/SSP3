@@ -248,8 +248,6 @@ module.exports = (app, sequelize, express) => {
             ville: req.body.ville,
             nombre_chambre: req.body.nombre_chambre,
             secteur_id: req.body.secteur_id,
-            raport: req.body.raport,
-            note: req.body.note,
         })
         return res.status(results.status).json(results)
     })

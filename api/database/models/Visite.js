@@ -1,6 +1,28 @@
 const Op = require("sequelize").Op
 const moment = require("moment")
 
+const Format = {
+
+    regularVisiteAttributes: {
+        attributes: ["id", "hotel_id", "time_start", "time_end", "visiteur_id_1", "visiteur_id_2"],
+        include: [
+            {
+                association: "hotel",
+            }
+        ]
+    },
+    regularVisiteFormat: visiteItem => ({
+        id: visiteItem.get("id").toString(),
+        start: moment(visiteItem.get("time_start")).format("YYYY-MM-DDTHH:mm:ssZ"),
+        end: moment(visiteItem.get("time_end")).format("YYYY-MM-DDTHH:mm:ssZ"),
+        title: visiteItem.get("hotel").get("nom"),
+        resourceIds: [
+            visiteItem.get("visiteur_id_1").toString(),
+            visiteItem.get("visiteur_id_2").toString(),
+        ],
+    })
+}
+
 module.exports = (sequelize, DataTypes) => {
 
     const Visite = sequelize.define('visite', {
@@ -53,12 +75,7 @@ module.exports = (sequelize, DataTypes) => {
                 try {
         
                     visites = await Visite.findAll({
-                        attributes: ["id", "hotel_id", "time_start", "time_end", "visiteur_id_1", "visiteur_id_2"],
-                        include: [
-                            {
-                                association: "hotel",
-                            }
-                        ],
+                        ...Format.regularVisiteAttributes,
                         where: {
                             visited_at: {
                                 [Op.between]: [
@@ -72,16 +89,7 @@ module.exports = (sequelize, DataTypes) => {
         
                     results.data = {
                         reference: momentDate,
-                        events: visites.map(visitesItems => ({
-                            id: visitesItems.get("id").toString(),
-                            start: moment(visitesItems.get("time_start")).format("YYYY-MM-DDTHH:mm:ssZ"),
-                            end: moment(visitesItems.get("time_end")).format("YYYY-MM-DDTHH:mm:ssZ"),
-                            title: visitesItems.get("hotel").get("nom"),
-                            resourceIds: [
-                                visitesItems.get("visiteur_id_1").toString(),
-                                visitesItems.get("visiteur_id_2").toString(),
-                            ],
-                        }))
+                        events: visites.map(Format.regularVisiteFormat)
                     }
         
                 } catch (GetPlanningError) {
@@ -234,21 +242,29 @@ module.exports = (sequelize, DataTypes) => {
         Object.keys(nextVisite).forEach(key => (nextVisite[key] === null || nextVisite[key] === "" || nextVisite[key] === undefined) && delete nextVisite[key])
         
         try {
-            [modifiedVisiteCount,] = await Visite.update(nextVisite, {
-                where: {
-                    id: visiteId
-                }
+
+            // verifiy existence
+            let foundVisite = await Visite.findByPk(visiteId, {
+                attributes: ["id"]
             })
 
-            if(modifiedVisiteCount === 1){
-                results.data = await Visite.findByPk(visiteId)
+            // if found perform an update
+            if (foundVisite) {
+                await Visite.update(nextVisite, {
+                    where: {
+                        id: visiteId
+                    }
+                })
+
+                // OPTI - may crash if null
+                results.data = Format.regularVisiteFormat(await Visite.findByPk(visiteId, Format.regularVisiteAttributes))
             } else {
                 results.error = {
-                    code: 404,
                     message: "NOT FOUND - no visite found"
                 }
                 results.status = 404
             }
+
         } catch (UpdateVisiteError) {
             console.error({UpdateVisiteError})
             results.error = {
