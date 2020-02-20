@@ -77,10 +77,10 @@ module.exports = (sequelize, DataTypes) => {
                         reference: momentDate,
                         events: visites.map(visitesItems => ({
                             id: visitesItems.get("id").toString(),
-                            start: moment(visitesItems.get("time_start")),
-                            end: moment(visitesItems.get("time_end")),
+                            start: moment(visitesItems.get("time_start")).format("YYYY-MM-DDTHH:mm:ssZ"),
+                            end: moment(visitesItems.get("time_end")).format("YYYY-MM-DDTHH:mm:ssZ"),
                             title: visitesItems.get("hotel").get("nom"),
-                            resourcesIds: [
+                            resourceIds: [
                                 visitesItems.get("binome").get("visiteur_id_1").toString(),
                                 visitesItems.get("binome").get("visiteur_id_2").toString(),
                             ],
