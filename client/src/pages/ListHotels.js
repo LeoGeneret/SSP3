@@ -8,16 +8,10 @@ function ListHotels(props) {
   const [list, setList] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [openModalCreate, setOpenModalCreate] = useState(false);
-  const [enableEdit, setEnableEdit] = useState(false)
+  const [openModalDelete, setOpenModalDelete] = useState(false);
+  const [enableEdit, setEnableEdit] = useState(false);
   const [secteurs, setSecteurs] = useState([]);
-  const [hotelClicked, sethotelClicked] = useState({
-    nom: "",
-    adresse: "",
-    ville: "",
-    code_postal: "",
-    nombre_chambre: "",
-    secteur_id: ""
-  });
+  const [hotelClicked, sethotelClicked] = useState({});
 
   const [value, setValue] = useState({
     nom: "",
@@ -36,6 +30,7 @@ function ListHotels(props) {
 
   const handleSubmit = e => {
     e.preventDefault();
+    setOpenModalCreate(!openModalCreate);
 
     utils
       .fetchReadyData("/hotel/create", {
@@ -154,49 +149,45 @@ function ListHotels(props) {
 
   const handleEditHotel = (item) => {
     setOpenModal(!openModal);
-    console.log(item.id)
     sethotelClicked({
       ...hotelClicked,
       item: item
     })
   };
 
-  const removeList = id => {
+  const handleDeleteHotel = (item) => {
+    sethotelClicked({
+      ...hotelClicked,
+      item: item,
+      modalDelete: true
 
+    })
+  }
+
+  const removeList = (e) => {
+    setOpenModalDelete(!openModalDelete);
     utils
-      .fetchReadyData("/hotel/" + id + "/delete", {
+      .fetchReadyData(`/hotel/${hotelClicked.item.id}/delete`, {
         method: "DELETE"
       })
       .then(res => {
         if (res.data) {
           const newValue = [...list];
-          const removedItemIndex = newValue.findIndex(item => item.id === id);
+          const removedItemIndex = newValue.findIndex(item => hotelClicked.item.id === item.id);
           newValue.splice(removedItemIndex, 1);
           setList(newValue);
+
         }
-        console.log(res);
+        sethotelClicked({
+          ...hotelClicked,
+          modalDelete: false
+        })
       });
   };
   return (
     <div>
       <h1>Liste des hôtels</h1>
       <div>
-        {/* <div className="card row header-list">
-          <div className="row justify-center col-4">
-            <div className="icon-agents"></div>
-            <div>40 salariés</div>
-          </div>
-          <div className="row justify-center col-4">
-            <div className="icon-agents"></div>
-            <div>Secteur</div>
-          </div>
-          <div className="row justify-center col-4">
-            <div className="icon-agents"></div>
-            <div>
-              120 chambres utilisés<br></br> depuis janvier
-            </div>
-          </div>
-        </div> */}
         <div className="nav-hotels row">
         </div>
 
@@ -263,15 +254,12 @@ function ListHotels(props) {
                     )
                   })}
                 </select>
-
                 <button className="btn-edit bg-blue">AJOUTER</button>
+                <button onClick={() => setOpenModalCreate(!openModalCreate)} className="btn-edit">ANNULER</button>
               </form>
-              <button onClick={() => setOpenModalCreate(!openModalCreate)} className="btn-edit btn-large">ANNULER</button>
             </div>
           </div>
-
         )}
-
 
         {/*EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT*/}
         {openModal && (
@@ -355,10 +343,10 @@ function ListHotels(props) {
             <div className="row">
               <div className="col-4">Nom de l'hebergement</div>
               <div className="col-2">Code postal</div>
-              <div className="col-1">Dernière note</div>
+              <div className="col-2">Dernière note</div>
               <div className="col-2">Dernière visite</div>
-              <div className="col-1">Actions</div>
-              <div className="col-2"></div>
+              <div className="col-2">Actions</div>
+              <div className="col-1"></div>
             </div>
           </div>
           <ul className="table-container">
@@ -367,24 +355,41 @@ function ListHotels(props) {
                 <li className="row" key={item.id}>
                   <p className="col-4">{item.nom}</p>
                   <p className="col-2">{item.code_postal}</p>
-                  <p className={`col-1 ${item.last_note <= 30 ? 'badnote' : item.last_note <= 40 ? 'moyennote' : 'goodnote'}`}>{item.last_note}</p>
-                  <p className="col-2">{moment(item.last_visited_at).format('DD/MM/YYYY')}</p>
-                  <button onClick={togglePriority(item)} className={'col-1 btn-priority ' + (item.priority ? 'priority-active' : '')}>Urgent</button>
-                  <div className="col-2 justify-center">
-                    <span className="btn icon-edit" onClick={() => handleEditHotel(item)}></span>
-                    <span className="btn icon-supp" onClick={() => removeList(item.id)}></span>
+                  <div className="col-2">
+                    <p className={`${item.last_note <= 30 ? 'badnote' : item.last_note <= 40 ? 'moyennote' : item.last_note == null ? 'item.last_visited_at' : 'goodnote'}`}>
+                      {item.last_note == null ? 'Aucune note' : item.last_note}</p>
                   </div>
-                  <span>{item.pagination}</span>
+                  <p className="col-2">{item.last_visited_at == null ? 'Aucune date' : moment(item.last_visited_at).format('DD/MM/YYYY')}</p>
+                  <div className="col-2">
+                    <button onClick={togglePriority(item)} className={'btn-priority ' + (item.priority ? 'priority-active' : '')}>
+                      <span className="icon-alert-outline"></span>
+                      Urgent
+                  </button>
+                  </div>
+                  <div className="col-1 justify-center">
+                    <span className="btn icon-more-horiz" onClick={() => handleEditHotel(item)}></span>
+                    <span className="btn icon-delete" onClick={() => handleDeleteHotel(item)}></span>
+                  </div>
                 </li>
               )
             })}
+            {/*DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE DELETE*/}
+            {hotelClicked.modalDelete && (
+              <div className="modal-container">
+                <div className="modal-content modal-delete">
+                  <h1>Etes vous sûre de vouloir supprimer cet hôtels ? </h1>
+                  <button className="btn-edit btn-large bg-danger" onClick={() => removeList(hotelClicked.item.id)}>SUPPRIMER</button>
+                  <button className="btn-edit btn-large" onClick={() => sethotelClicked({modalDelete : false})}>ANNULER</button>
+              </div>
+              </div>
+          )}
           </ul>
-        </div>
-        <div onClick={handleEventClickCreate} className="btn-add-visit shadow">
-          <span></span>
-          <span></span>
-        </div>
-        {/* <div className="pagination">
+      </div>
+      <div onClick={handleEventClickCreate} className="btn-add-visit shadow">
+        <span></span>
+        <span></span>
+      </div>
+      {/* <div className="pagination">
             <span>
               Page {} - {}
             </span>
@@ -392,8 +397,8 @@ function ListHotels(props) {
             <button className="icon-next btn-next"></button>
           </div> */}
 
-      </div>
     </div>
+    </div >
   );
 }
 

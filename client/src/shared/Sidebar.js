@@ -19,7 +19,7 @@ function Sidebar() {
         </div>
         <nav>
           <NavLink exact to="/">
-            <div className="icon icon-home"></div>
+            <div className="icon icon-dashboard"></div>
             <p>Accueil</p>
           </NavLink>
           <NavLink to="/agents">

@@ -267,9 +267,7 @@ module.exports = (app, sequelize, express) => {
             code_postal: req.body.code_postal,
             ville: req.body.ville,
             nombre_chambre: req.body.nombre_chambre,
-            secteur_id: req.body.secteur_id,
-            raport: req.body.raport,
-            note: req.body.note,
+            secteur_id: req.body.secteur_id
         })
         return res.status(results.status).json(results)
     })
