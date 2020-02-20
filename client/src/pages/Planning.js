@@ -52,7 +52,6 @@ function Planning() {
               };
             })
           );
-          console.log(ressources);
         }
       });
 
@@ -63,16 +62,7 @@ function Planning() {
         if (requester.error) {
           console.log(requester.error);
         } else {
-          setEvents(
-            requester.data.events.map(event => {
-              return {
-                ...event,
-                start: moment(event.start).format("YYYY-MM-DDTHH:mm:ssZ"),
-                end: moment(event.end).format("YYYY-MM-DDTHH:mm:ssZ"),
-                resourceIds: event.resourcesIds
-              };
-            })
-          );
+          setEvents(requester.data.events);
         }
       });
   }, []);
@@ -94,26 +84,26 @@ function Planning() {
     setOpenPopIn(!openPopIn);
   };
 
-  const handleDropEvent = (eventDropInfo) => {
-
-    var eventId = eventDropInfo.event.id
-    console.log(eventId)
-
-    utils.fetchReadyData(`/visite/${eventId}/update`, {
-      method: "PATCH"
-
-    });
+  const handleDropEvent = eventDropInfo => {
+    var eventId = eventDropInfo.event.id;
 
     const eventUpdate = {
       time_start: moment(eventDropInfo.event.start),
       time_end: moment(eventDropInfo.event.end),
-      visited_at: eventDropInfo.event.start,
-      binome_id: eventDropInfo.event._def.resourceIds
+      visited_at: moment(eventDropInfo.event.start),
+      visiteur_id_1: eventDropInfo.event._def.resourceIds[0],
+      visiteur_id_2: eventDropInfo.event._def.resourceIds[1]
     };
+
+    utils
+      .fetchReadyData(`/visite/${eventId}/update`, {
+        method: "PATCH",
+        body: JSON.stringify(eventUpdate)
+      })
+      .then(res => console.log(res));
   };
 
   const handleRemove = () => {
-    console.log(eventClicked);
     eventClicked.remove();
     setOpenPopIn(!openPopIn);
   };
@@ -160,7 +150,6 @@ function Planning() {
     eventClicked.setDates(editedDateStart, editedDateEnd);
     setOpenPopIn(!openPopIn);
   };
-  console.log(events);
 
   return (
     <div className="test">
