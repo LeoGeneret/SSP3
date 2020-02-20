@@ -422,7 +422,8 @@ module.exports = (app, sequelize, express) => {
             time_end: req.body.time_end,
             hotel_id: req.body.hotel_id,
             voiture_id: req.body.voiture_id,
-            binome_id: req.body.binome_id,
+            visiteur_id_1: req.body.visiteur_id_1,
+            visiteur_id_2: req.body.visiteur_id_2,
             //@WAIT - rajouter rapport_note, rapport_comment
         })
         return res.status(results.status).json(results)
@@ -435,7 +436,8 @@ module.exports = (app, sequelize, express) => {
             time_end: req.body.time_end,
             hotel_id: req.body.hotel_id,
             voiture_id: req.body.voiture_id,
-            binome_id: req.body.binome_id,
+            visiteur_id_1: req.body.visiteur_id_1,
+            visiteur_id_2: req.body.visiteur_id_2,
             //@WAIT - rajouter rapport_note, rapport_comment
         })
         return res.status(results.status).json(results)
