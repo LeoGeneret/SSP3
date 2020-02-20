@@ -228,21 +228,10 @@ module.exports = (app, sequelize, express) => {
      * ####################################
      */
 
-    // app.get("/hotel", async (req, res) => {
-        
-    //     // query
-    //     const offset = (req.query.offset && Number(req.query.offset)) || undefined
-    //     const limit = (req.query.limit && Number(req.query.limit)) || undefined
-    //     const search = req.query.search || undefined
-        
-    //     const results = await sequelize.models.Hotel.getAll(offset, limit, search)
-    //     return res.status(results.status).json(results)
-    // })
-
     app.get("/hotel", async (req, res) => {
         const results = await apiAlgo.getHotelFormated()
         return res.status(results.status).json(results)
-    })   
+    })  
 
     app.delete("/hotel/:id/delete", async (req, res) => {
         
@@ -258,7 +247,7 @@ module.exports = (app, sequelize, express) => {
             code_postal: req.body.code_postal,
             ville: req.body.ville,
             nombre_chambre: req.body.nombre_chambre,
-            secteur_id: req.body.secteur_id
+            secteur_id: req.body.secteur_id,
         })
         return res.status(results.status).json(results)
     })
@@ -437,7 +426,8 @@ module.exports = (app, sequelize, express) => {
             time_end: req.body.time_end,
             hotel_id: req.body.hotel_id,
             voiture_id: req.body.voiture_id,
-            binome_id: req.body.binome_id,
+            visiteur_id_1: req.body.visiteur_id_1,
+            visiteur_id_2: req.body.visiteur_id_2,
             //@WAIT - rajouter rapport_note, rapport_comment
         })
         return res.status(results.status).json(results)
@@ -449,8 +439,8 @@ module.exports = (app, sequelize, express) => {
             time_start: req.body.time_start,
             time_end: req.body.time_end,
             hotel_id: req.body.hotel_id,
-            voiture_id: req.body.voiture_id,
-            binome_id: req.body.binome_id,
+            visiteur_id_1: req.body.visiteur_id_1,
+            visiteur_id_2: req.body.visiteur_id_2,
             //@WAIT - rajouter rapport_note, rapport_comment
         })
         return res.status(results.status).json(results)

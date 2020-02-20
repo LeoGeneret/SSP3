@@ -36,7 +36,6 @@ const {
     Visite,
     Voiture,
     VisiteurAbsence,
-    Binome,
     Secteur,
     User
 } = sequelize.models
@@ -164,14 +163,12 @@ const generate = async () => {
 
 
     const generated_binomes = Helpers.loop(Math.round(VISITEUR_COUNT * 1.5), () => Helpers.randomSubArray(visiteurs, 2))
-
-    const binomes = await Binome.bulkCreate(generated_binomes.map(binomesItem => {
-
+    const binomes = generated_binomes.map(binomesItem => {
         return {
             visiteur_id_1: binomesItem[0].get("id"),
             visiteur_id_2: binomesItem[1].get("id")
         }
-    }))
+    })
 
     console.log("#######")
     console.log("HAS GENERATED " + binomes.length + "binomes")
@@ -179,17 +176,18 @@ const generate = async () => {
 
     let visits = binomes.map(binomesItem => {
             
-        return Visite.bulkCreate(Helpers.loop(4, () => {
+        return Visite.bulkCreate(Helpers.loop(10, () => {
     
             let visited_at = moment()
-                .add(faker.random.number(120) * (Math.random() > .5 ? -1 : 1), "day")
+                .add(-4 + faker.random.number(30 * 24) * -1, "day")
                 .add(faker.random.number(4), "day")
     
             let time_start = visited_at.clone().hour(9).add(faker.random.number(9), "hour")
             let time_end = time_start.clone().add(faker.random.number(3), "hour")
     
             return {
-                binome_id: binomesItem.get("id"),
+                visiteur_id_1: binomesItem.visiteur_id_1,
+                visiteur_id_2: binomesItem.visiteur_id_2,
                 hotel_id: faker.random.arrayElement(hotels).get("id"),
                 voiture_id: faker.random.arrayElement(voitures).get("id"),
                 rapport: {

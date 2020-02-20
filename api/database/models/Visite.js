@@ -1,6 +1,28 @@
 const Op = require("sequelize").Op
 const moment = require("moment")
 
+const Format = {
+
+    regularVisiteAttributes: {
+        attributes: ["id", "hotel_id", "time_start", "time_end", "visiteur_id_1", "visiteur_id_2"],
+        include: [
+            {
+                association: "hotel",
+            }
+        ]
+    },
+    regularVisiteFormat: visiteItem => ({
+        id: visiteItem.get("id").toString(),
+        start: moment(visiteItem.get("time_start")).format("YYYY-MM-DDTHH:mm:ssZ"),
+        end: moment(visiteItem.get("time_end")).format("YYYY-MM-DDTHH:mm:ssZ"),
+        title: visiteItem.get("hotel").get("nom"),
+        resourceIds: [
+            visiteItem.get("visiteur_id_1").toString(),
+            visiteItem.get("visiteur_id_2").toString(),
+        ],
+    })
+}
+
 module.exports = (sequelize, DataTypes) => {
 
     const Visite = sequelize.define('visite', {
@@ -53,15 +75,7 @@ module.exports = (sequelize, DataTypes) => {
                 try {
         
                     visites = await Visite.findAll({
-                        attributes: ["id", "hotel_id", "time_start", "time_end"],
-                        include: [
-                            {
-                                association: "hotel",
-                            },
-                            {
-                                association: "binome",
-                            }
-                        ],
+                        ...Format.regularVisiteAttributes,
                         where: {
                             visited_at: {
                                 [Op.between]: [
@@ -75,16 +89,7 @@ module.exports = (sequelize, DataTypes) => {
         
                     results.data = {
                         reference: momentDate,
-                        events: visites.map(visitesItems => ({
-                            id: visitesItems.get("id").toString(),
-                            start: moment(visitesItems.get("time_start")),
-                            end: moment(visitesItems.get("time_end")),
-                            title: visitesItems.get("hotel").get("nom"),
-                            resourcesIds: [
-                                visitesItems.get("binome").get("visiteur_id_1").toString(),
-                                visitesItems.get("binome").get("visiteur_id_2").toString(),
-                            ],
-                        }))
+                        events: visites.map(Format.regularVisiteFormat)
                     }
         
                 } catch (GetPlanningError) {
@@ -127,22 +132,8 @@ module.exports = (sequelize, DataTypes) => {
             visites = await Visite.findAll({
                 offset: offset * limit,
                 limit: limit,
-                attributes: ["id", "visited_at", "time_start", "time_end"],
+                attributes: ["id", "visited_at", "time_start", "time_end", "visiteur_id_1", "visiteur_id_2"],
                 include: [
-                    {
-                        association: "binome",
-                        attributes: ["id"],
-                        include: [
-                            {
-                                association: "visiteur_1",
-                                attributes: ["id", "nom"],
-                            },
-                            {
-                                association: "visiteur_2",
-                                attributes: ["id", "nom"],
-                            },
-                        ]
-                    },
                     {
                         association: "hotel",
                         attributes: ["id", "ville"]
@@ -251,21 +242,29 @@ module.exports = (sequelize, DataTypes) => {
         Object.keys(nextVisite).forEach(key => (nextVisite[key] === null || nextVisite[key] === "" || nextVisite[key] === undefined) && delete nextVisite[key])
         
         try {
-            [modifiedVisiteCount,] = await Visite.update(nextVisite, {
-                where: {
-                    id: visiteId
-                }
+
+            // verifiy existence
+            let foundVisite = await Visite.findByPk(visiteId, {
+                attributes: ["id"]
             })
 
-            if(modifiedVisiteCount === 1){
-                results.data = await Visite.findByPk(visiteId)
+            // if found perform an update
+            if (foundVisite) {
+                await Visite.update(nextVisite, {
+                    where: {
+                        id: visiteId
+                    }
+                })
+
+                // OPTI - may crash if null
+                results.data = Format.regularVisiteFormat(await Visite.findByPk(visiteId, Format.regularVisiteAttributes))
             } else {
                 results.error = {
-                    code: 404,
                     message: "NOT FOUND - no visite found"
                 }
                 results.status = 404
             }
+
         } catch (UpdateVisiteError) {
             console.error({UpdateVisiteError})
             results.error = {
@@ -299,7 +298,10 @@ module.exports = (sequelize, DataTypes) => {
                 visite = await Visite.create(fields)
     
                 if(visite){
-                    results.data = visite
+
+                    const createdVisite = await Visite.findByPk(visite.get("id"), Format.regularVisiteAttributes)
+
+                    results.data = Format.regularVisiteFormat(createdVisite)
                     results.status = 201
                 }
             } catch (CreateVisiteError) {
