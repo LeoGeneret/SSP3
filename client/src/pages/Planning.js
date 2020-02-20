@@ -7,7 +7,16 @@ import resourceTimeline from '@fullcalendar/resource-timeline'
 import interactionPlugin from '@fullcalendar/interaction'
 import moment from 'moment'
 
-function Planning () {
+function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+function Planning() {
   // REFS
   const teamPlanning = useRef(null)
   const [teamPlanningRef, setTeamPlanningRef] = useState(null)
@@ -63,7 +72,9 @@ function Planning () {
         if (requester.error) {
           console.log(requester.error)
         } else {
-          setEvents(requester.data.events)
+          setEvents(requester.data.events.map(e => {
+            return { ...e, color: getRandomColor()}
+          }))
         }
       })
 
@@ -273,9 +284,9 @@ function Planning () {
         </div>
       )}
       <h1>Les plannings</h1>
-      <div className="container-filter card">
+      {/* <div className="container-filter card">
         <h3>Filter par</h3>
-        <div className="row">
+        <div className="row"> */}
           {/* <div className="col-4">
             <span>Catégories :</span>
             <div className="row f-wrap">
@@ -340,7 +351,7 @@ function Planning () {
               </label>
             </div>
           </div> */}
-          <div className="col-4">
+          {/* <div className="col-4">
             <span>Secteur :</span>
             <div className="row f-wrap">
               <input
@@ -393,10 +404,10 @@ function Planning () {
                 93
               </label>
             </div>
-          </div>
-          <div className="col-4"></div>
+          </div> */}
+          {/* <div className="col-4"></div>
         </div>
-      </div>
+      </div> */}
       {openPopInCreate && (
         <div className="modal-container">
           <div className="modal-content">
