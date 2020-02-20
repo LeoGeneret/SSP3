@@ -180,9 +180,6 @@ function Planning() {
       visited_at: dateStart
     }
 
-    // var coucou = JSON.stringify(eventCreated)
-    // console.log(coucou);
-
     utils
     .fetchReadyData('/visite/create', {
       method: "PUT",
@@ -190,6 +187,8 @@ function Planning() {
       headers: { "Content-Type": "application/json" }
     })
     .then(res => console.log(res));
+
+    console.log(teamPlanningRef);
 
     
   };
@@ -283,7 +282,7 @@ function Planning() {
       <div className="container-filter card">
         <h3>Filter par</h3>
         <div className="row">
-          <div className="col-4">
+          {/* <div className="col-4">
             <span>Catégories :</span>
             <div className="row f-wrap">
               <input
@@ -346,7 +345,7 @@ function Planning() {
                 Anomalies
               </label>
             </div>
-          </div>
+          </div> */}
           <div className="col-4">
             <span>Secteur :</span>
             <div className="row f-wrap">
@@ -446,6 +445,9 @@ function Planning() {
             />
             <button className="btn-create" type="submit">
               Ajouter
+            </button>
+            <button className="btn-edit" type="">
+              Annuler
             </button>
           </form>
 
