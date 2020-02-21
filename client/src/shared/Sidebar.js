@@ -49,7 +49,7 @@ function Sidebar(props) {
             <p>Les plannings</p>
           </NavLink>
           <NavLink to="/" exact>
-            <div className="icon icon-planning"></div>
+            <div className="icon icon-hotel"></div>
             <p>Les hôtels</p>
           </NavLink>
         </nav>

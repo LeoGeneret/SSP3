@@ -3,7 +3,7 @@ import utils from '../utils'
 import '../scss/App.scss'
 import moment from 'moment'
 
-function ListHotels (props) {
+function ListHotels(props) {
   const [list, setList] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const [openModalCreate, setOpenModalCreate] = useState(false)
@@ -11,6 +11,13 @@ function ListHotels (props) {
   const [enableEdit, setEnableEdit] = useState(false)
   const [secteurs, setSecteurs] = useState([])
   const [hotelClicked, sethotelClicked] = useState({})
+
+  // search module
+  const [filterSecteurLabel, setFilterSecteurLabel] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const handleChangeSearch = event => {
+    setSearchTerm(event.target.value);
+  };
 
   const [value, setValue] = useState({
     nom: '',
@@ -75,7 +82,7 @@ function ListHotels (props) {
         if (res.error) {
         } else {
           setList(list.map(itemEdited => {
-            if (itemEdited.id === res.data.id) { return {...itemEdited, priority: res.data.priority} } else { return itemEdited }
+            if (itemEdited.id === res.data.id) { return { ...itemEdited, priority: res.data.priority } } else { return itemEdited }
           }))
         }
       })
@@ -132,9 +139,22 @@ function ListHotels (props) {
         setSecteurs(requester.data)
         console.log(requester)
       }
-    })
-  }, [])
+    });
+  }, []);
 
+
+  // Search filter
+  const results = list.filter(item => {
+    const itemSecteur = item.secteur.id
+    const filterSecteur = filterSecteurLabel && Number.parseInt(filterSecteurLabel)
+    const resultFilter = item.nom.toLowerCase().includes(searchTerm.toLowerCase()) && (filterSecteur ? itemSecteur === filterSecteur : true)
+    return resultFilter
+  }
+
+
+  );
+
+  // Add to list
   const addTodo = name => {
     const newValue = [...list, name]
     setList(newValue)
@@ -179,9 +199,31 @@ function ListHotels (props) {
   return (
     <div>
       <h1>Liste des hôtels</h1>
+      <br></br>
       <div>
-        <div className="nav-hotels row">
+        <div className="row">
+          <div className="input-search">
+            <span className="icon-magnifying-glass"></span>
+            <input
+              value={searchTerm}
+              onChange={handleChangeSearch}
+              className="input-search"
+              placeholder="Rechercher un hôtel">
+            </input>
+          </div>
+          <div className="select-search">
+            <select
+              onChange={e => setFilterSecteurLabel(e.target.value)}>
+              <option>Secteurs</option>
+              {secteurs.map((secteur) => {
+                return (
+                  <option key={secteur.id} value={secteur.id}>{secteur.label}</option>
+                )
+              })}
+            </select>
+          </div>
         </div>
+        <br></br>
 
         {/* CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE */}
         {openModalCreate && (
@@ -342,7 +384,7 @@ function ListHotels (props) {
             </div>
           </div>
           <ul className="table-container">
-            {list.map((item, index) => {
+            {results.map((item, index) => {
               return (
                 <li className="row" key={item.id}>
                   <p className="col-4">{item.nom}</p>
