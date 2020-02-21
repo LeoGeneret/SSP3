@@ -3,7 +3,6 @@ import './scss/App.scss'
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import Home from './pages/Home'
 import Sidebar from './shared/Sidebar'
 import ListAgent from './pages/ListAgent'
 import Login from './pages/Login'

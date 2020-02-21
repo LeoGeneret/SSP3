@@ -1,25 +1,21 @@
-import React, { useState } from "react";
-import "../scss/App.scss";
+import React from 'react'
+import '../scss/App.scss'
 import utils from '../utils'
-import { NavLink, withRouter } from "react-router-dom";
+import { NavLink, withRouter } from 'react-router-dom'
 import moment from 'moment'
 
-function Sidebar(props) {
-
+function Sidebar (props) {
   const createPlanningAction = () => {
+    const keepgoing = window.confirm('Etes vous sûr de vouloir générer un plannig pour cette semaine ?')
 
-
-    const keepgoing = window.confirm("Etes vous sûr de vouloir générer un plannig pour cette semaine ?")
-    
-    if(keepgoing === true){
-      utils.fetchReadyData("/planning/create?date=" + moment().format("YYYY-MM-DD"), {
-        method: "PUT"
+    if (keepgoing === true) {
+      utils.fetchReadyData('/planning/create?date=' + moment().format('YYYY-MM-DD'), {
+        method: 'PUT'
       }).then(res => {
-        console.log({props})
-        props.history.go("/planning")
+        console.log({ props })
+        props.history.go('/planning')
       })
     }
-    
   }
 
   return (

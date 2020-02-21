@@ -3,7 +3,7 @@ import utils from '../utils'
 import '../scss/App.scss'
 import moment from 'moment'
 
-function ListHotels(props) {
+function ListHotels (props) {
   const [list, setList] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const [openModalCreate, setOpenModalCreate] = useState(false)
@@ -13,11 +13,11 @@ function ListHotels(props) {
   const [hotelClicked, sethotelClicked] = useState({})
 
   // search module
-  const [filterSecteurLabel, setFilterSecteurLabel] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
+  const [filterSecteurLabel, setFilterSecteurLabel] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
   const handleChangeSearch = event => {
-    setSearchTerm(event.target.value);
-  };
+    setSearchTerm(event.target.value)
+  }
 
   const [value, setValue] = useState({
     nom: '',
@@ -139,9 +139,8 @@ function ListHotels(props) {
         setSecteurs(requester.data)
         console.log(requester)
       }
-    });
-  }, []);
-
+    })
+  }, [])
 
   // Search filter
   const results = list.filter(item => {
@@ -151,8 +150,7 @@ function ListHotels(props) {
     return resultFilter
   }
 
-
-  );
+  )
 
   // Add to list
   const addTodo = name => {
