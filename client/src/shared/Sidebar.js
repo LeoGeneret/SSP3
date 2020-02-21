@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from 'prop-types'
 import "../scss/App.scss";
 import utils from '../utils'
 import { NavLink, withRouter } from "react-router-dom";
@@ -7,16 +8,19 @@ import moment from 'moment'
 function Sidebar(props) {
 
   const createPlanningAction = () => {
-
-
+    
     const keepgoing = window.confirm("Etes vous sûr de vouloir générer un plannig pour cette semaine ?")
     
     if(keepgoing === true){
       utils.fetchReadyData("/planning/create?date=" + moment().format("YYYY-MM-DD"), {
         method: "PUT"
       }).then(res => {
-        console.log({props})
-        props.history.go("/planning")
+      
+        if(res.error){
+          //
+        } else {
+          props.history.push("/planning")
+        }
       })
     }
     
@@ -59,5 +63,4 @@ function Sidebar(props) {
     </div>
   )
 }
-
 export default withRouter(Sidebar)

@@ -34,7 +34,14 @@ app.use((req, res, next) => {
  * ROUTES
  */
 
-const apiRoutes = require("./api.routes")(app, sequelize, express)
+const routesHotel = require("./routes/api.routes.hotel")(app, sequelize, express)
+const routesAuth = require("./routes/api.routes.auth")(app, sequelize, express)
+const routesPlanning = require("./routes/api.routes.planning")(app, sequelize, express)
+const routesSecteur = require("./routes/api.routes.secteur")(app, sequelize, express)
+const routesVisit = require("./routes/api.routes.visit")(app, sequelize, express)
+const routesVisiteur = require("./routes/api.routes.visiteur")(app, sequelize, express)
+// const routesVoiture = require("./routes/api.routes.voiture")(app, sequelize, express) - Unused for the moment
+
 
 app.listen(PORT, () => console.log("## API IS RUNNING ON PORT " + PORT))
 
