@@ -8,8 +8,8 @@ cd /home/app
 
 # clone repo and move
 sudo git clone https://github.com/LeoGeneret/SSP3.git
-sudo git checkout prod
 cd SSP3/
+sudo git checkout prod
 
 # Retrieve myip and pass value to .env
 sudo mv /mypublicip .env
