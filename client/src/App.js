@@ -3,7 +3,6 @@ import './scss/App.scss'
 
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
-import Home from './pages/Home'
 import Sidebar from './shared/Sidebar'
 import ListAgent from './pages/ListAgent'
 import Login from './pages/Login'
@@ -20,9 +19,9 @@ function App () {
         <Sidebar />
         <div className="content">
           <Switch>
-            <Route path="/login">
+            {/* <Route path="/login">
               <Login />
-            </Route>
+            </Route> */}
             <Route path="/EditPwd">
               <EditPwd />
             </Route>

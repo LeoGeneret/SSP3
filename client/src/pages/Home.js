@@ -1,5 +1,4 @@
 import React from 'react'
-import '../scss/App.scss'
 
 function Home () {
   return (

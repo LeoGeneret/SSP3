@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import PropTypes from 'prop-types'
-import "../scss/App.scss";
 import utils from '../utils'
-import { NavLink, withRouter } from "react-router-dom";
+import { NavLink, withRouter } from 'react-router-dom'
 import moment from 'moment'
 
-function Sidebar(props) {
-
+function Sidebar (props) {
   const createPlanningAction = () => {
     
     const keepgoing = window.confirm("Etes vous sûr de vouloir générer un plannig pour cette semaine ?")
@@ -19,11 +17,15 @@ function Sidebar(props) {
         if(res.error){
           //
         } else {
-          props.history.push("/planning")
+
+          if(props.location.pathname === "/planning"){
+            props.history.go("/planning")
+          } else {
+            props.history.push("/planning")
+          }
         }
       })
     }
-    
   }
 
   return (
@@ -53,7 +55,7 @@ function Sidebar(props) {
             <p>Les plannings</p>
           </NavLink>
           <NavLink to="/" exact>
-            <div className="icon icon-planning"></div>
+            <div className="icon icon-hotel"></div>
             <p>Les hôtels</p>
           </NavLink>
         </nav>

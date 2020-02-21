@@ -1,5 +1,4 @@
 import React from 'react'
-import '../scss/App.scss'
 import Header from '../shared/Header'
 
 function ListVehicles () {

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
 import utils from '../utils'
-import '../scss/App.scss'
 import FullCalendar from '@fullcalendar/react'
 import frLocale from '@fullcalendar/core/locales/fr'
 import resourceTimeline from '@fullcalendar/resource-timeline'

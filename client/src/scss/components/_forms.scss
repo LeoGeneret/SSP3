@@ -264,3 +264,43 @@ select {
   font-size: 18px;
   cursor: pointer;
 }
+
+.input-search,
+.select-search {
+  position: relative;
+  padding: 5px 5px 5px 10px;
+  margin-left: 10px;
+  width: 300px;
+  border: none;
+  border: solid 1px $color-dark-grey;
+  border-radius: 5px;
+  background-color: transparent;
+
+  span {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+  }
+
+  select {
+    width: 100px;
+    background-color: transparent;
+
+    &:focus {
+      outline: none;
+    }
+  }
+
+  input {
+    border: none;
+
+    &:focus {
+      outline: none;
+    }
+  }
+}
+
+.select-search {
+  width: 100px;
+  padding: 8px;
+}
