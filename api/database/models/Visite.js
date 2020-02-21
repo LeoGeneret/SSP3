@@ -89,7 +89,10 @@ module.exports = (sequelize, DataTypes) => {
         
                     results.data = {
                         reference: momentDate,
-                        events: visites.map(Format.regularVisiteFormat)
+                        events: visites.map(visitesIitem => ({
+                            ...Format.regularVisiteFormat(visitesIitem),
+                            hotel_id: visitesIitem.get("hotel_id")
+                        }))
                     }
         
                 } catch (GetPlanningError) {

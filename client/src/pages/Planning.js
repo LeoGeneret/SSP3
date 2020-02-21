@@ -1,116 +1,124 @@
-import React, { useState, useRef, useEffect } from 'react'
-import utils from '../utils'
-import '../scss/App.scss'
-import FullCalendar from '@fullcalendar/react'
-import frLocale from '@fullcalendar/core/locales/fr'
-import resourceTimeline from '@fullcalendar/resource-timeline'
-import interactionPlugin from '@fullcalendar/interaction'
-import moment from 'moment'
+import React, { useState, useRef, useEffect } from "react";
+import utils from "../utils";
+import "../scss/App.scss";
+import FullCalendar from "@fullcalendar/react";
+import frLocale from "@fullcalendar/core/locales/fr";
+import resourceTimeline from "@fullcalendar/resource-timeline";
+import interactionPlugin from "@fullcalendar/interaction";
+import moment from "moment";
 
-function getRandomColor () {
-  var letters = '0123456789ABCDEF'
-  var color = '#'
+function getRandomColor() {
+  var letters = "0123456789ABCDEF";
+  var color = "#";
   for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)]
+    color += letters[Math.floor(Math.random() * 16)];
   }
-  return color
+  return color;
 }
 
-function Planning () {
+function Planning() {
   // REFS
-  const teamPlanning = useRef(null)
-  const [teamPlanningRef, setTeamPlanningRef] = useState(null)
+  const teamPlanning = useRef(null);
+  const [teamPlanningRef, setTeamPlanningRef] = useState(null);
 
   // STATES
-  const [agent1, setAgent1] = useState('')
-  const [agent2, setAgent2] = useState('')
-  const [hotel, setHotel] = useState('')
-  const [dateStart, setDateStart] = useState('')
-  const [dateEnd, setDateEnd] = useState('')
-  const [openPopIn, setOpenPopIn] = useState(false)
-  const [openPopInCreate, setopenPopInCreate] = useState(false)
-  const [eventClicked, setEventClicked] = useState({})
-  const [eventClickedData, setEventClickedData] = useState({})/* eslint-disable-line*/
+  const [agent1, setAgent1] = useState("");
+  const [agent2, setAgent2] = useState("");
+  const [hotel, setHotel] = useState("");
+  const [dateStart, setDateStart] = useState("");
+  const [dateEnd, setDateEnd] = useState("");
+  const [openPopIn, setOpenPopIn] = useState(false);
+  const [openPopInCreate, setopenPopInCreate] = useState(false);
+  const [eventClicked, setEventClicked] = useState({});
+  const [eventClickedData, setEventClickedData] = useState(
+    {}
+  ); /* eslint-disable-line*/
   const [editedEvent, setEditedEvent] = useState({
-    title: '',
-    agent1: '',
-    agent2: '',
-    dateStart: '',
-    dateEnd: ''
-  })
-  const [ressources, setRessources] = useState([])
-  const [events, setEvents] = useState([])
-  const [listHotel, setListHotel] = useState([])
+    title: "",
+    agent1: "",
+    agent2: "",
+    dateStart: "",
+    dateEnd: "",
+    hotel: ""
+  });
+  const [ressources, setRessources] = useState([]);
+  const [events, setEvents] = useState([]);
+  const [listHotel, setListHotel] = useState([]);
 
   useEffect(() => {
     // get FullCalendar API
-    const calendarApi = teamPlanning.current.getApi()
-    setTeamPlanningRef(calendarApi)
+    const calendarApi = teamPlanning.current.getApi();
+    setTeamPlanningRef(calendarApi);
 
     // GET Visiteur
     utils
-      .fetchReadyData('/visiteur?no_limit=1&attributes=id,nom')
+      .fetchReadyData("/visiteur?no_limit=1&attributes=id,nom")
       .then(requester => {
         if (requester.error) {
-          console.log(requester.error)
+          console.log(requester.error);
         } else {
           setRessources(
             requester.data.visiteurs.map(visiteur => {
               return {
                 id: visiteur.id,
                 title: visiteur.nom
-              }
+              };
             })
-          )
+          );
         }
-      })
+      });
 
     // GET Events
     utils
-      .fetchReadyData('/planning?date=' + moment().format('YYYY-MM-DD'))
+      .fetchReadyData("/planning?date=" + moment().format("YYYY-MM-DD"))
       .then(requester => {
         if (requester.error) {
-          console.log(requester.error)
+          console.log(requester.error);
         } else {
-          setEvents(requester.data.events.map(e => {
-            return { ...e, color: getRandomColor() }
-          }))
+          setEvents(
+            requester.data.events.map(e => {
+              return { ...e, color: getRandomColor() };
+            })
+          );
         }
-      })
+      });
 
     // GET HOTELS
-    utils.fetchReadyData('/hotel').then(requester => {
+    utils.fetchReadyData("/hotel").then(requester => {
       if (requester.error) {
-        console.log(requester.error)
+        console.log(requester.error);
       } else {
-        setListHotel(requester.data.list)
-        console.log(requester)
+        setListHotel(requester.data.list);
+        console.log(requester);
       }
-    })
-  }, [])
+    });
+  }, []);
 
   const handleEventClickCreate = () => {
-    setopenPopInCreate(!openPopInCreate)
-  }
+    setopenPopInCreate(!openPopInCreate);
+  };
 
+  // ON CLICK EVENT
   const handleEventClick = info => {
-    setEventClicked(info.event)
-    setEventClickedData(info.event._def)
+    setEventClicked(info.event);
+    setEventClickedData(info.event._def);
     setEditedEvent({
       title: info.event._def.title,
       agent1: info.event._def.resourceIds[0],
       agent2: info.event._def.resourceIds[1],
       dateStart: info.event.start,
-      dateEnd: info.event.end
-    })
-    setOpenPopIn(!openPopIn)
-  }
+      dateEnd: info.event.end,
+      hotel_id: info.event._def.extendedProps.hotel_id
+    });
+    setOpenPopIn(!openPopIn);
+    console.log(info)
+  };
 
   // ON DROP EVENT
   const handleDropEvent = eventDropInfo => {
-    var eventId = eventDropInfo.event.id
+    var eventId = eventDropInfo.event.id;
     if (!eventDropInfo.event.end) {
-      eventDropInfo.revert()
+      eventDropInfo.revert();
     } else {
       const eventUpdate = {
         time_start: moment(eventDropInfo.event.start),
@@ -118,42 +126,44 @@ function Planning () {
         visited_at: moment(eventDropInfo.event.start),
         visiteur_id_1: eventDropInfo.event._def.resourceIds[0],
         visiteur_id_2: eventDropInfo.event._def.resourceIds[1]
-      }
+      };
 
       utils
         .fetchReadyData(`/visite/${eventId}/update`, {
-          method: 'PATCH',
+          method: "PATCH",
           body: JSON.stringify(eventUpdate),
-          headers: { 'Content-Type': 'application/json' }
+          headers: { "Content-Type": "application/json" }
         })
-        .then(res => console.log(res))
+        .then(res => console.log(res));
     }
-  }
+  };
 
   // ON RESIZE EVENT
   const handleResizeEvent = eventResizeInfo => {
-    var eventId = eventResizeInfo.event.id
+    var eventId = eventResizeInfo.event.id;
 
     const eventUpdate = {
       time_start: moment(eventResizeInfo.event.start),
       time_end: moment(eventResizeInfo.event.end)
-    }
+    };
 
-    utils.fetchReadyData(`/visite/${eventId}/update`, {
-      method: 'PATCH',
-      body: JSON.stringify(eventUpdate),
-      headers: { 'Content-Type': 'application/json' }
-    }).then(res => console.log(res))
-  }
+    utils
+      .fetchReadyData(`/visite/${eventId}/update`, {
+        method: "PATCH",
+        body: JSON.stringify(eventUpdate),
+        headers: { "Content-Type": "application/json" }
+      })
+      .then(res => console.log(res));
+  };
 
   const handleRemove = () => {
-    eventClicked.remove()
-    setOpenPopIn(!openPopIn)
-  }
+    eventClicked.remove();
+    setOpenPopIn(!openPopIn);
+  };
 
   const handleSubmit = e => {
-    e.preventDefault()
-    setopenPopInCreate(!openPopInCreate)
+    e.preventDefault();
+    setopenPopInCreate(!openPopInCreate);
 
     // let newBinome = [agent1, agent2];
     // let newDateStart = dateStart;
@@ -186,39 +196,120 @@ function Planning () {
       time_end: dateEnd,
       hotel_id: hotel,
       visited_at: dateStart
-    }
+    };
 
     utils
-      .fetchReadyData('/visite/create', {
-        method: 'PUT',
+      .fetchReadyData("/visite/create", {
+        method: "PUT",
         body: JSON.stringify(eventCreated),
-        headers: { 'Content-Type': 'application/json' }
+        headers: { "Content-Type": "application/json" }
       })
-      .then(res => console.log(res))
+      .then(res => console.log(res));
 
-    console.log(teamPlanningRef)
-  }
+    console.log(teamPlanningRef);
+  };
 
   const handleEditEvent = e => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const editedTitle = editedEvent.title   /* eslint-disable-line*/
-    const editedBinome = [editedEvent.agent1, editedEvent.agent2]
-    const editedDateStart = editedEvent.dateStart
-    const editedDateEnd = editedEvent.dateEnd
+    const editedTitle = editedEvent.title; /* eslint-disable-line*/
+    const editedBinome = [editedEvent.agent1, editedEvent.agent2];
+    const editedDateStart = editedEvent.dateStart;
+    const editedDateEnd = editedEvent.dateEnd;
 
-    eventClicked.setResources(editedBinome)
-    eventClicked.setDates(editedDateStart, editedDateEnd)
-    setOpenPopIn(!openPopIn)
-  }
+    eventClicked.setResources(editedBinome);
+    eventClicked.setDates(editedDateStart, editedDateEnd);
+    setOpenPopIn(!openPopIn);
+  };
 
   return (
     <div className="test">
-      {false && (
+      {/* POPIN CREATE EVENT */}
+      {openPopInCreate && (
+        <div className="modal-container">
+          <div className="modal-content">
+            <form className="flex-column" onSubmit={handleSubmit}>
+              <select
+                className="col-12"
+                value={agent1}
+                onChange={e => setAgent1(e.target.value)}
+              >
+                <option>Selectionnez agent 1</option>
+                {ressources.map((item, index) => (
+                  <option key={index} value={item.id}>
+                    {item.title}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="col-12"
+                value={agent2}
+                onChange={e => setAgent2(e.target.value)}
+              >
+                <option>Selectionnez agent 2</option>
+                {ressources.map((item, index) => (
+                  <option key={index} value={item.id}>
+                    {item.title}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="col-12"
+                value={hotel}
+                onChange={e => setHotel(e.target.value)}
+              >
+                <option>Selectionnez hotel</option>
+                {listHotel.map((item, index) => (
+                  <option key={index} value={item.id}>
+                    {item.nom} {item.code_postal}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="datetime-local"
+                placeholder="Date de début"
+                onChange={e => setDateStart(e.target.value)}
+                value={dateStart}
+              />
+              <input
+                type="datetime-local"
+                placeholder="Date de fin"
+                onChange={e => setDateEnd(e.target.value)}
+                value={dateEnd}
+              />
+              <button className="btn-create" type="submit">
+                Ajouter
+              </button>
+              <button className="btn-edit" type="">
+                Annuler
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+      {/* POPIN EDIT EVENT */}
+      {openPopIn && (
         <div className="formContainer" id="popin">
-          <div className={`pop-in ${openPopIn ? 'active' : ''}`}>
+          <div className={`pop-in ${openPopIn ? "active" : ""}`}>
             <form onSubmit={handleEditEvent}>
-              {/* <select
+              <select
+                className="col-12"
+                value={editedEvent.hotel_id}
+                onChange={e =>
+                  setEditedEvent({
+                    ...editedEvent,
+                    hotel_id: e.target.value
+                  })
+                }
+              >
+                <option >Selectionnez hotel</option>
+                {listHotel.map((item, index) => (
+                  <option key={index} value={item.id}>
+                    {item.nom}
+                  </option>
+                ))}
+              </select>
+              <select
                 value={editedEvent.agent1}
                 onChange={e =>
                   setEditedEvent({
@@ -230,7 +321,7 @@ function Planning () {
                 <option>Selectionnez agent 1</option>
                 {ressources.map((item, index) => (
                   <option key={index} value={item.id}>
-                    {item.nom}
+                    {item.title}
                   </option>
                 ))}
               </select>
@@ -246,35 +337,39 @@ function Planning () {
                 <option>Selectionnez agent 2</option>
                 {ressources.map((item, index) => (
                   <option key={index} value={item.id}>
-                    {item.nom}
+                    {item.title}
                   </option>
                 ))}
               </select>
               <input
                 type="datetime-local"
                 placeholder="Date de début"
+                value={moment(editedEvent.dateStart).format(
+                  "YYYY-MM-DD[T]HH:MM"
+                )}
                 onChange={e =>
                   setEditedEvent({
                     ...editedEvent,
                     dateStart: e.target.value
                   })
                 }
-                value={editedEvent.dateStart}
               />
               <input
                 type="datetime-local"
                 placeholder="Date de fin"
+                value={moment(editedEvent.dateEnd).format(
+                  "YYYY-MM-DD[T]HH:MM"
+                )}
                 onChange={e =>
                   setEditedEvent({
                     ...editedEvent,
                     dateEnd: e.target.value
                   })
                 }
-                value={editedEvent.dateEnd}
-              /> */}
-              {/* <button className="btn-create" type="submit">
+              />
+              <button className="btn-create" type="submit">
                 Modifier
-              </button> */}
+              </button>
             </form>
 
             <button className="btn-create bg-danger" onClick={handleRemove}>
@@ -408,57 +503,7 @@ function Planning () {
       {/* <div className="col-4"></div>
         </div>
       </div> */}
-      {openPopInCreate && (
-        <div className="modal-container">
-          <div className="modal-content">
-            <form className='flex-column' onSubmit={handleSubmit}>
-              <select className='col-12' value={agent1} onChange={e => setAgent1(e.target.value)}>
-                <option>Selectionnez agent 1</option>
-                {ressources.map((item, index) => (
-                  <option key={index} value={item.id}>
-                    {item.title}
-                  </option>
-                ))}
-              </select>
-              <select className='col-12' value={agent2} onChange={e => setAgent2(e.target.value)}>
-                <option>Selectionnez agent 2</option>
-                {ressources.map((item, index) => (
-                  <option key={index} value={item.id}>
-                    {item.title}
-                  </option>
-                ))}
-              </select>
-              <select className='col-12' value={hotel} onChange={e => setHotel(e.target.value)}>
-                <option>Selectionnez hotel</option>
-                {listHotel.map((item, index) => (
-                  <option key={index} value={item.id}>
-                    {item.nom} {item.code_postal}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="datetime-local"
-                placeholder="Date de début"
-                onChange={e => setDateStart(e.target.value)}
-                value={dateStart}
-              />
-              <input
-                type="datetime-local"
-                placeholder="Date de fin"
-                onChange={e => setDateEnd(e.target.value)}
-                value={dateEnd}
-              />
-              <button className="btn-create" type="submit">
-                Ajouter
-              </button>
-              <button className="btn-edit" type="">
-                Annuler
-              </button>
-            </form>
 
-          </div>
-        </div>
-      )}
       <div className="card calendar-container">
         <FullCalendar
           locale={frLocale}
@@ -481,19 +526,19 @@ function Planning () {
           editable={true}
           droppable={true}
           header={{
-            left: 'prev,next',
-            center: 'title',
-            right: 'resourceTimelineDay, resourceTimelineWeek'
+            left: "prev,next",
+            center: "title",
+            right: "resourceTimelineDay, resourceTimelineWeek"
           }}
           disableDragging={true}
           views={{
             week: {
-              titleFormat: { day: '2-digit', month: 'long' }
+              titleFormat: { day: "2-digit", month: "long" }
             }
           }}
           resourceColumns={[
             {
-              labelText: 'Visiteurs'
+              labelText: "Visiteurs"
             }
           ]}
           resources={ressources}
@@ -509,7 +554,7 @@ function Planning () {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Planning
+export default Planning;
