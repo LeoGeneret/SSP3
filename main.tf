@@ -8,7 +8,7 @@ data "aws_vpc" "default" {
 }
 
 resource "aws_key_pair" "key_pair" {
-  public_key    = var.public_key
+  public_key    = file(var.public_key_path)
   key_name      = "ssp3_prod_key"
   
 }
@@ -66,7 +66,7 @@ resource "aws_instance" "rs_instance_ssp3" {
     connection {
         type        = "ssh"
         user        = "ubuntu"
-        private_key = var_private_key
+        private_key = file(var.private_key_path)
         host        = self.public_ip
     }
     
