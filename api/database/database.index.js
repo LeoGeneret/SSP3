@@ -40,7 +40,7 @@ const User = sequelize.import("./models/User.js")
  */
 
 // // Visite <-> Hotel
-Hotel.hasMany(Visite, { as: "hotel_visites", foreignKey: "hotel_id" })
+Hotel.hasMany(Visite, { as: "hotel_visites", foreignKey: "hotel_id", onDelete: "CASCADE"})
 Visite.belongsTo(Hotel, { as: "hotel", foreignKey: "hotel_id" })
 
 // // Visite <-> Voiture
