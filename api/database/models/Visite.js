@@ -16,9 +16,10 @@ const Format = {
         start: moment(visiteItem.get("time_start")).format("YYYY-MM-DDTHH:mm:ssZ"),
         end: moment(visiteItem.get("time_end")).format("YYYY-MM-DDTHH:mm:ssZ"),
         title: visiteItem.get("hotel").get("nom"),
+        // URGENT - erreur ici
         resourceIds: [
-            visiteItem.get("visiteur_id_1").toString(),
-            visiteItem.get("visiteur_id_2").toString(),
+            visiteItem.get("visiteur_id_1") && visiteItem.get("visiteur_id_1").toString(),
+            visiteItem.get("visiteur_id_2") && visiteItem.get("visiteur_id_2").toString(),
         ],
     })
 }

@@ -7,7 +7,8 @@
     "start-dev": "node_modules/nodemon/bin/nodemon.js api.index.js",
     "db-seed": "node database/database.seeder.js",
     "db-sync": "node database/database.sync.js",
-    "api-doc": "apidoc -i ./ -e node_modules -o apidoc"
+    "api-doc": "apidoc -i ./ -e node_modules -o apidoc",
+    "start-prod": "npm run db-seed && node api.index.js"
   },
   "dependencies": {
     "bcrypt": "^3.0.8",

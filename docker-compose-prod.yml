@@ -38,7 +38,7 @@ services:
         build: 
             context: ./api
             dockerfile: Dockerfile-prod
-        restart: always
+        restart: on-failure
         volumes: 
             - /home/api/node_modules
         environment: 
@@ -58,7 +58,7 @@ services:
             - 3002:3002
         networks: 
             - network_database
-        command: node api.index.js
+        command: npm run start-prod
 
     app:
         container_name: ssp3_app
@@ -68,11 +68,7 @@ services:
             context: ./client
             dockerfile: Dockerfile-prod
             args: 
-                api_endpoint: api
-                foo1: Hello
-                foo2: myhh
-        environment: 
-            REACT_APP_API_ENDPOINT: http://localhost:3666
+                api_endpoint: "http://${MACHINE_HOST}:3002"
         ports: 
             - 80:80
         volumes: 
