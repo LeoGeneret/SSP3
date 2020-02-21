@@ -214,7 +214,7 @@ function Planning () {
 
   return (
     <div className="test">
-      {openPopIn && (
+      {false && (
         <div className="formContainer" id="popin">
           <div className={`pop-in ${openPopIn ? 'active' : ''}`}>
             <form onSubmit={handleEditEvent}>

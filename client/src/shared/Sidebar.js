@@ -1,17 +1,25 @@
 import React, { useState } from "react";
 import "../scss/App.scss";
 import utils from '../utils'
-import { NavLink } from "react-router-dom";
+import { NavLink, withRouter } from "react-router-dom";
 import moment from 'moment'
 
-function Sidebar() {
+function Sidebar(props) {
 
   const createPlanningAction = () => {
-    utils.fetchReadyData("/planning/create?date=" + moment().format("YYYY-MM-DD"), {
-      method: "PUT"
-    }).then(res => {
-      console.log({res})
-    })
+
+
+    const keepgoing = window.confirm("Etes vous sûr de vouloir générer un plannig pour cette semaine ?")
+    
+    if(keepgoing === true){
+      utils.fetchReadyData("/planning/create?date=" + moment().format("YYYY-MM-DD"), {
+        method: "PUT"
+      }).then(res => {
+        console.log({props})
+        props.history.go("/planning")
+      })
+    }
+    
   }
 
   return (
@@ -25,13 +33,13 @@ function Sidebar() {
               <div className="userStatus">Administrateur</div>
             </div>
           </div>
-          <div className="Btn myAccount">Mon Compte</div>
+          {/* <div className="Btn myAccount">Mon Compte</div> */}
         </div>
         <nav>
-          <NavLink exact to="/">
+          {/* <NavLink exact to="/">
             <div className="icon icon-dashboard"></div>
             <p>Accueil</p>
-          </NavLink>
+          </NavLink> */}
           <NavLink to="/agents">
             <div className="icon icon-agents"></div>
             <p>Liste des agents</p>
@@ -40,7 +48,7 @@ function Sidebar() {
             <div className="icon icon-planning"></div>
             <p>Les plannings</p>
           </NavLink>
-          <NavLink to="/hotels">
+          <NavLink to="/" exact>
             <div className="icon icon-planning"></div>
             <p>Les hôtels</p>
           </NavLink>
@@ -52,4 +60,4 @@ function Sidebar() {
   )
 }
 
-export default Sidebar
+export default withRouter(Sidebar)

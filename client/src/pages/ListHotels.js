@@ -75,7 +75,7 @@ function ListHotels (props) {
         if (res.error) {
         } else {
           setList(list.map(itemEdited => {
-            if (itemEdited.id === res.data.id) { return res.data } else { return itemEdited }
+            if (itemEdited.id === res.data.id) { return {...itemEdited, priority: res.data.priority} } else { return itemEdited }
           }))
         }
       })

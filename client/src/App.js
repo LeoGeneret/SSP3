@@ -26,9 +26,9 @@ function App () {
             <Route path="/EditPwd">
               <EditPwd />
             </Route>
-            <Route path="/hotels">
+            {/* <Route path="/hotels">
               <ListHotels />
-            </Route>
+            </Route> */}
             <Route path="/vehicles">
               <ListVehicles />
             </Route>
@@ -38,8 +38,8 @@ function App () {
             <Route path="/agents">
               <ListAgent />
             </Route>
-            <Route path="/">
-              <Home />
+            <Route path="/" exact>
+              <ListHotels />
             </Route>
           </Switch>
         </div>
