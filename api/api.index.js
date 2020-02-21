@@ -42,6 +42,8 @@ const routesVisit = require("./routes/api.routes.visit")(app, sequelize, express
 const routesVisiteur = require("./routes/api.routes.visiteur")(app, sequelize, express)
 // const routesVoiture = require("./routes/api.routes.voiture")(app, sequelize, express) - Unused for the moment
 
+app.use("/apidoc", express.static("apidoc"))
+
 
 app.listen(PORT, () => console.log("## API IS RUNNING ON PORT " + PORT))
 
