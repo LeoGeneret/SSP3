@@ -103,7 +103,7 @@ class Algo {
         return listeHotelsParDate.reverse()
     }
 
-    prioriteSelonNoteFunction(listeHotels){
+    prioriteSelonNote(listeHotels){
 
         var listeHotelsParNote = listeHotels
         
@@ -167,10 +167,10 @@ class Algo {
 
     
     //change name : to test
-    async prioriteSelonNote(){
+    async creerListePriorisee(){
 
         var listeHotelsParDate = await this.prioriteSelonDate()
-        var listeHotelsParNote = this.prioriteSelonNoteFunction(listeHotelsParDate)
+        var listeHotelsParNote = this.prioriteSelonNote(listeHotelsParDate)
         var listePrio = new Set()
 
         this.ajoutHotels(listePrio, listeHotelsParNote, listeHotelsParDate)
@@ -190,7 +190,7 @@ class Algo {
             data: null
         }
         
-        const formattedListeHotel = await this.prioriteSelonNote()
+        const formattedListeHotel = await this.creerListePriorisee()
 
         results.data = {
             pagination: {},
@@ -210,7 +210,7 @@ class Algo {
 
         if(jour){
 
-            var listeDesHotelsAvisiterOrdonnee = await this.prioriteSelonNote()
+            var listeDesHotelsAvisiterOrdonnee = await this.creerListePriorisee()
             //this.creerVisites(listeDesHotelsAvisiterOrdonnee)
             var listeTestVisit = await this.creerVisites(listeDesHotelsAvisiterOrdonnee, jour)
             var listeNewReturn = []
@@ -231,67 +231,10 @@ class Algo {
         return results
     }
 
-
-    async creerVisites(listeDesHotelsAvisiterOrdonnee, jour) {
-        //tant qu'il reste des hotels a visiter et que < a ?
-
-        //Visite.cre
-        //ajouterDateVisite
-        //ajouterHotel
-        //ajouterVoiture
-        //ajouterBinome
-
-        var listeVisiteur = await sequelize.models.Visiteur.getAll(undefined, undefined, undefined, true)
-
-
-       var listeBinomes = []
-       var ListeDesVisiteursParSecteur = {}
-       var secteurId = null
-       var binomes = []
-       var isFirst = true
-       var ListeDesHotelsParSecteur = {}
-       var binomesParSecteur = {}
-       var binomeSecteur = null
-       var hotelSecteur = null
-       var jourRef = moment(jour)
-       console.log({memfe: jourRef.format("YYYY-MM-DD")})
-       var visites = []
-
-
-
-        if(listeVisiteur.error) {
-
-        }
-        else {
-            listeVisiteur.data.visiteurs.forEach(function(visiteur){
-                
-                secteurId = visiteur.get("secteur_id")
-
-                if(ListeDesVisiteursParSecteur[secteurId]){
-                    ListeDesVisiteursParSecteur[secteurId].push(visiteur)
-                }
-                else{
-                    ListeDesVisiteursParSecteur[secteurId] = [visiteur]
-                }
-            })
-
-            Object.values(ListeDesVisiteursParSecteur).forEach(function(secteur){
-                if(secteur.length%2 == 1){
-                    secteur.pop()
-                }
-                //console.log(secteur)
-                for(var i = 0; i<secteur.length; i++){
-                    if(i%2 === 0){
-                        binomes.push([secteur[i]])
-                    }
-                    else{
-                        binomes[binomes.length-1].push(secteur[i])
-                    }
-
-                }
-       
-            })
-        }
+    //Create Liste des visiteurs par secteur (key : secteur; value : visiteurs)
+    creerListeVisitesParSecteur(listeVisiteur){
+        var secteurId = null
+        var ListeDesVisiteursParSecteur = {}
 
         listeVisiteur.data.visiteurs.forEach(function(visiteur){
                 
@@ -305,9 +248,37 @@ class Algo {
             }
         })
 
+        return ListeDesVisiteursParSecteur
+    }
+
+    creerListeBinomes(ListeDesVisiteursParSecteur){
+
+        var binomes = []
+
+        Object.values(ListeDesVisiteursParSecteur).forEach(function(secteur){
+            if(secteur.length%2 == 1){
+                secteur.pop()
+            }
+            for(var i = 0; i<secteur.length; i++){
+                if(i%2 === 0){
+                    binomes.push([secteur[i]])
+                }
+                else{
+                    binomes[binomes.length-1].push(secteur[i])
+                }
+            }
+        })
+        return binomes
+    }
+
+    //Create object binome par secteur (key : secteur, value : binomes)
+    creerBinomesParSecteurs(binomes){
+
+        var binomesParSecteur = {}
+        var binomeSecteur = null
 
         binomes.forEach(function(binomeDansBinomes){
-                
+                    
             binomeSecteur = binomeDansBinomes[0].secteur_id
 
             if(binomesParSecteur[binomeSecteur]){
@@ -317,24 +288,38 @@ class Algo {
                 binomesParSecteur[binomeSecteur] = [binomeDansBinomes]
             }
         })
+        return binomesParSecteur
+    }
 
-        
-        listeDesHotelsAvisiterOrdonnee.forEach(function(hotelAtrier){
-                
-            hotelSecteur = hotelAtrier.secteur.id
+    //Create Liste des Hotels par secteur (key : secteur, value : hotels)
+    creerHotelsParSecteur(listeDesHotelsAvisiterOrdonnee){
 
-            if(ListeDesHotelsParSecteur[hotelSecteur]){
-                ListeDesHotelsParSecteur[hotelSecteur].push(hotelAtrier)
+        var ListeDesHotelsParSecteur = {}
+        var secteurHotel = null
+
+        listeDesHotelsAvisiterOrdonnee.forEach(function(hotelAvisiter){
+                    
+            secteurHotel = hotelAvisiter.secteur.id
+
+            if(ListeDesHotelsParSecteur[secteurHotel]){
+                ListeDesHotelsParSecteur[secteurHotel].push(hotelAvisiter)
             }
             else{
-                ListeDesHotelsParSecteur[hotelSecteur] = [hotelAtrier]
+                ListeDesHotelsParSecteur[secteurHotel] = [hotelAvisiter]
             }
         })
 
+        return ListeDesHotelsParSecteur
+    }
+
+
+    creerVisitesPlanning(binomesParSecteur, ListeDesHotelsParSecteur, jour){
+
+        var jourRef = moment(jour)
+        var visites = []
 
         Object.keys(binomesParSecteur).forEach((binomesDansSecteur)=>{
             binomesParSecteur[binomesDansSecteur].forEach((binome)=>{
-
                 var hotelsDansSecteur = ListeDesHotelsParSecteur[binomesDansSecteur]
                 if(hotelsDansSecteur && hotelsDansSecteur.length){
                     for (var i = 0; i<this.nombreVistesMaxParSemaine; i++){
@@ -368,11 +353,26 @@ class Algo {
                 
             })
         })
+        return visites
+    }
 
+    async creerVisites(listeDesHotelsAvisiterOrdonnee, jour) {
 
-        const visitesCreated  = await sequelize.models.Visite.bulkCreate(visites)
+        var listeVisiteur = await sequelize.models.Visiteur.getAll(undefined, undefined, undefined, true)
 
-        return visitesCreated
+        if(listeVisiteur.error) {
+        }
+        else {
+
+            var ListeDesVisiteursParSecteur = this.creerListeVisitesParSecteur(listeVisiteur)  
+            var binomes = this.creerListeBinomes(ListeDesVisiteursParSecteur)
+            var binomesParSecteur = this.creerBinomesParSecteurs(binomes)
+            var ListeDesHotelsParSecteur = this.creerHotelsParSecteur(listeDesHotelsAvisiterOrdonnee)
+            var visites = this.creerVisitesPlanning(binomesParSecteur, ListeDesHotelsParSecteur, jour)
+            const visitesCreated  = await sequelize.models.Visite.bulkCreate(visites)
+
+            return visitesCreated
+        }
 
     }
 }
