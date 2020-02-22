@@ -7,12 +7,14 @@ data "aws_vpc" "default" {
   default = true
 }
 
+# La clé publique pour se connecter à notre future machine
 resource "aws_key_pair" "key_pair" {
   public_key    = file(var.public_key_path)
   key_name      = "ssp3_prod_key"
   
 }
 
+# Groupe de sécurité autorisant l'accès SSH pour notre machine uniquement, ainsi qu'une connexion tcp sur port 3002 (api) et 80 (back-office) pour tout le monde
 resource "aws_security_group" "security_group" {
   name        = "ssp3_security_group"
   description = "Security group created with terraform"
@@ -39,13 +41,6 @@ resource "aws_security_group" "security_group" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port       = 0
     to_port         = 0
@@ -54,6 +49,7 @@ resource "aws_security_group" "security_group" {
   }
 }
 
+# Création de l'instance AWS - machine Ubuntu 16.4
 resource "aws_instance" "rs_instance_ssp3" {
     ami                 = "ami-051ebe9615b416c15"
     instance_type       = "t2.micro"

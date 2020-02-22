@@ -3,6 +3,8 @@
 👋🏼Bonjour et bienvenue sur le Readme de la partie Tech du groupe 3 ! 
 Les dev front sont Adrien Bannwarth et Léo Generet.
 
+## Lien vers BackOffice déployé :
+http://ec2-52-47-84-55.eu-west-3.compute.amazonaws.com
 
 # Technos, dépendances & librairies 
 

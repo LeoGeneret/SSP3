@@ -34,6 +34,8 @@ app.use((req, res, next) => {
  * ROUTES
  */
 
+ app.get("/", async (req, res) => res.json({api_running: req.hostname, api_doc: req.hostname + "/apidoc"}))
+
 const routesHotel = require("./routes/api.routes.hotel")(app, sequelize, express)
 const routesAuth = require("./routes/api.routes.auth")(app, sequelize, express)
 const routesPlanning = require("./routes/api.routes.planning")(app, sequelize, express)
