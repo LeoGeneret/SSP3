@@ -1,15 +1,59 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Link } from 'react-router-dom'
+import utils from '../utils'
 
 function Login () {
+
+  /** STATES */
+  const [stateEmail, setStateEmail] = useState(null) 
+  const [statePassword, setStatePassword] = useState(null) 
+
+
+  /** METHODS */
+
+  const submitLogin = event => {
+    event.preventDefault()
+
+    if(!stateEmail || !statePassword){
+      // show you must enter email and password!
+    } else {
+      utils.fetchForm("/auth/signin", {
+        "email": stateEmail,
+        "password": statePassword
+      }).then(response => {
+        if(response.error){
+          // credentials or invalid
+        } else {
+          localStorage.setItem("access_token", response.data.token)
+        }
+      })
+      .catch(error => {
+        console.error(error)
+      })
+    }
+  }
+
+
   return (
     <div className="row">
       <div className="d-flex col-4">
         <form className="form-login">
-          <input type="text" placeholder="Nom d'utilisateur"></input>
-          <input type="text" placeholder="Mot de passe"></input>
+          <input 
+            onChange={e => setStateEmail(e.target.value)} 
+            value={stateEmail} 
+            type="text" 
+            placeholder="Nom d'utilisateur"
+            required
+          />
+          <input 
+            onChange={e => setStatePassword(e.target.value)} 
+            value={statePassword} 
+            type="password" 
+            placeholder="Mot de passe"
+            required
+          />
           <Link className="btn-pwd" to="/EditPwd">Mot de passe oublié ?</Link>
-          <button className="btn-create" type="submit">Se connecter</button>
+          <button onClick={submitLogin} className="btn-create" type="submit">Se connecter</button>
           <span className="d-none pwd-danger">Mot de passe / Email incorrect.</span>
         </form>
       </div>

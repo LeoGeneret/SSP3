@@ -11,6 +11,7 @@ import ListHotels from './pages/ListHotels'
 
 import Planning from './pages/Planning'
 import EditPwd from './pages/EditPwd'
+import SecretPage from './shared/SecretPage'
 
 function App () {
   return (
@@ -19,15 +20,12 @@ function App () {
         <Sidebar />
         <div className="content">
           <Switch>
-            {/* <Route path="/login">
+            <Route path="/login">
               <Login />
-            </Route> */}
+            </Route>
             <Route path="/EditPwd">
               <EditPwd />
             </Route>
-            {/* <Route path="/hotels">
-              <ListHotels />
-            </Route> */}
             <Route path="/vehicles">
               <ListVehicles />
             </Route>

@@ -5,7 +5,7 @@ const xss = require("xss")
 
 module.exports = (app, sequelize, express) => {
 
-
+    
     /**
      * @api {post} /auth/forgot_password
      * @apiName forgotPassword
@@ -84,7 +84,7 @@ module.exports = (app, sequelize, express) => {
      * @apiParam {String} email
      * @apiParam {String} password
      */
-    app.post("/auth/signin", async (req, res) => {
+    app.post("/auth/signin", express.urlencoded({extended: true}), async (req, res) => {
     
         const email = req.body.email && xss(req.body.email) || null
         const password = req.body.password && xss(req.body.password) || null
