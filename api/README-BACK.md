@@ -71,6 +71,13 @@ Afin de faire fonctionner l'application et de travailler dans les conditions les
 
 ### 4. Authentification
 
+Pour tester les routes de connexion `/auth/signin`, `/auth/forgot_password`
+```
+email: planner@spp3.email
+password: 0000
+role: "planner"
+```
+
 <em>Pour le moment l'authentification n'est pas reliée à l'application c'est pourquoi toute les routes sont accéssible sans besoin d'authentification.</em>
 
 Le système de d'authentification est effectué par jwt token.
