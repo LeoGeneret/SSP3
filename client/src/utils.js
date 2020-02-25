@@ -6,13 +6,14 @@ import jwtDecode from 'jwt-decode'
  * @param {string} url api route
  * @param {object} parameters request parameters (headers, body, etc...)
  */
-function fetchJson(url, {headers, method, body}){
+function fetchJson(url, parameters = {}){
+
   return fetch(process.env.REACT_APP_API_ENDPOINT + url, {
-    method: method || "GET",
-    headers: headers || {
+    method: parameters.method || "GET" ,
+    headers: parameters.headers || {
       "Content-Type": "application/json",
     },
-    body: body
+    body: parameters.body
   })
   .then(res => res.json())
 }

@@ -48,7 +48,7 @@ function Planning () {
 
     // GET Visiteur
     utils
-      .fetchReadyData('/visiteur?no_limit=1&attributes=id,nom')
+      .fetchJson('/visiteur?no_limit=1&attributes=id,nom')
       .then(requester => {
         if (requester.error) {
           console.log(requester.error)
@@ -66,7 +66,7 @@ function Planning () {
 
     // GET Events
     utils
-      .fetchReadyData('/planning?date=' + moment().format('YYYY-MM-DD'))
+      .fetchJson('/planning?date=' + moment().format('YYYY-MM-DD'))
       .then(requester => {
         if (requester.error) {
           console.log(requester.error)
@@ -78,7 +78,7 @@ function Planning () {
       })
 
     // GET HOTELS
-    utils.fetchReadyData('/hotel').then(requester => {
+    utils.fetchJson('/hotel').then(requester => {
       if (requester.error) {
         console.log(requester.error)
       } else {
@@ -120,11 +120,10 @@ function Planning () {
       }
 
       utils
-        .fetchReadyData(`/visite/${eventId}/update`, {
+        .fetchJson(`/visite/${eventId}/update`, {
           method: 'PATCH',
           body: JSON.stringify(eventUpdate),
-          headers: { 'Content-Type': 'application/json' }
-        })
+          })
         .then(res => console.log(res))
     }
   }
@@ -138,10 +137,9 @@ function Planning () {
       time_end: moment(eventResizeInfo.event.end)
     }
 
-    utils.fetchReadyData(`/visite/${eventId}/update`, {
+    utils.fetchJson(`/visite/${eventId}/update`, {
       method: 'PATCH',
       body: JSON.stringify(eventUpdate),
-      headers: { 'Content-Type': 'application/json' }
     }).then(res => console.log(res))
   }
 
@@ -188,10 +186,9 @@ function Planning () {
     }
 
     utils
-      .fetchReadyData('/visite/create', {
+      .fetchJson('/visite/create', {
         method: 'PUT',
         body: JSON.stringify(eventCreated),
-        headers: { 'Content-Type': 'application/json' }
       })
       .then(res => console.log(res))
 

@@ -10,7 +10,7 @@ function Sidebar (props) {
     const keepgoing = window.confirm("Etes vous sûr de vouloir générer un plannig pour cette semaine ?")
     
     if(keepgoing === true){
-      utils.fetchReadyData("/planning/create?date=" + moment().format("YYYY-MM-DD"), {
+      utils.fetchJson("/planning/create?date=" + moment().format("YYYY-MM-DD"), {
         method: "PUT"
       }).then(res => {
       
