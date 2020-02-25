@@ -1,5 +1,7 @@
 
 const apiAlgo = require("../Algo/Algo")
+const params = require("../api.params")
+const utils = require("../api.utils")
 
 module.exports = (app, sequelize, express) => {
 
@@ -22,7 +24,7 @@ module.exports = (app, sequelize, express) => {
      * @apiSuccess {Number} data.hotel_id Id de l'hotel
      * 
      */
-    app.get("/planning", async (req, res) => {
+    app.get("/planning", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER]), async (req, res) => {
         // query
         const date = req.query.date || null
         const results = await sequelize.models.Visite.getPlanning(date)
@@ -40,7 +42,7 @@ module.exports = (app, sequelize, express) => {
      * @apiErrorExample Error: 
      *      HTTP/1.1 400 BAD REQUEST
      */
-    app.put("/planning/create", async (req, res) => {
+    app.put("/planning/create", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER]), async (req, res) => {
         // query
         const date = req.query.date || null
         const results = await apiAlgo.creerPlanning(date)

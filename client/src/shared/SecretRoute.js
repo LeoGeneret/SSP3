@@ -1,9 +1,9 @@
 import React from 'react'
-import {Redirect} from 'react-router-dom'
+import {Redirect, Route} from 'react-router-dom'
 
 import utils from '../utils'
 
-const SecretPage = (props) => {
+const SecretRoute = (props) => {
 
     const [state, setState] = React.useState({
         loading: true,
@@ -29,10 +29,10 @@ const SecretPage = (props) => {
         return <div>loading...</div>
     }
     else if(!state.loading && state.authorized){
-        return props.children
+        return <Route {...props}/>
     } else {
         return <Redirect to="/login"/>
     }
 }
 
-export default SecretPage
+export default SecretRoute

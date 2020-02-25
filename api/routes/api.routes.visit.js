@@ -1,3 +1,5 @@
+const utils = require("../api.utils")
+const params = require("../api.params")
 
 module.exports = (app, sequelize, express) => {
 
@@ -24,7 +26,7 @@ module.exports = (app, sequelize, express) => {
      * @apiSuccess {string} data Vaut "deleted" si la visite a été supprimé
      * 
      */
-    app.delete("/visite/:id/delete", async (req, res) => {
+    app.delete("/visite/:id/delete", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER]), async (req, res) => {
 
         const visiteId = (req.params.id && Number(req.params.id)) || undefined
         const results = await sequelize.models.Visite.deleteVisite(visiteId)
@@ -43,7 +45,7 @@ module.exports = (app, sequelize, express) => {
      * @apiSuccess {String[]} data.resourceIds Ensemble des visiteurs
      * 
      */
-    app.patch("/visite/:id/update", async (req, res) => {
+    app.patch("/visite/:id/update", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER]), async (req, res) => {
 
         // params
         const visiteId = (req.params.id && Number(req.params.id)) || undefined
@@ -73,7 +75,7 @@ module.exports = (app, sequelize, express) => {
      * @apiSuccess {String[]} data.resourceIds Ensemble des visiteurs
      * 
      */
-    app.put("/visite/create", async (req, res) => {
+    app.put("/visite/create", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER]), async (req, res) => {
         const results = await sequelize.models.Visite.createVisite({
             visited_at: req.body.visited_at,
             time_start: req.body.time_start,

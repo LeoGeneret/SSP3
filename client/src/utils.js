@@ -12,6 +12,7 @@ function fetchJson(url, parameters = {}){
     method: parameters.method || "GET" ,
     headers: parameters.headers || {
       "Content-Type": "application/json",
+      "x-access-token": localStorage.getItem("access_token") || ""
     },
     body: parameters.body
   })

@@ -11,7 +11,7 @@ import ListHotels from './pages/ListHotels'
 
 import Planning from './pages/Planning'
 import EditPwd from './pages/EditPwd'
-import SecretPage from './shared/SecretPage'
+import SecretRoute from './shared/SecretRoute'
 
 function App () {
   return (
@@ -23,21 +23,21 @@ function App () {
             <Route path="/login">
               <Login />
             </Route>
-            <Route path="/EditPwd">
+            {/* <SecretRoute path="/EditPwd">
               <EditPwd />
-            </Route>
-            <Route path="/vehicles">
+            </SecretRoute> */}
+            {/* <SecretRoute path="/vehicles">
               <ListVehicles />
-            </Route>
-            <Route path="/planning">
-              <Planning />
-            </Route>
-            <Route path="/agents">
-              <ListAgent />
-            </Route>
-            <Route path="/" exact>
-              <ListHotels />
-            </Route>
+            </SecretRoute> */}
+            <SecretRoute path="/planning">
+                <Planning/>
+            </SecretRoute>
+            <SecretRoute path="/agents">
+                <ListAgent />
+            </SecretRoute>
+            <SecretRoute path="/" exact>
+                <ListHotels/>
+            </SecretRoute>
           </Switch>
         </div>
       </Router>

@@ -2,6 +2,7 @@
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const ApiUtils = require("../../api.utils")
+const params = require("../../api.params")
 
 module.exports = (sequelize, DataTypes) => {
 
@@ -23,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         },
 
         role: {
-            type: DataTypes.ENUM("visitor", "planner"),
+            type: DataTypes.ENUM(params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER),
             allowNull: false,
         }
 

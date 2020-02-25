@@ -1,3 +1,6 @@
+const params = require("../api.params")
+const utils = require("../api.utils")
+
 module.exports = (app, sequelize, express) => {
 
     /**
@@ -30,7 +33,7 @@ module.exports = (app, sequelize, express) => {
      * @apiSuccess {Number} pagination.page_count Nombre de page
      * 
      */
-    app.get("/visiteur", async (req, res) => {
+    app.get("/visiteur", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER]), async (req, res) => {
 
         // query
         const offset = (req.query.offset && Number(req.query.offset)) || undefined
@@ -55,7 +58,7 @@ module.exports = (app, sequelize, express) => {
      * @apiSuccess {string} data Vaut "deleted" si le visiteur a été supprimé
      * 
      */
-    app.delete("/visiteur/:id/delete", async (req, res) => {
+    app.delete("/visiteur/:id/delete", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER]), async (req, res) => {
         
         // params
         const visiteurId = (req.params.id && Number(req.params.id)) || undefined
@@ -78,7 +81,7 @@ module.exports = (app, sequelize, express) => {
      * @apiParam {Number} secteur_id Id du secteur de l'hotel
      * 
      */
-    app.put("/visiteur/create", async (req, res) => {
+    app.put("/visiteur/create", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER]), async (req, res) => {
 
         const results = await sequelize.models.Visiteur.createVisiteur({
             nom: req.body.nom,
@@ -102,7 +105,7 @@ module.exports = (app, sequelize, express) => {
      * @apiSuccess {String[]} data.resourceIds Ensemble des visiteurs
      * 
      */
-    app.patch("/visiteur/:id/update", async (req, res) => {
+    app.patch("/visiteur/:id/update", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER]), async (req, res) => {
 
         // params
         const visiteurId = (req.params.id && Number(req.params.id)) || undefined
