@@ -34,6 +34,51 @@ module.exports = (sequelize, DataTypes) => {
     })
 
 
+    // Retrieve short user information 
+
+    User.getUserInfo = async userId => {
+
+        let results = {
+            error: false,
+            status: 200,
+            data: null,
+        }
+
+        try {
+            
+            const user = await User.findByPk(userId, {
+                attributes: ["id", "role"],
+                include: [
+                    {
+                        association: "visiteur",
+                        attributes: ["nom"]
+                    }
+                ]
+            })
+
+            if(user){
+                results.data = {
+                    role: user.get("role"),
+                    nom: user.get("visiteur").get("nom"),
+                }
+            } else {
+                results.error = {
+                    message: "NOT FOUND - user not found"
+                }
+                results.status = 404
+            }
+            
+        } catch (GetUserInfo) {
+            console.log({GetUserInfo})
+            results.error = {
+                message: "BAD GETAWAY error on getting user info"
+            }
+            results.status = 502
+        }
+
+        return results
+    }
+
     User.findByEmail = async email => {
 
         let results = {

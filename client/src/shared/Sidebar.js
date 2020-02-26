@@ -1,10 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import PropTypes from 'prop-types'
 import utils from '../utils'
+import params from '../app.params'
 import { NavLink, withRouter } from 'react-router-dom'
 import moment from 'moment'
 
 function Sidebar (props) {
+
+  const [stateUsername, setStateUsername] = useState(null)
+  const [stateRole, setStateRole] = useState(null)
+
+  // ON MOUNT
+  useEffect(() => {
+    const payload = utils.getPayloadToken()
+
+    utils.fetchJson(`/user/${payload.id}/info`).then(res => {
+
+      if(res.error){
+        //
+        return
+      }
+
+      setStateUsername(res.data.nom)
+      setStateRole(params.WORDING.role[res.data.role])
+    })
+
+  }, [])
+
   const createPlanningAction = () => {
     
     const keepgoing = window.confirm("Etes vous sûr de vouloir générer un plannig pour cette semaine ?")
@@ -35,8 +57,8 @@ function Sidebar (props) {
           <div className="user">
             <div className="userImg"></div>
             <div className="userInfos">
-              <div className="userName">Mathilde Jackson</div>
-              <div className="userStatus">Administrateur</div>
+              <div className="userName">{stateUsername}</div>
+              <div className="userStatus">{stateRole}</div>
             </div>
           </div>
           {/* <div className="Btn myAccount">Mon Compte</div> */}

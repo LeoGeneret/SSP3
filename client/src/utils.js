@@ -1,5 +1,6 @@
 
 import jwtDecode from 'jwt-decode'
+import params from './app.params'
 
 /**
  * 
@@ -12,7 +13,7 @@ function fetchJson(url, parameters = {}){
     method: parameters.method || "GET" ,
     headers: parameters.headers || {
       "Content-Type": "application/json",
-      "x-access-token": localStorage.getItem("access_token") || ""
+      "x-access-token": localStorage.getItem(params.LOCAL_STORAGE_ACCESS_TOKEN) || ""
     },
     body: parameters.body
   })
@@ -41,6 +42,18 @@ function fetchForm(url, data = {}){
   })
 }
 
+function getPayloadToken(){
+  let tokenValue = localStorage.getItem(params.LOCAL_STORAGE_ACCESS_TOKEN)
+  if(tokenValue){
+    try {
+      let payload = jwtDecode(tokenValue)
+      return payload
+    } catch (error) {
+      console.error(error)
+      return null
+    }
+  }
+}
 
 function tokenIsExpired(token) {
 
@@ -58,7 +71,7 @@ function tokenIsExpired(token) {
 function checkToken(){
 
   return new Promise((resolve, reject) => {
-    let tokenValue = localStorage.getItem('access_token')
+    let tokenValue = localStorage.getItem(params.LOCAL_STORAGE_ACCESS_TOKEN)
       // if invalid or expired => reject
     if (!tokenValue || (tokenValue && tokenIsExpired(tokenValue))) {
       reject(false)
@@ -96,5 +109,6 @@ export default {
   fetchReadyData: fetchJson,
   fetchJson,
   fetchForm,
-  checkToken
+  checkToken,
+  getPayloadToken
 }
