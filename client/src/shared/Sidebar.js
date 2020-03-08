@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect, useContext} from "react";
 import PropTypes from 'prop-types'
 import utils from '../utils'
 import params from '../app.params'
@@ -14,16 +14,18 @@ function Sidebar (props) {
   useEffect(() => {
     const payload = utils.getPayloadToken()
 
-    utils.fetchJson(`/user/${payload.id}/info`).then(res => {
+    if(payload){
+      utils.fetchJson(`/user/${payload.id}/info`).then(res => {
 
-      if(res.error){
-        //
-        return
-      }
-
-      setStateUsername(res.data.nom)
-      setStateRole(params.WORDING.role[res.data.role])
-    })
+        if(res.error){
+          //
+          return
+        }
+  
+        setStateUsername(res.data.nom)
+        setStateRole(params.WORDING.role[res.data.role])
+      })
+    }
 
   }, [])
 

@@ -8,7 +8,7 @@ const params = require("../api.params")
  * HELPERS
  */
 const moment = require('moment')
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcryptjs")
 const faker = require('faker')
 faker.locale = "fr"
 

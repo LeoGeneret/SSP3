@@ -1,6 +1,4 @@
 import React from 'react'
-import './scss/App.scss'
-
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import Sidebar from './shared/Sidebar'
@@ -12,6 +10,8 @@ import ListHotels from './pages/ListHotels'
 import Planning from './pages/Planning'
 import EditPwd from './pages/EditPwd'
 import SecretRoute from './shared/SecretRoute'
+
+import './scss/App.scss'
 
 function App () {
   return (
