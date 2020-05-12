@@ -8,6 +8,14 @@ function ListAgent (props) {
   const [openModalDelete, setOpenModalDelete] = useState(false)
   const [agentClicked, setagentClicked] = useState({})
 
+  // search module
+  const [filterSecteurLabel, setFilterSecteurLabel] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
+  const handleChangeSearch = event => {
+    setSearchTerm(event.target.value)
+  }
+
+
   const [value, setValue] = useState({
     nom: '',
     adresse: '1 rue Deguerry',
@@ -49,6 +57,7 @@ function ListAgent (props) {
         }
       })
   }
+
 
   useEffect(() => {
     utils.fetchReadyData('/visiteur').then(requester => {
@@ -108,6 +117,13 @@ function ListAgent (props) {
     })
   }
 
+    // Search filter
+    const results = list.filter(item => {
+
+      const resultFilter = item.nom.toLowerCase().includes(searchTerm.toLowerCase())
+      return resultFilter
+    })
+
   const removeList = (e) => {
     setOpenModalDelete(!openModalDelete)
 
@@ -134,6 +150,15 @@ function ListAgent (props) {
       <h1>Liste des agents</h1>
       <div>
         <div className="nav-hotels row">
+        <div className="input-search">
+            <span className="icon-magnifying-glass"></span>
+            <input
+              value={searchTerm}
+              onChange={handleChangeSearch}
+              className="input-search"
+              placeholder="Rechercher un agent">
+            </input>
+          </div>
         </div>
 
         {/* CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE */}
@@ -262,7 +287,7 @@ function ListAgent (props) {
             </div>
           </div>
           <ul className="table-container">
-            {list.map((item, index) => (
+            {results.map((item, index) => (
               <li className="row" key={item.id}>
                 <p className="col-2">{item.nom}</p>
                 <p className="col-2">{item.secteur_id}</p>
