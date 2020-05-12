@@ -1,35 +1,37 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import utils from '../utils'
+import { useHistory } from "react-router-dom"
 
-function Login () {
+function Login() {
 
   /** STATES */
-  const [stateEmail, setStateEmail] = useState(null) 
-  const [statePassword, setStatePassword] = useState(null) 
+  const [stateEmail, setStateEmail] = useState(null)
+  const [statePassword, setStatePassword] = useState(null)
 
-
+  let history = useHistory();
   /** METHODS */
 
   const submitLogin = event => {
     event.preventDefault()
+    history.push('/planning')
 
-    if(!stateEmail || !statePassword){
+    if (!stateEmail || !statePassword) {
       // show you must enter email and password!
     } else {
       utils.fetchForm("/auth/signin", {
         "email": stateEmail,
         "password": statePassword
       }).then(response => {
-        if(response.error){
+        if (response.error) {
           // credentials or invalid
         } else {
           localStorage.setItem("access_token", response.data.token)
         }
       })
-      .catch(error => {
-        console.error(error)
-      })
+        .catch(error => {
+          console.error(error)
+        })
     }
   }
 
@@ -38,17 +40,17 @@ function Login () {
     <div className="row">
       <div className="d-flex col-4">
         <form className="form-login">
-          <input 
-            onChange={e => setStateEmail(e.target.value)} 
-            value={stateEmail} 
-            type="text" 
+          <input
+            onChange={e => setStateEmail(e.target.value)}
+            value={stateEmail}
+            type="text"
             placeholder="Nom d'utilisateur"
             required
           />
-          <input 
-            onChange={e => setStatePassword(e.target.value)} 
-            value={statePassword} 
-            type="password" 
+          <input
+            onChange={e => setStatePassword(e.target.value)}
+            value={statePassword}
+            type="password"
             placeholder="Mot de passe"
             required
           />
@@ -67,3 +69,4 @@ function Login () {
 }
 
 export default Login
+

@@ -13,12 +13,15 @@ import SecretRoute from './shared/SecretRoute'
 
 import './scss/App.scss'
 
-function App () {
+function App() {
+  let HideSidebar = window.location.pathname === '/login' ? null : <Sidebar />
+
+  let contentHidebar = window.location.pathname === '/login' ? 'content-login' : 'content'
   return (
     <div id="App">
       <Router>
-        <Sidebar />
-        <div className="content">
+        {HideSidebar}
+        <div className={contentHidebar}>
           <Switch>
             <Route path="/login">
               <Login />
@@ -30,13 +33,13 @@ function App () {
               <ListVehicles />
             </SecretRoute> */}
             <SecretRoute path="/planning">
-                <Planning/>
+              <Planning />
             </SecretRoute>
             <SecretRoute path="/agents">
-                <ListAgent />
+              <ListAgent />
             </SecretRoute>
             <SecretRoute path="/" exact>
-                <ListHotels/>
+              <ListHotels />
             </SecretRoute>
           </Switch>
         </div>
