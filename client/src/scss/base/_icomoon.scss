@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'Julaya';
-  src:  url('../../fonts/Julaya.eot?d0mvi6');
-  src:  url('../../fonts/Julaya.eot?d0mvi6#iefix') format('embedded-opentype'),
-    url('../../fonts/Julaya.ttf?d0mvi6') format('truetype'),
-    url('../../fonts/Julaya.woff?d0mvi6') format('woff'),
-    url('../../fonts/Julaya.svg?d0mvi6#Julaya') format('svg');
+  src:  url('../../fonts/Julaya.eot?p2if1d');
+  src:  url('../../fonts/Julaya.eot?p2if1d#iefix') format('embedded-opentype'),
+    url('../../fonts/Julaya.ttf?p2if1d') format('truetype'),
+    url('../../fonts/Julaya.woff?p2if1d') format('woff'),
+    url('../../fonts/Julaya.svg?p2if1d#Julaya') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,6 +25,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-power:before {
+  content: "\e903";
+  color: #f00;
+}
+.icon-life-buoy:before {
+  content: "\e90b";
+}
 .icon-shield:before {
   content: "\e900";
 }

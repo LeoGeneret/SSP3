@@ -39,8 +39,9 @@ function Sidebar (props) {
               <div className="userStatus">Administrateur</div>
             </div>
           </div>
-          {/* <div className="Btn myAccount">Mon Compte</div> */}
+          <div className="Btn myAccount">Mon Compte</div>
         </div>
+        <div onClick={createPlanningAction} className="btn-create shadow">Creer un planning</div>
         <nav>
           {/* <NavLink exact to="/">
             <div className="icon icon-dashboard"></div>
@@ -58,9 +59,20 @@ function Sidebar (props) {
             <div className="icon icon-hotel"></div>
             <p>Les hôtels</p>
           </NavLink>
+          <div className="separator"></div>
+          <NavLink to="/help" exact>
+            <div className="icon icon-support"></div>
+            <p>J'ai besoin d'aide</p>
+          </NavLink>
+          <NavLink to="/logout" exact>
+            <div className="icon icon-power"></div>
+            <p>Se déconnecter</p>
+          </NavLink>
         </nav>
+
+        
       </div>
-      <div onClick={createPlanningAction} className="btn-create shadow">Creer un planning</div>
+
       {/* <div className="btn-create bg-danger shadow">Se deconnecter</div> */}
     </div>
   )

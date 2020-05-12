@@ -59,8 +59,10 @@ services:
         networks: 
             - network_database
         command: npm run start-dev
-
+    
     app:
+        stdin_open: true
+        tty: true
         container_name: ssp3_app
         depends_on: 
             - api

@@ -9,6 +9,9 @@
     flex-direction: column;
     justify-content: space-between;
 
+    .btn-create {
+        margin-top: 20px;
+    }
 
     .profile {
         border-bottom: 1px solid rgba(0, 0, 0, 0.24);
@@ -52,9 +55,16 @@
         }
     }
 
+    .separator {
+        padding-top: 15px;
+        margin-bottom: 15px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.24);
+
+    }
+
+
     nav {
         padding: 15px 0;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.24);
 
         a {
             display: flex;
