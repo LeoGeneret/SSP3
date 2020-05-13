@@ -7,6 +7,8 @@ function ListAgent (props) {
   const [openModalCreate, setOpenModalCreate] = useState(false)
   const [openModalDelete, setOpenModalDelete] = useState(false)
   const [agentClicked, setagentClicked] = useState({})
+  const [secteurs, setSecteurs] = useState([])
+
 
   // search module
   const [filterSecteurLabel, setFilterSecteurLabel] = useState('')
@@ -68,7 +70,21 @@ function ListAgent (props) {
         setPagination(requester.data.pagination)
       }
     })
+
+        // secteurs
+    utils.fetchReadyData('/secteur').then(requester => {
+      if (requester.error) {
+        console.log(requester.error)
+      } else {
+        setSecteurs(requester.data)
+        console.log(requester)
+      }
+    })
   }, [])
+
+  const secteurMatch = () => {
+    return 'lol'
+  }
 
   const addTodo = name => {
     const newValue = [...list, name]
@@ -117,12 +133,13 @@ function ListAgent (props) {
     })
   }
 
-    // Search filter
-    const results = list.filter(item => {
-
-      const resultFilter = item.nom.toLowerCase().includes(searchTerm.toLowerCase())
-      return resultFilter
-    })
+  // Search filter
+  const results = list.filter(item => {
+    const itemSecteur = item.secteur_id
+    const filterSecteur = filterSecteurLabel && Number.parseInt(filterSecteurLabel)
+    const resultFilter = item.nom.toLowerCase().includes(searchTerm.toLowerCase()) && (filterSecteur ? itemSecteur === filterSecteur : true)
+    return resultFilter
+  })
 
   const removeList = (e) => {
     setOpenModalDelete(!openModalDelete)
@@ -158,6 +175,17 @@ function ListAgent (props) {
               className="input-search"
               placeholder="Rechercher un agent">
             </input>
+          </div>
+          <div className="select-search">
+            <select
+              onChange={e => setFilterSecteurLabel(e.target.value)}>
+              <option>Secteurs</option>
+              {secteurs.map((secteur) => {
+                return (
+                  <option key={secteur.id} value={secteur.id}>{secteur.label}</option>
+                )
+              })}
+            </select>
           </div>
         </div>
 
@@ -290,7 +318,7 @@ function ListAgent (props) {
             {results.map((item, index) => (
               <li className="row" key={item.id}>
                 <p className="col-2">{item.nom}</p>
-                <p className="col-2">{item.secteur_id}</p>
+                <p className="col-2">{secteurMatch()}</p>
                 <p className="col-4">{item.adresse}</p>
                 <p className="col-2">{item.ville}</p>
                 <div className="col-2 justify-center">

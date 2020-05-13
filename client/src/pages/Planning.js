@@ -5,6 +5,9 @@ import frLocale from '@fullcalendar/core/locales/fr'
 import resourceTimeline from '@fullcalendar/resource-timeline'
 import interactionPlugin from '@fullcalendar/interaction'
 import moment from 'moment'
+import ressourcesBinome from '../datas/ressourcesBinomes.json';
+import hotels from '../datas/hotels.json';
+import eventsDatas from '../datas/events.json';
 
 function getRandomColor () {
   var letters = '0123456789ABCDEF'
@@ -46,46 +49,62 @@ function Planning () {
     const calendarApi = teamPlanning.current.getApi()
     setTeamPlanningRef(calendarApi)
 
+
+    
     // GET Visiteur
-    utils
-      .fetchReadyData('/visiteur?no_limit=1&attributes=id,nom')
-      .then(requester => {
-        if (requester.error) {
-          console.log(requester.error)
-        } else {
-          setRessources(
-            requester.data.visiteurs.map(visiteur => {
-              return {
-                id: visiteur.id,
-                title: visiteur.nom
-              }
-            })
-          )
-        }
-      })
+    // utils
+    //   .fetchReadyData('/visiteur?no_limit=1&attributes=id,nom')
+    //   .then(requester => {
+    //     if (requester.error) {
+    //       console.log(requester.error)
+    //     } else {
+    //       setRessources(
+    //         requester.data.visiteurs.map(visiteur => {
+    //           return {
+    //             id: visiteur.id,
+    //             title: visiteur.nom
+    //           }
+    //         })
+    //       )
+    //     }
+    //   })
+
+    // * BINOMES EN STATIC
+    setRessources(ressourcesBinome)
+    
+    // * HOTELS EN STATIC 
+    setListHotel(hotels)
+
+    // * EVENT EN STATIC
+    setEvents(eventsDatas)
+    
+    
+
+
+
 
     // GET Events
-    utils
-      .fetchReadyData('/planning?date=' + moment().format('YYYY-MM-DD'))
-      .then(requester => {
-        if (requester.error) {
-          console.log(requester.error)
-        } else {
-          setEvents(requester.data.events.map(e => {
-            return { ...e, color: getRandomColor() }
-          }))
-        }
-      })
+    // utils
+    //   .fetchReadyData('/planning?date=' + moment().format('YYYY-MM-DD'))
+    //   .then(requester => {
+    //     if (requester.error) {
+    //       console.log(requester.error)
+    //     } else {
+    //       setEvents(requester.data.events.map(e => {
+    //         return { ...e, color: getRandomColor() }
+    //       }))
+    //     }
+    //   })
 
     // GET HOTELS
-    utils.fetchReadyData('/hotel').then(requester => {
-      if (requester.error) {
-        console.log(requester.error)
-      } else {
-        setListHotel(requester.data.list)
-        console.log(requester)
-      }
-    })
+    // utils.fetchReadyData('/hotel').then(requester => {
+    //   if (requester.error) {
+    //     console.log(requester.error)
+    //   } else {
+    //     setListHotel(requester.data.list)
+    //     console.log(requester)
+    //   }
+    // })
   }, [])
 
   const handleEventClickCreate = () => {
@@ -468,6 +487,7 @@ function Planning () {
           maxTime="21:00:00"
           schedulerLicenseKey="GPL-My-Project-Is-Open-Source"
           slotDuration="01:00:00"
+          resourcesInitiallyExpanded={false}
           // slotLabelFormat={[{
           //   weekday: 'long',
           //   day: 'numeric',
@@ -479,6 +499,7 @@ function Planning () {
           eventClick={handleEventClick}
           editable={true}
           droppable={true}
+          resourceGroupField='binome'
           header={{
             left: 'prev,next',
             center: 'title',
