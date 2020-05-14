@@ -1,5 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import utils from '../utils'
+import Snackbar from '@material-ui/core/Snackbar'
+import IconButton from '@material-ui/core/IconButton'
+import CloseIcon from '@material-ui/icons/Close'
+import { makeStyles } from '@material-ui/core/styles';
+import MuiAlert from '@material-ui/lab/Alert';
+
+
+const useStyles = makeStyles((theme) => ({
+  close: {
+    padding: theme.spacing(0.5),
+  },
+}));
 
 function ListAgent (props) {
   const [list, setList] = useState([])
@@ -112,13 +124,18 @@ function ListAgent (props) {
     setOpenModalDelete(!openModalDelete)
 
     utils
+
       .fetchReadyData(`/visiteur/${agentClicked.item.id}/delete`, {
         method: 'DELETE'
       })
+
       .then(res => {
         if (res.data) {
           const newValue = [...list]
           const removedItemIndex = newValue.findIndex(item => agentClicked.item.id === item.id)
+          console.log('TEST')
+          handleClick('Agent ' + agentClicked.item.nom +' supprimé avec succès')
+          console.log('TEST 2')
           newValue.splice(removedItemIndex, 1)
           setList(newValue)
         }
@@ -127,7 +144,58 @@ function ListAgent (props) {
           modalDelete: false
         })
       })
+
+
   }
+
+  // snackbar const
+  // const [open, setOpen] = React.useState(false);
+
+  // const handleClick = () => {
+  //   setOpen(true);
+  // };
+
+  // const handleClose = (event, reason) => {
+  //   if (reason === 'clickaway') {
+  //     return;
+  //   }
+
+  //   setOpen(false);
+  // };
+
+  // snackbar const
+  const [snackPack, setSnackPack] = React.useState([]);
+  const [open, setOpen] = React.useState(false);
+  const [messageInfo, setMessageInfo] = React.useState(undefined);
+
+  React.useEffect(() => {
+    if (snackPack.length && !messageInfo) {
+      // Set a new snack when we don't have an active one
+      setMessageInfo({ ...snackPack[0] });
+      setSnackPack((prev) => prev.slice(1));
+      setOpen(true);
+    } else if (snackPack.length && messageInfo && open) {
+      // Close an active snack when a new one is added
+      setOpen(false);
+    }
+  }, [snackPack, messageInfo, open]);
+
+  const handleClick = (message) => () => {
+    setSnackPack((prev) => [...prev, { message, key: new Date().getTime() }]);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
+  const handleExited = () => {
+    setMessageInfo(undefined);
+  };
+
+  const classes = useStyles();
 
   return (
     <div>
@@ -176,12 +244,14 @@ function ListAgent (props) {
                   placeholder="Secteur"
                   onChange={e => setValue({ ...value, secteur_id: e.target.value })}
                 ></input>
-                <button className="col-12 btn-edit bg-blue">AJOUTER</button>
+                <button className="col-12 btn-edit bg-blue" onClick={handleClick('Agent ' + value.nom +' ajouté avec succès')}>AJOUTER</button>
+                
                 <button onClick={() => setOpenModalCreate(!openModalCreate)} className="col-12 btn-edit bg-INFO">ANNULER</button>
               </form>
             </div>
           </div>
         )}
+
 
         {/* EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT EDIT */}
         {openModal && (
@@ -244,7 +314,7 @@ function ListAgent (props) {
                     })
                   }
                 ></input>
-                <button className="btn-edit bg-blue">METTRE A JOUR</button>
+                <button className="btn-edit bg-blue" onClick={handleClick('Agent ' + agentClicked.item.nom +' mis à jour avec succès')}>METTRE A JOUR</button>
               </form>
               <button onClick={() => setOpenModal(!openModal)} className="btn-edit btn-large">ANNULER</button>
             </div>
@@ -297,6 +367,33 @@ function ListAgent (props) {
           <button className="icon-arrow-left btn-prev"></button>
           <button className="icon-arrow-right btn-next"></button>
         </div> */}
+
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          open={open}
+          autoHideDuration={6000}
+          onClose={handleClose}
+          onExited={handleExited}
+          /*action={
+            <React.Fragment>
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                className={classes.close}
+                onClick={handleClose}
+              >
+                <CloseIcon />
+              </IconButton>
+            </React.Fragment>
+          }*/
+        >
+          <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity="success">
+            {messageInfo ? messageInfo.message : undefined}
+          </MuiAlert>
+        </Snackbar>
       </div>
     </div>
   )

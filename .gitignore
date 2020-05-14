@@ -31,3 +31,4 @@ override.tf.json
 
 .env
 variables.tf
+node_modules
