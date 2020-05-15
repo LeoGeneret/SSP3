@@ -13,7 +13,38 @@ import Planning from './pages/Planning'
 import EditPwd from './pages/EditPwd'
 
 import Snackbar from '@material-ui/core/Snackbar'
-import MuiAlert from '@material-ui/lab/Alert';
+
+import { makeStyles } from '@material-ui/core/styles';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import ErrorIcon from '@material-ui/icons/Error';
+
+const useStyles = makeStyles({
+  root: {
+    background: 'white',
+    borderRadius: 6,
+    border: 0,
+    color: 'black',
+    padding: '10px 20px',
+    boxShadow: '0px 2px 14px rgba(0, 0, 0, 0.1)',
+    display: 'flex',
+  },
+  iconCheck: {
+    color: '#87D37C',
+    marginRight: '20px',
+    fontSize: '40px'
+  },
+  iconError: {
+    color: '#EF3E36',
+    marginRight: '20px',
+    fontSize: '40px'
+  },
+  inconClose: {
+    position: 'absolute',
+    right: '10px',
+    top: '10px',
+  }
+});
 
 function App () {
 
@@ -41,6 +72,13 @@ function App () {
     })
   };
 
+  const classes = useStyles();
+
+  const snackStyle = ({
+    component : {display: 'flex', width: '373px', height: '57px', justifyContent: 'flex-start', alignItems: 'center'},
+    title : {marginBottom: '10px'}
+  });
+  
   return (
     <div id="App">
       <Router>
@@ -55,10 +93,49 @@ function App () {
             open={snackbar.open}
             autoHideDuration={2000}
             onClose={handleClose}
+            severity={snackbar.type}
+            message={snackbar.message}
+            classes={{
+              root: classes.root,
+            }}
+       
           >
-            <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity= {snackbar.type}>
-              {snackbar.message}
-            </MuiAlert>
+            {(() => {
+              if (snackbar.type=='success') {
+                return (
+                  <div style={snackStyle.component}>
+                    <CheckCircleIcon classes={{
+                      root: classes.iconCheck,
+                    }}/>
+                    <div>
+                      <h4 style={snackStyle.title}>Terminé !</h4>
+                      <p>{snackbar.message}</p>
+                    </div>
+                    <HighlightOffIcon onClick={handleClose} classes={{
+                      root: classes.inconClose,
+                    }}/>
+                    
+                  </div>
+                )
+              }
+              else {
+                return (
+                  <div style={snackStyle.component}>
+                    <ErrorIcon classes={{
+                      root: classes.iconError,
+                    }}/>
+                    <div>
+                      <p>{snackbar.message}</p>
+                    </div>
+                    <HighlightOffIcon onClick={handleClose} classes={{
+                      root: classes.inconClose,
+                    }}/>
+                    
+                  </div>
+                )
+              }
+            })()}
+
           </Snackbar>
 
           <Switch>
