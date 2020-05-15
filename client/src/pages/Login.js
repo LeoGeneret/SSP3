@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
 import utils from '../utils'
 import { useHistory } from "react-router-dom"
 
@@ -14,7 +13,6 @@ function Login() {
 
   const submitLogin = event => {
     event.preventDefault()
-    history.push('/planning')
 
     if (!stateEmail || !statePassword) {
       // show you must enter email and password!
@@ -27,6 +25,7 @@ function Login() {
           // credentials or invalid
         } else {
           localStorage.setItem("access_token", response.data.token)
+          history.push('/')
         }
       })
         .catch(error => {
@@ -54,7 +53,7 @@ function Login() {
             placeholder="Mot de passe"
             required
           />
-          <Link className="btn-pwd" to="/EditPwd">Mot de passe oublié ?</Link>
+          {/* <Link className="btn-pwd" to="/EditPwd">Mot de passe oublié ?</Link> */}
           <button onClick={submitLogin} className="btn-create" type="submit">Se connecter</button>
           <span className="d-none pwd-danger">Mot de passe / Email incorrect.</span>
         </form>

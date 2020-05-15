@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext} from "react";
-import PropTypes from 'prop-types'
+import React, { useState, useEffect} from "react";
 import utils from '../utils'
 import params from '../app.params'
 import { NavLink, withRouter } from 'react-router-dom'

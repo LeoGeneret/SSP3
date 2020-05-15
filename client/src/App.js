@@ -1,5 +1,6 @@
 import React from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import {useHistory} from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 
 import Sidebar from './shared/Sidebar'
 import ListAgent from './pages/ListAgent'
@@ -11,15 +12,21 @@ import Planning from './pages/Planning'
 import EditPwd from './pages/EditPwd'
 import SecretRoute from './shared/SecretRoute'
 
+
+
+
 import './scss/App.scss'
 
 function App() {
-  let HideSidebar = window.location.pathname === '/login' ? null : <Sidebar />
+  
+  // router
+  const history = useHistory()
 
-  let contentHidebar = window.location.pathname === '/login' ? 'content-login' : 'content'
+  let HideSidebar = history.location.pathname === '/login' ? null : <Sidebar />
+  let contentHidebar = history.location.pathname === '/login' ? 'content-login' : 'content'
+  
   return (
     <div id="App">
-      <Router>
         {HideSidebar}
         <div className={contentHidebar}>
           <Switch>
@@ -43,8 +50,6 @@ function App() {
             </SecretRoute>
           </Switch>
         </div>
-      </Router>
-
     </div>
   )
 }
