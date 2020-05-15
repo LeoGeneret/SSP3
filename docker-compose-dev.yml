@@ -61,8 +61,6 @@ services:
         command: npm run start-dev
     
     app:
-        stdin_open: true
-        tty: true
         container_name: ssp3_app
         depends_on: 
             - api
@@ -76,6 +74,7 @@ services:
             - /home/app/node_modules
         environment: 
             REACT_APP_API_ENDPOINT: http://localhost:3002
+            CI: "true"
         networks: 
             - network_database
         command: npm run start
