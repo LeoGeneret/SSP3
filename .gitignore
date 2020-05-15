@@ -31,4 +31,7 @@ override.tf.json
 
 .env
 variables.tf
-node_modules
+yarn.lock
+package-lock.json
+
+

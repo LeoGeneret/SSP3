@@ -13,26 +13,18 @@ import Planning from './pages/Planning'
 import EditPwd from './pages/EditPwd'
 
 import Snackbar from '@material-ui/core/Snackbar'
-import IconButton from '@material-ui/core/IconButton'
-import CloseIcon from '@material-ui/icons/Close'
-import { makeStyles } from '@material-ui/core/styles';
 import MuiAlert from '@material-ui/lab/Alert';
-
-const useStyles = makeStyles((theme) => ({
-  close: {
-    padding: theme.spacing(0.5),
-  },
-}));
 
 function App () {
 
-  // snackbar const
+  // snackbar default
   const [snackbar, setSnackbar] = React.useState({
     open: false,
     message: '',
     type: '',
   });
   
+  // Open the snackbar
   const openSnackBar = (message, type) => {
     setSnackbar({
       open: true,
@@ -41,23 +33,13 @@ function App () {
     })
   }
 
-
-  const handleClick = (message) => () => {
-    //setSnackPack((prev) => [...prev, { message, key: new Date().getTime() }]);
-  };
-
+  // Close the snackbar
   const handleClose = (event, reason) => {
     setSnackbar ({
       ...snackbar,
       open: false,
     })
   };
-
-  const handleExited = () => {
-  };
-
-  const classes = useStyles();
-
 
   return (
     <div id="App">
@@ -73,7 +55,6 @@ function App () {
             open={snackbar.open}
             autoHideDuration={2000}
             onClose={handleClose}
-            onExited={handleExited}
           >
             <MuiAlert elevation={6} variant="filled" onClose={handleClose} severity= {snackbar.type}>
               {snackbar.message}
