@@ -15,7 +15,7 @@ function getRandomColor () {
   return color
 }
 
-function Planning () {
+function Planning (props) {
   // REFS
   const teamPlanning = useRef(null)
   const [teamPlanningRef, setTeamPlanningRef] = useState(null)
@@ -447,7 +447,7 @@ function Planning () {
                 onChange={e => setDateEnd(e.target.value)}
                 value={dateEnd}
               />
-              <button className="btn-create" type="submit">
+              <button className="btn-create" type="submit" onClick={() => props.openSnackBar('Visite ajoutée avec succès', "success")}>
                 Ajouter
               </button>
               <button className="btn-edit" type="">

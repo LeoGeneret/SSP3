@@ -181,9 +181,13 @@ function ListHotels (props) {
         method: 'DELETE'
       })
       .then(res => {
-        if (res.data) {
+        if(res.error){
+          props.openSnackBar("Erreur de suppression", "error")
+        }
+        else if (res.data) {
           const newValue = [...list]
           const removedItemIndex = newValue.findIndex(item => hotelClicked.item.id === item.id)
+          props.openSnackBar('Hotel ' + hotelClicked.item.nom +' supprimé avec succès', "success")
           newValue.splice(removedItemIndex, 1)
           setList(newValue)
         }
@@ -285,7 +289,7 @@ function ListHotels (props) {
                     )
                   })}
                 </select>
-                <button className="btn-edit bg-blue">AJOUTER</button>
+                <button className="btn-edit bg-blue" onClick={() => props.openSnackBar('Hotel ' + value.nom +' ajouté avec succès', "success")}>AJOUTER</button>
                 <button onClick={() => setOpenModalCreate(!openModalCreate)} className="btn-edit">ANNULER</button>
               </form>
             </div>
@@ -362,7 +366,7 @@ function ListHotels (props) {
                   })}
                 </select>
 
-                <button className="btn-edit bg-blue">METTRE A JOUR</button>
+                <button className="btn-edit bg-blue" onClick={() => props.openSnackBar('Agent ' + hotelClicked.item.nom +' mis à jour avec succès', "success")}>METTRE A JOUR</button>
               </form>
               <button onClick={() => setOpenModal(!openModal)} className="btn-edit btn-large">ANNULER</button>
             </div>
