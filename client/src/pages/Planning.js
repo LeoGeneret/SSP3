@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import {useHistory} from 'react-router-dom'
 import utils from '../utils'
 import FullCalendar from '@fullcalendar/react'
 import frLocale from '@fullcalendar/core/locales/fr'
@@ -16,6 +17,10 @@ function getRandomColor () {
 }
 
 function Planning () {
+
+  // Others
+  const history = useHistory()
+  
   // REFS
   const teamPlanning = useRef(null)
   const [teamPlanningRef, setTeamPlanningRef] = useState(null)
@@ -89,7 +94,7 @@ function Planning () {
   }, [])
 
   const handleEventClickCreate = () => {
-    setopenPopInCreate(!openPopInCreate)
+    history.push("/visite/create")
   }
 
   const handleEventClick = info => {

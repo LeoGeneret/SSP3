@@ -1,7 +1,14 @@
+// Libs
 import React, { useEffect, useState } from 'react'
+import {useHistory} from 'react-router-dom'
+
+// Utils
 import utils from '../utils'
 
 function ListAgent (props) {
+
+  const history = useHistory()
+
   const [list, setList] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const [openModalCreate, setOpenModalCreate] = useState(false)
@@ -23,7 +30,7 @@ function ListAgent (props) {
   })
 
   const handleEventClickCreate = () => {
-    setOpenModalCreate(!openModalCreate)
+    history.push("/agents/create")
   }
 
   const handleSubmit = e => {
@@ -92,12 +99,7 @@ function ListAgent (props) {
   }
 
   const handleEditAgent = (item) => {
-    setOpenModal(!openModal)
-    console.log(item.id)
-    setagentClicked({
-      ...agentClicked,
-      item: item
-    })
+    history.push("/agents/" + item.id + "/edit")
   }
 
   const handleDeleteAgent = (item) => {
@@ -109,6 +111,7 @@ function ListAgent (props) {
   }
 
   const removeList = (e) => {
+
     setOpenModalDelete(!openModalDelete)
 
     utils
@@ -116,6 +119,7 @@ function ListAgent (props) {
         method: 'DELETE'
       })
       .then(res => {
+        
         if (res.data) {
           const newValue = [...list]
           const removedItemIndex = newValue.findIndex(item => agentClicked.item.id === item.id)
@@ -269,7 +273,7 @@ function ListAgent (props) {
                 <p className="col-4">{item.adresse}</p>
                 <p className="col-2">{item.ville}</p>
                 <div className="col-2 justify-center">
-                  <span className="btn icon-edit" onClick={() => handleEditAgent(item)}></span>
+                  <a className="btn icon-edit" href={"/agents/" + item.id + "/edit"}></a>
                   <span className="btn icon-delete" onClick={() => handleDeleteAgent(item)}></span>
                 </div>
               </li>

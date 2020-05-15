@@ -36,10 +36,21 @@ module.exports = (app, sequelize, express) => {
         const offset = (req.query.offset && Number(req.query.offset)) || undefined
         const limit = (req.query.limit && Number(req.query.limit)) || undefined
         // use a int boolean
-        const noLimit = (req.query.no_limit && Number(req.query.no_limit)) || undefined
         const attributes = req.query.attributes || undefined
 
-        const results = await sequelize.models.Visiteur.getAll(offset, limit, attributes, noLimit)
+        const results = await sequelize.models.Visiteur.getAll(attributes)
+        return res.status(results.status).json(results)
+    })
+
+    app.get("/visiteur/:id", async (req, res) => {
+
+        // query
+        const visiteurId = req.params.id
+
+        // use a int boolean
+        const attributes = req.query.attributes || undefined
+
+        const results = await sequelize.models.Visiteur.getOne(attributes, visiteurId)
         return res.status(results.status).json(results)
     })
 

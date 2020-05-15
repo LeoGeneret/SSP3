@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     })
 
 
-    Visiteur.getAll = async (offset = 0, limit = 5, attributes = undefined, noLimit = false) => {
+    Visiteur.getAll = async (attributes = undefined, visiteurId = null) => {
         
         let results = {
             error: false,
@@ -46,27 +46,17 @@ module.exports = (sequelize, DataTypes) => {
         let visiteurs = null
 
         try {
-            visiteurs = await Visiteur.findAll({
+            visiteurs = await Visiteur.findAll(Object.assign({
                 attributes: attributes,
-                offset: noLimit ? undefined : (offset * limit),
-                limit: noLimit ? undefined : (limit)
-            })
+            }, visiteurId && ({
+                where: {
+                    id: visiteurId
+                }
+            })))
 
             if(visiteurs){
 
-                let item_count = await Visiteur.count()
-
                 results.data = {}
-
-                // response is limited so we need pagination
-                if(!noLimit){
-                    results.data.pagination = {
-                        item_count: item_count,
-                        page_current: offset,
-                        page_count: Math.ceil(item_count / limit)
-                    }
-                }
-
                 results.data.visiteurs = visiteurs
             }
 
@@ -78,6 +68,19 @@ module.exports = (sequelize, DataTypes) => {
                 extra_message: attributes ? ("you specified attributes=" + attributes.toString()) : undefined
             }
             results.status = 502
+        }
+
+        return results
+    }
+
+    Visiteur.getOne = async (attributes = undefined, visiteurId = null) => {
+
+        let results = await Visiteur.getAll(attributes, visiteurId)
+
+        if(results.data.visiteurs && results.data.visiteurs.length){
+            results.data = results.data.visiteurs[0]
+        } else {
+            results.data = null
         }
 
         return results

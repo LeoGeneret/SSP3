@@ -60,7 +60,7 @@ function Sidebar (props) {
           </NavLink>
         </nav>
       </div>
-      <div onClick={createPlanningAction} className="btn-create shadow">Creer un planning</div>
+      <div onClick={createPlanningAction} className="btn-create shadow">Créer un planning</div>
       {/* <div className="btn-create bg-danger shadow">Se deconnecter</div> */}
     </div>
   )

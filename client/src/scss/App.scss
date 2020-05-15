@@ -18,7 +18,25 @@
 @import './components/modals';
 @import './components/calendar';
 
-.pop-in {}
+/* PAGES */
+@import './pages/page-form-ressource';
+@import './pages/page-list-hotel';
+
+
+/* SHARED */
+@import "./shared/shared-form-select.scss";
+
+*{
+  box-sizing: border-box;
+}
+
+body{
+  font-family: $font-primary;
+}
+
+button, a{
+  font: inherit;
+}
 
 .active {
   display: block;

@@ -1,0 +1,66 @@
+
+.page-ressource{
+    padding-top: 30px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    // Extends
+
+    &__heading{
+        @extend %form-body-spacing;
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+
+        &__icon{
+            width: 40px;
+            height: 40px;
+            background-color: $color-primary;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            margin-right: 10px;
+
+            .icon{
+                stroke: #fff;
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        &__title{
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    }
+
+    &__form{
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        height: 100%;
+
+        &__body{
+            @extend %form-body-spacing;
+            display: grid;
+            grid-template-columns: 300px;
+        }
+
+        &__footer{
+            display: flex;
+            border-top: 1px solid $color-dark-grey;
+            padding: 10px 0;
+            margin-top: auto;
+            padding-left: 48px;
+        }
+
+    }
+
+
+    /** GENERICS **/
+
+
+}
