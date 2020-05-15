@@ -5,7 +5,6 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import Sidebar from './shared/Sidebar'
 import ListAgent from './pages/ListAgent'
-import Login from './pages/Login'
 import ListVehicles from './pages/ListVehicles'
 import ListHotels from './pages/ListHotels'
 

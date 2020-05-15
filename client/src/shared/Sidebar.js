@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import PropTypes from 'prop-types'
+import React from "react";
 import utils from '../utils'
 import { NavLink, withRouter } from 'react-router-dom'
 import moment from 'moment'
