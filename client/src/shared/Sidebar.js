@@ -3,6 +3,11 @@ import utils from '../utils'
 import { NavLink, withRouter } from 'react-router-dom'
 import moment from 'moment'
 
+// Assets
+import IconCalendar from "../icons/IconCalendar"
+import IconPerson from "../icons/IconPerson"
+import IconHotel from "../icons/IconHotel"
+
 function Sidebar (props) {
   const createPlanningAction = () => {
     
@@ -28,7 +33,7 @@ function Sidebar (props) {
   }
 
   return (
-    <div id="Sidebar">
+    <div className="sidebar" id="Sidebar">
       <div>
         <div className="profile">
           <div className="user">
@@ -38,7 +43,6 @@ function Sidebar (props) {
               <div className="userStatus">Administrateur</div>
             </div>
           </div>
-          <div className="Btn myAccount">Mon Compte</div>
         </div>
         <div onClick={createPlanningAction} className="btn-create shadow">Creer un planning</div>
         <nav>
@@ -47,22 +51,18 @@ function Sidebar (props) {
             <p>Accueil</p>
           </NavLink> */}
           <NavLink to="/agents">
-            <div className="icon icon-agents"></div>
+            <IconPerson/>
             <p>Liste des agents</p>
           </NavLink>
           <NavLink to="/planning">
-            <div className="icon icon-planning"></div>
-            <p>Les plannings</p>
+            <IconCalendar/>
+            <p>Plannings</p>
           </NavLink>
           <NavLink to="/" exact>
-            <div className="icon icon-hotel"></div>
-            <p>Les hôtels</p>
+          <IconHotel/>
+            <p>Répertoires hôtels</p>
           </NavLink>
           <div className="separator"></div>
-          <NavLink to="/help" exact>
-            <div className="icon icon-support"></div>
-            <p>J'ai besoin d'aide</p>
-          </NavLink>
           <NavLink to="/logout" exact>
             <div className="icon icon-power"></div>
             <p>Se déconnecter</p>

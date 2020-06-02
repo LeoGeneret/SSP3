@@ -231,7 +231,7 @@ function Planning () {
   }
 
   return (
-    <div className="test">
+    <div className="test page-planning">
       {false && (
         <div className="formContainer" id="popin">
           <div className={`pop-in ${openPopIn ? 'active' : ''}`}>

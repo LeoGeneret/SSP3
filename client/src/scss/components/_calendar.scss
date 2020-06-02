@@ -31,8 +31,13 @@
     button {
       margin-left: 1px;
       padding: 3px;
-      background-color: $color-info;
+      background-color: $color-primary;
       border: none;
     }
+  }
+
+  .fc-button-primary{
+    background-color: $color-primary!important;
+    border: none;
   }
 }

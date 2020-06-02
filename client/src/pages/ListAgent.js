@@ -187,6 +187,7 @@ function ListAgent (props) {
               })}
             </select>
           </div>
+          <button onClick={handleEventClickCreate} className="btn-ressource-add">Ajouter un agent</button>
         </div>
 
         {/* CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE */}
@@ -338,10 +339,6 @@ function ListAgent (props) {
               </div>
             )}
           </ul>
-        </div>
-        <div onClick={handleEventClickCreate} className="btn-add-visit shadow">
-          <span></span>
-          <span></span>
         </div>
         {/* <div className="pagination">
           <span>

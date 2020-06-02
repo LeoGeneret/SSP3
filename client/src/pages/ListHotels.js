@@ -217,6 +217,7 @@ function ListHotels (props) {
               })}
             </select>
           </div>
+          <button onClick={handleEventClickCreate} className="btn-ressource-add">Ajouter un agent</button>
         </div>
         <br></br>
 
@@ -413,10 +414,6 @@ function ListHotels (props) {
               </div>
             )}
           </ul>
-        </div>
-        <div onClick={handleEventClickCreate} className="btn-add-visit shadow">
-          <span></span>
-          <span></span>
         </div>
         {/* <div className="pagination">
             <span>
