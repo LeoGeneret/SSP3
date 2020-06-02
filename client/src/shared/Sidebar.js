@@ -1,16 +1,49 @@
-import React, { useState } from "react";
-import PropTypes from 'prop-types'
-import utils from '../utils'
-import { NavLink, withRouter } from 'react-router-dom'
+import React, { useState, useEffect} from "react";
+import { NavLink, withRouter, useHistory } from 'react-router-dom'
 import moment from 'moment'
 
+// Utils
+import utils from '../utils'
+import params from '../app.params'
+
+// Assets
+import IconLogout from "../icons/IconLogout";
+
+
 function Sidebar (props) {
+
+  const [stateUsername, setStateUsername] = useState(null)
+  const [stateRole, setStateRole] = useState(null)
+
+  const history = useHistory()
+
+  // ON MOUNT
+  useEffect(() => {
+    const payload = utils.getPayloadToken()
+
+    if(payload){
+      utils.fetchJson(`/user/${payload.id}/info`).then(res => {
+
+        if(res.error){
+          //
+          return
+        }
+  
+        setStateUsername(res.data.nom)
+        setStateRole(params.WORDING.role[res.data.role])
+      })
+    }
+
+  }, [])
+
+  /** Methods */
+
   const createPlanningAction = () => {
     
     const keepgoing = window.confirm("Etes vous sûr de vouloir générer un plannig pour cette semaine ?")
     
     if(keepgoing === true){
-      utils.fetchReadyData("/planning/create?date=" + moment().format("YYYY-MM-DD"), {
+      utils.fetchJson("/planning/create?date=" + moment().format("YYYY-MM-DD"), {
         method: "PUT"
       }).then(res => {
       
@@ -28,19 +61,25 @@ function Sidebar (props) {
     }
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem(params.LOCAL_STORAGE_ACCESS_TOKEN)
+    history.push("/login")
+  }
+
   return (
-    <div id="Sidebar">
+    <div className="sidebar" id="Sidebar">
       <div>
         <div className="profile">
           <div className="user">
             <div className="userImg"></div>
             <div className="userInfos">
-              <div className="userName">Mathilde Jackson</div>
-              <div className="userStatus">Administrateur</div>
+              <div className="userName">{stateUsername}</div>
+              <div className="userStatus">{stateRole}</div>
             </div>
           </div>
           {/* <div className="Btn myAccount">Mon Compte</div> */}
         </div>
+        <div onClick={createPlanningAction} className="btn-create shadow sidebar__create-planning">Creer un planning</div>
         <nav>
           {/* <NavLink exact to="/">
             <div className="icon icon-dashboard"></div>
@@ -60,8 +99,9 @@ function Sidebar (props) {
           </NavLink>
         </nav>
       </div>
-      <div onClick={createPlanningAction} className="btn-create shadow">Creer un planning</div>
-      {/* <div className="btn-create bg-danger shadow">Se deconnecter</div> */}
+      <button onClick={handleLogout} className="sidebar__logout">
+        Se déconnecter
+      </button>
     </div>
   )
 }

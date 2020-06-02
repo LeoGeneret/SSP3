@@ -1,4 +1,6 @@
 const apiAlgo = require("../Algo/Algo")
+const utils = require("../api.utils")
+const params = require("../api.params")
 
 module.exports = (app, sequelize, express) => {
 
@@ -27,7 +29,7 @@ module.exports = (app, sequelize, express) => {
      * 
      */
 
-    app.get("/hotel", async (req, res) => {
+    app.get("/hotel", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER]), async (req, res) => {
         const results = await apiAlgo.getHotelFormated()
         return res.status(results.status).json(results)
     })  
@@ -45,7 +47,7 @@ module.exports = (app, sequelize, express) => {
      * 
      */
 
-    app.delete("/hotel/:id/delete", async (req, res) => {
+    app.delete("/hotel/:id/delete", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER]), async (req, res) => {
         
         const hotelId = (req.params.id && Number(req.params.id)) || undefined
         const results = await sequelize.models.Hotel.deleteHotel(hotelId)
@@ -66,7 +68,7 @@ module.exports = (app, sequelize, express) => {
      * @apiParam {Number} secteur_id Id du secteur de l'hotel
      * 
      */
-    app.put("/hotel/create", async (req, res) => {
+    app.put("/hotel/create", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER]), async (req, res) => {
         const results = await sequelize.models.Hotel.createHotel({
             nom: req.body.nom,
             adresse: req.body.adresse,
@@ -92,7 +94,7 @@ module.exports = (app, sequelize, express) => {
      * @apiParam {Number} secteur_id Id du secteur de l'hotel
      * 
      */
-    app.patch("/hotel/:id/update", async (req, res) => {
+    app.patch("/hotel/:id/update", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER]), async (req, res) => {
 
         // params
         const hotelId = (req.params.id && Number(req.params.id)) || undefined

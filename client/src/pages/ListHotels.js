@@ -38,7 +38,7 @@ function ListHotels (props) {
     setOpenModalCreate(!openModalCreate)
 
     utils
-      .fetchReadyData('/hotel/create', {
+      .fetchJson('/hotel/create', {
         method: 'PUT',
         body: JSON.stringify({
           nom: value.nom,
@@ -48,7 +48,6 @@ function ListHotels (props) {
           nombre_chambre: value.nombre_chambre,
           secteur_id: value.secteur_id
         }),
-        headers: { 'Content-Type': 'application/json' }
       })
       .then(res => {
         if (res.error) {
@@ -69,12 +68,11 @@ function ListHotels (props) {
 
   const togglePriority = (item) => () => {
     utils
-      .fetchReadyData(`/hotel/${item.id}/update`, {
+      .fetchJson(`/hotel/${item.id}/update`, {
         method: 'PATCH',
         body: JSON.stringify({
           priority: !item.priority
         }),
-        headers: { 'Content-Type': 'application/json' }
       })
       .then(res => {
         console.log(res)
@@ -95,7 +93,7 @@ function ListHotels (props) {
     setOpenModal(!openModal)
     e.preventDefault()
     utils
-      .fetchReadyData(`/hotel/${hotelClicked.item.id}/update`, {
+      .fetchJson(`/hotel/${hotelClicked.item.id}/update`, {
         method: 'PATCH',
         body: JSON.stringify({
           nom: hotelClicked.item.nom,
@@ -106,7 +104,6 @@ function ListHotels (props) {
           priority: hotelClicked.item.priority,
           secteur_id: Number.parseInt(hotelClicked.item.secteur_id)
         }),
-        headers: { 'Content-Type': 'application/json' }
       })
       .then(res => {
         console.log(res)
@@ -120,7 +117,7 @@ function ListHotels (props) {
   }
 
   useEffect(() => {
-    utils.fetchReadyData('/hotel').then(requester => {
+    utils.fetchJson('/hotel').then(requester => {
       if (requester.error) {
         console.log(requester.error)
       } else {
@@ -131,7 +128,7 @@ function ListHotels (props) {
     })
 
     // secteurs
-    utils.fetchReadyData('/secteur').then(requester => {
+    utils.fetchJson('/secteur').then(requester => {
       if (requester.error) {
         console.log(requester.error)
       } else {
@@ -177,7 +174,7 @@ function ListHotels (props) {
   const removeList = (e) => {
     setOpenModalDelete(!openModalDelete)
     utils
-      .fetchReadyData(`/hotel/${hotelClicked.item.id}/delete`, {
+      .fetchJson(`/hotel/${hotelClicked.item.id}/delete`, {
         method: 'DELETE'
       })
       .then(res => {

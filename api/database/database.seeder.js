@@ -2,12 +2,13 @@
 require("dotenv").config()
 
 const sequelize = require("./database.index")
+const params = require("../api.params")
 
 /**
  * HELPERS
  */
 const moment = require('moment')
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcryptjs")
 const faker = require('faker')
 faker.locale = "fr"
 
@@ -89,7 +90,7 @@ const generate = async () => {
             email: faker.internet.email(),
             // must use async in production
             password: bcrypt.hashSync("1234", 10),
-            role: "visitor"
+            role: params.USER_ROLE_VISITOR
         }
     }))
 
@@ -97,7 +98,7 @@ const generate = async () => {
     const userPlanner = await User.create({
         email: "planner@spp3.email",
         password: bcrypt.hashSync("0000", 10),
-        role: "planner"
+        role: params.USER_ROLE_PLANNER
     })
 
     console.log("#######")

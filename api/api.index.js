@@ -26,7 +26,7 @@ app.use(express.json())
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*")
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE")
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+    res.header("Access-Control-Allow-Headers", "Content-Type, x-access-token, Origin, X-Requested-With, Accept, Authorization")
     next()
 })
 
@@ -42,6 +42,7 @@ const routesPlanning = require("./routes/api.routes.planning")(app, sequelize, e
 const routesSecteur = require("./routes/api.routes.secteur")(app, sequelize, express)
 const routesVisit = require("./routes/api.routes.visit")(app, sequelize, express)
 const routesVisiteur = require("./routes/api.routes.visiteur")(app, sequelize, express)
+const routesUser = require("./routes/api.routes.user")(app, sequelize, express)
 // const routesVoiture = require("./routes/api.routes.voiture")(app, sequelize, express) - Unused for the moment
 
 app.use("/apidoc", express.static("apidoc"))

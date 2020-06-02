@@ -1,49 +1,53 @@
 import React from 'react'
-import './scss/App.scss'
-
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import {useHistory} from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 
 import Sidebar from './shared/Sidebar'
 import ListAgent from './pages/ListAgent'
 import Login from './pages/Login'
-import ListVehicles from './pages/ListVehicles'
 import ListHotels from './pages/ListHotels'
 
 import Planning from './pages/Planning'
-import EditPwd from './pages/EditPwd'
+import SecretRoute from './shared/SecretRoute'
 
-function App () {
+
+
+
+import './scss/App.scss'
+
+function App() {
+  
+  // router
+  const history = useHistory()
+
+  let HideSidebar = history.location.pathname === '/login' ? null : <Sidebar />
+  let contentHidebar = history.location.pathname === '/login' ? 'content-login' : 'content'
+  
   return (
     <div id="App">
-      <Router>
-        <Sidebar />
-        <div className="content">
+        {HideSidebar}
+        <div className={contentHidebar}>
           <Switch>
-            {/* <Route path="/login">
+            <Route path="/login">
               <Login />
-            </Route> */}
-            <Route path="/EditPwd">
+            </Route>
+            {/* <SecretRoute path="/EditPwd">
               <EditPwd />
-            </Route>
-            {/* <Route path="/hotels">
-              <ListHotels />
-            </Route> */}
-            <Route path="/vehicles">
+            </SecretRoute> */}
+            {/* <SecretRoute path="/vehicles">
               <ListVehicles />
-            </Route>
-            <Route path="/planning">
+            </SecretRoute> */}
+            <SecretRoute path="/planning">
               <Planning />
-            </Route>
-            <Route path="/agents">
+            </SecretRoute>
+            <SecretRoute path="/agents">
               <ListAgent />
-            </Route>
-            <Route path="/" exact>
+            </SecretRoute>
+            <SecretRoute path="/" exact>
               <ListHotels />
-            </Route>
+            </SecretRoute>
           </Switch>
         </div>
-      </Router>
-
     </div>
   )
 }

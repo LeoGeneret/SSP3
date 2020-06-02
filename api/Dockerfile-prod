@@ -1,9 +1,6 @@
-FROM node:12.15.0-slim
+FROM node:12.15.0-alpine
 WORKDIR /home/api
 COPY package.json .
-RUN apt update
-RUN apt-get install musl-dev --yes
-RUN ln -s /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
 RUN npm install
 COPY . . 
 CMD ["npm", "run", "start-prod"]
