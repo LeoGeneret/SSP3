@@ -7,6 +7,7 @@ function Login() {
   /** STATES */
   const [stateEmail, setStateEmail] = useState(null)
   const [statePassword, setStatePassword] = useState(null)
+  const [errorForm, setErrorForm] = useState(false)
 
   let history = useHistory();
   /** METHODS */
@@ -23,6 +24,7 @@ function Login() {
       }).then(response => {
         if (response.error) {
           // credentials or invalid
+          setErrorForm(true)
         } else {
           localStorage.setItem("access_token", response.data.token)
           history.push('/')
@@ -36,23 +38,30 @@ function Login() {
 
 
   return (
-    <div className="row">
+    <div className="row page-login">
       <div className="d-flex col-4">
         <form className="form-login">
-          <input
-            onChange={e => setStateEmail(e.target.value)}
-            value={stateEmail}
-            type="text"
-            placeholder="Nom d'utilisateur"
-            required
-          />
-          <input
-            onChange={e => setStatePassword(e.target.value)}
-            value={statePassword}
-            type="password"
-            placeholder="Mot de passe"
-            required
-          />
+          <div>
+            <input
+              onChange={e => setStateEmail(e.target.value)}
+              value={stateEmail}
+              type="text"
+              placeholder="Nom d'utilisateur"
+              required
+            />
+            {errorForm && <div className="input-helper">Identifiant incorrect</div>}
+          </div>
+          <div>
+            <input
+              onChange={e => setStatePassword(e.target.value)}
+              value={statePassword}
+              type="password"
+              placeholder="Mot de passe"
+              required
+            />
+            {errorForm && <div className="input-helper">Mot de passe incorrect</div>}
+          </div>
+          
           {/* <Link className="btn-pwd" to="/EditPwd">Mot de passe oublié ?</Link> */}
           <button onClick={submitLogin} className="btn-create" type="submit">Se connecter</button>
           <span className="d-none pwd-danger">Mot de passe / Email incorrect.</span>

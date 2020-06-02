@@ -1,13 +1,21 @@
 import React, { useState, useEffect} from "react";
+import { NavLink, withRouter, useHistory } from 'react-router-dom'
+import moment from 'moment'
+
+// Utils
 import utils from '../utils'
 import params from '../app.params'
-import { NavLink, withRouter } from 'react-router-dom'
-import moment from 'moment'
+
+// Assets
+import IconLogout from "../icons/IconLogout";
+
 
 function Sidebar (props) {
 
   const [stateUsername, setStateUsername] = useState(null)
   const [stateRole, setStateRole] = useState(null)
+
+  const history = useHistory()
 
   // ON MOUNT
   useEffect(() => {
@@ -27,6 +35,8 @@ function Sidebar (props) {
     }
 
   }, [])
+
+  /** Methods */
 
   const createPlanningAction = () => {
     
@@ -51,8 +61,13 @@ function Sidebar (props) {
     }
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem(params.LOCAL_STORAGE_ACCESS_TOKEN)
+    history.push("/login")
+  }
+
   return (
-    <div id="Sidebar">
+    <div className="sidebar" id="Sidebar">
       <div>
         <div className="profile">
           <div className="user">
@@ -64,6 +79,7 @@ function Sidebar (props) {
           </div>
           {/* <div className="Btn myAccount">Mon Compte</div> */}
         </div>
+        <div onClick={createPlanningAction} className="btn-create shadow sidebar__create-planning">Creer un planning</div>
         <nav>
           {/* <NavLink exact to="/">
             <div className="icon icon-dashboard"></div>
@@ -83,8 +99,9 @@ function Sidebar (props) {
           </NavLink>
         </nav>
       </div>
-      <div onClick={createPlanningAction} className="btn-create shadow">Creer un planning</div>
-      {/* <div className="btn-create bg-danger shadow">Se deconnecter</div> */}
+      <button onClick={handleLogout} className="sidebar__logout">
+        Se déconnecter
+      </button>
     </div>
   )
 }

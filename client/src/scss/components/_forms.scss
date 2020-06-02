@@ -48,33 +48,6 @@ select {
   }
 }
 
-.form-login {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  width: 70%;
-  height: 300px;
-
-  input {
-    width: 100%;
-
-    border: none;
-    border-bottom: solid 2px $color-grey;
-
-    line-height: 2rem;
-    font-family: $font-primary;
-    font-size: 16px;
-
-    background-color: inherit;
-
-    &:focus {
-      outline: none;
-      border-color: $color-dark-grey;
-    }
-  }
-}
-
 .form-edit-pwd {
   height: 450px;
 }
@@ -102,7 +75,7 @@ select {
 
   border: none;
   border-radius: 5px;
-  background-color: $color-info;
+  background-color: $color-primary;
 
   font-family: $font-primary;
   font-size: 13px;
