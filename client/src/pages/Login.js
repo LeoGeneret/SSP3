@@ -35,6 +35,7 @@ function Login() {
         })
     }
   }
+  
 
 
   return (
@@ -69,7 +70,7 @@ function Login() {
       </div>
       <div className="col-8">
         <div className="d-flex bg-blue">
-          <img className="logo" src="./img/logo.png" />
+          <img className="logo" src="./img/logo.png" alt="logo" />
         </div>
       </div>
     </div>
