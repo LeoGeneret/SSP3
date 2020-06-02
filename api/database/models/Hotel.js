@@ -104,8 +104,6 @@ module.exports = (sequelize, DataTypes) => {
         try {
 
             let queryParameters = {
-                offset: offset * limit,
-                limit: limit,
                 ...Format.regularHotelAttributes,
 
                 // add search parameters if search is defined
@@ -146,6 +144,28 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         return results
+    }
+
+    Hotel.getOne = async (id) => {
+
+        let results = {
+            error: false,
+            status: 200,
+            data: null
+        }
+
+        let hotel = await Hotel.findByPk(id)
+
+        if(!hotel){
+            results.error = {
+                message: "no hotel found"
+            }
+        } else {
+            results.data = hotel
+        }
+
+        return results
+
     }
 
     Hotel.deleteHotel = async (hotelId = null) => {

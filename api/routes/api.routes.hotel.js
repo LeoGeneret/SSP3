@@ -34,6 +34,20 @@ module.exports = (app, sequelize, express) => {
         return res.status(results.status).json(results)
     })  
 
+    app.get("/hotel/all", async (req, res) => {
+        const results = await sequelize.models.Hotel.getAll()
+        return res.status(results.status).json(results)
+    })  
+
+    app.get("/hotel/:id", async (req, res) => {
+
+        // params
+        const hotelId = req.params.id   
+
+        const results = await sequelize.models.Hotel.getOne(hotelId)
+        return res.status(results.status).json(results)
+    })  
+
     /**
      * @api {delete} /hotel/:id/delete
      * @apiName deleteHotel
@@ -108,6 +122,9 @@ module.exports = (app, sequelize, express) => {
             secteur_id: req.body.secteur_id,
             priority: req.body.priority,
         })
+
+console.log({finn : results})
+
         return res.status(results.status).json(results)
     })
 

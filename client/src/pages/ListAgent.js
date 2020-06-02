@@ -1,7 +1,16 @@
+// Libs
 import React, { useEffect, useState } from 'react'
+import {useHistory} from 'react-router-dom'
+
+// Utils
 import utils from '../utils'
+import IconSearch from '../icons/icon-search'
+import FormSelect from '../shared/FormSelect'
 
 function ListAgent (props) {
+
+  const history = useHistory()
+
   const [list, setList] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const [openModalCreate, setOpenModalCreate] = useState(false)
@@ -33,7 +42,7 @@ function ListAgent (props) {
   })
 
   const handleEventClickCreate = () => {
-    setOpenModalCreate(!openModalCreate)
+    history.push("/agents/create")
   }
 
   const handleSubmit = e => {
@@ -117,12 +126,7 @@ function ListAgent (props) {
   }
 
   const handleEditAgent = (item) => {
-    setOpenModal(!openModal)
-    console.log(item.id)
-    setagentClicked({
-      ...agentClicked,
-      item: item
-    })
+    history.push("/agents/" + item.id + "/edit")
   }
 
   const handleDeleteAgent = (item) => {
@@ -142,6 +146,7 @@ function ListAgent (props) {
   })
 
   const removeList = (e) => {
+
     setOpenModalDelete(!openModalDelete)
 
     utils
@@ -149,6 +154,7 @@ function ListAgent (props) {
         method: 'DELETE'
       })
       .then(res => {
+        
         if (res.data) {
           const newValue = [...list]
           const removedItemIndex = newValue.findIndex(item => agentClicked.item.id === item.id)
@@ -167,25 +173,22 @@ function ListAgent (props) {
       <h1>Liste des agents</h1>
       <div>
         <div className="nav-hotels row">
-        <div className="input-search">
-            <span className="icon-magnifying-glass"></span>
+          <div className="input-search">
+            <IconSearch/>
             <input
               value={searchTerm}
               onChange={handleChangeSearch}
-              className="input-search"
+              className="input-search-input"
               placeholder="Rechercher un agent">
             </input>
           </div>
-          <div className="select-search">
-            <select
-              onChange={e => setFilterSecteurLabel(e.target.value)}>
-              <option>Secteurs</option>
-              {secteurs.map((secteur) => {
-                return (
-                  <option key={secteur.id} value={secteur.id}>{secteur.label}</option>
-                )
-              })}
-            </select>
+          <div className="filter-secteur">
+            <FormSelect 
+              placeholder={"Secteur de travail"}
+              items={utils.formatSelectSecteur(secteurs)}
+              selected={filterSecteurLabel}
+              handleChange={e => setFilterSecteurLabel(e.target.value)}
+            />
           </div>
           <button onClick={handleEventClickCreate} className="btn-ressource-add">Ajouter un agent</button>
         </div>
@@ -323,7 +326,7 @@ function ListAgent (props) {
                 <p className="col-4">{item.adresse}</p>
                 <p className="col-2">{item.ville}</p>
                 <div className="col-2 justify-center">
-                  <span className="btn icon-edit" onClick={() => handleEditAgent(item)}></span>
+                  <a className="btn icon-edit" href={"/agents/" + item.id + "/edit"}></a>
                   <span className="btn icon-delete" onClick={() => handleDeleteAgent(item)}></span>
                 </div>
               </li>

@@ -84,34 +84,15 @@ function checkToken(){
   })
 }
 
-// function handleErrors(res) {
-
-//   if (!res.ok) {
-//     throw res.json();
-//   } else {
-//     try {
-//       let response = res.json();
-//       return response;
-//     } catch (e) {
-//       console.log(e);
-//     }
-//   }
-// }
-
-// function catchErrors(err) {
-//   try {
-//     let response = err.json();
-//     if (response && response.error) console.log(response.error);
-//     throw err;
-//   } catch (e) {
-//     throw err;
-//   }
-// }
-
 export default {
   fetchReadyData: fetchJson,
   fetchJson,
   fetchForm,
   checkToken,
-  getPayloadToken
+  getPayloadToken,
+  formatSelectSecteur: secteurs => secteurs.map(s => ({
+    id: s.id,
+    label: s.label,
+    value: s.id,
+  }))
 }

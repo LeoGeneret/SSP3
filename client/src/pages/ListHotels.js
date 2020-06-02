@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import {useHistory} from 'react-router-dom'
+
 import utils from '../utils'
 import moment from 'moment'
+import FormSelect from '../shared/FormSelect'
+import IconSearch from '../icons/icon-search'
 
 function ListHotels (props) {
+
+  const history = useHistory()
+
   const [list, setList] = useState([])
   const [openModal, setOpenModal] = useState(false)
   const [openModalCreate, setOpenModalCreate] = useState(false)
@@ -86,7 +93,7 @@ function ListHotels (props) {
   }
 
   const handleEventClickCreate = () => {
-    setOpenModalCreate(!openModalCreate)
+    history.push("/hotels/create")
   }
 
   const handleSubmitEdit = (e) => {
@@ -139,7 +146,7 @@ function ListHotels (props) {
   }, [])
 
   // Search filter
-  const results = list.filter(item => {
+  const filteredHotels = list.filter(item => {
     const itemSecteur = item.secteur.id
     const filterSecteur = filterSecteurLabel && Number.parseInt(filterSecteurLabel)
     const resultFilter = item.nom.toLowerCase().includes(searchTerm.toLowerCase()) && (filterSecteur ? itemSecteur === filterSecteur : true)
@@ -153,11 +160,7 @@ function ListHotels (props) {
   }
 
   const handleEditHotel = (item) => {
-    setOpenModal(!openModal)
-    sethotelClicked({
-      ...hotelClicked,
-      item: item
-    })
+    history.push("/hotels/" + item.id + "/edit")
   }
 
   const handleDeleteHotel = (item) => {
@@ -189,30 +192,27 @@ function ListHotels (props) {
       })
   }
   return (
-    <div>
+    <div className="page-list-hotel">
       <h1>Liste des hôtels</h1>
       <br></br>
       <div>
         <div className="row">
           <div className="input-search">
-            <span className="icon-magnifying-glass"></span>
+            <IconSearch/>
             <input
               value={searchTerm}
               onChange={handleChangeSearch}
-              className="input-search"
+              className="input-search-input"
               placeholder="Rechercher un hôtel">
             </input>
           </div>
-          <div className="select-search">
-            <select
-              onChange={e => setFilterSecteurLabel(e.target.value)}>
-              <option>Secteurs</option>
-              {secteurs.map((secteur) => {
-                return (
-                  <option key={secteur.id} value={secteur.id}>{secteur.label}</option>
-                )
-              })}
-            </select>
+          <div className="filter-secteur">
+            <FormSelect 
+              placeholder={"Secteur de travail"}
+              items={utils.formatSelectSecteur(secteurs)}
+              selected={filterSecteurLabel}
+              handleChange={e => setFilterSecteurLabel(e.target.value)}
+            />
           </div>
           <button onClick={handleEventClickCreate} className="btn-ressource-add">Ajouter un agent</button>
         </div>
@@ -377,7 +377,7 @@ function ListHotels (props) {
             </div>
           </div>
           <ul className="table-container">
-            {results.map((item, index) => {
+            {filteredHotels.map((item, index) => {
               return (
                 <li className="row" key={item.id}>
                   <p className="col-4">{item.nom}</p>
