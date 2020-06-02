@@ -59,7 +59,7 @@ services:
         networks: 
             - network_database
         command: npm run start-dev
-
+    
     app:
         container_name: ssp3_app
         depends_on: 

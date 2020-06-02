@@ -144,9 +144,7 @@ function ListHotels (props) {
     const filterSecteur = filterSecteurLabel && Number.parseInt(filterSecteurLabel)
     const resultFilter = item.nom.toLowerCase().includes(searchTerm.toLowerCase()) && (filterSecteur ? itemSecteur === filterSecteur : true)
     return resultFilter
-  }
-
-  )
+  })
 
   // Add to list
   const addTodo = name => {
@@ -216,6 +214,7 @@ function ListHotels (props) {
               })}
             </select>
           </div>
+          <button onClick={handleEventClickCreate} className="btn-ressource-add">Ajouter un agent</button>
         </div>
         <br></br>
 
@@ -370,7 +369,7 @@ function ListHotels (props) {
           <div className="table-header">
             <div className="row">
               <div className="col-4">Nom de l'hebergement</div> {/* eslint-disable-line*/}
-              <div className="col-2">Code postal</div>
+              <div className="col-2">Secteur</div>
               <div className="col-2">Dernière note</div>
               <div className="col-2">Dernière visite</div>
               <div className="col-2">Actions</div>
@@ -382,7 +381,7 @@ function ListHotels (props) {
               return (
                 <li className="row" key={item.id}>
                   <p className="col-4">{item.nom}</p>
-                  <p className="col-2">{item.code_postal}</p>
+                  <p className="col-2">{item.secteur.label}</p>
                   <div className="col-2">
                     <p className={`${item.last_note <= 30 ? 'badnote' : item.last_note <= 40 ? 'moyennote' : item.last_note == null ? 'item.notnote' : 'goodnote'}`}>
                       {item.last_note == null ? 'Aucune note' : item.last_note}</p>
@@ -412,10 +411,6 @@ function ListHotels (props) {
               </div>
             )}
           </ul>
-        </div>
-        <div onClick={handleEventClickCreate} className="btn-add-visit shadow">
-          <span></span>
-          <span></span>
         </div>
         {/* <div className="pagination">
             <span>

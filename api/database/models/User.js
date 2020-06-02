@@ -57,6 +57,11 @@ module.exports = (sequelize, DataTypes) => {
             })
 
             if(user){
+
+                console.log({
+                    user: user.toJSON()
+                })
+
                 results.data = {
                     role: user.get("role"),
                     nom: user.get("visiteur").get("nom"),

@@ -7,8 +7,9 @@ import utils from '../utils'
 import params from '../app.params'
 
 // Assets
-import IconLogout from "../icons/IconLogout";
-
+import IconCalendar from "../icons/IconCalendar"
+import IconPerson from "../icons/IconPerson"
+import IconHotel from "../icons/IconHotel"
 
 function Sidebar (props) {
 
@@ -24,10 +25,14 @@ function Sidebar (props) {
     if(payload){
       utils.fetchJson(`/user/${payload.id}/info`).then(res => {
 
+        console.log({res: res})
+
+        
         if(res.error){
           //
           return
         }
+
   
         setStateUsername(res.data.nom)
         setStateRole(params.WORDING.role[res.data.role])
@@ -77,27 +82,25 @@ function Sidebar (props) {
               <div className="userStatus">{stateRole}</div>
             </div>
           </div>
-          {/* <div className="Btn myAccount">Mon Compte</div> */}
         </div>
         <div onClick={createPlanningAction} className="btn-create shadow sidebar__create-planning">Creer un planning</div>
         <nav>
-          {/* <NavLink exact to="/">
-            <div className="icon icon-dashboard"></div>
-            <p>Accueil</p>
-          </NavLink> */}
           <NavLink to="/agents">
-            <div className="icon icon-agents"></div>
+            <IconPerson/>
             <p>Liste des agents</p>
           </NavLink>
           <NavLink to="/planning">
-            <div className="icon icon-planning"></div>
-            <p>Les plannings</p>
+            <IconCalendar/>
+            <p>Plannings</p>
           </NavLink>
           <NavLink to="/" exact>
-            <div className="icon icon-hotel"></div>
-            <p>Les hôtels</p>
+          <IconHotel/>
+            <p>Répertoires hôtels</p>
           </NavLink>
+          <div className="separator"></div>
         </nav>
+
+        
       </div>
       <button onClick={handleLogout} className="sidebar__logout">
         Se déconnecter

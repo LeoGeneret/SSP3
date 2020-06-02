@@ -1,0 +1,10 @@
+[
+  { "id": "a", "binome": "Binome 1", "title": "Maelle" },
+  { "id": "b", "binome": "Binome 1", "title": "Baptiste" },
+  { "id": "c", "binome": "Binome 2", "title": "Clément" },
+  { "id": "d", "binome": "Binome 2", "title": "Anne" },
+  { "id": "e", "binome": "Binome 3", "title": "Christophe" },
+  { "id": "f", "binome": "Binome 3", "title": "Roger" },
+  { "id": "g", "binome": "Binome 4", "title": "Manuel" },
+  { "id": "h", "binome": "Binome 4", "title": "Sophie" }
+]

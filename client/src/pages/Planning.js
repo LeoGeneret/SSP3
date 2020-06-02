@@ -5,6 +5,9 @@ import frLocale from '@fullcalendar/core/locales/fr'
 import resourceTimeline from '@fullcalendar/resource-timeline'
 import interactionPlugin from '@fullcalendar/interaction'
 import moment from 'moment'
+import ressourcesBinome from '../datas/ressourcesBinomes.json';
+import hotels from '../datas/hotels.json';
+import eventsDatas from '../datas/events.json';
 
 function getRandomColor () {
   var letters = '0123456789ABCDEF'
@@ -46,6 +49,8 @@ function Planning () {
     const calendarApi = teamPlanning.current.getApi()
     setTeamPlanningRef(calendarApi)
 
+
+    
     // GET Visiteur
     utils
       .fetchJson('/visiteur?no_limit=1&attributes=id,nom')
@@ -209,7 +214,7 @@ function Planning () {
   }
 
   return (
-    <div className="test">
+    <div className="test page-planning">
       {false && (
         <div className="formContainer" id="popin">
           <div className={`pop-in ${openPopIn ? 'active' : ''}`}>
@@ -465,6 +470,7 @@ function Planning () {
           maxTime="21:00:00"
           schedulerLicenseKey="GPL-My-Project-Is-Open-Source"
           slotDuration="01:00:00"
+          resourcesInitiallyExpanded={false}
           // slotLabelFormat={[{
           //   weekday: 'long',
           //   day: 'numeric',
@@ -476,6 +482,7 @@ function Planning () {
           eventClick={handleEventClick}
           editable={true}
           droppable={true}
+          resourceGroupField='binome'
           header={{
             left: 'prev,next',
             center: 'title',
