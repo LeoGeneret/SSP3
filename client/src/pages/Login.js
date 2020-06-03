@@ -5,8 +5,8 @@ import { useHistory } from "react-router-dom"
 function Login() {
 
   /** STATES */
-  const [stateEmail, setStateEmail] = useState(null)
-  const [statePassword, setStatePassword] = useState(null)
+  const [stateEmail, setStateEmail] = useState("")
+  const [statePassword, setStatePassword] = useState("")
   const [errorForm, setErrorForm] = useState(false)
 
   let history = useHistory();

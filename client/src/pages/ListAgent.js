@@ -169,7 +169,7 @@ function ListAgent (props) {
   }
 
   return (
-    <div>
+    <div className="page-agents">
       <h1>Liste des agents</h1>
       <div>
         <div className="nav-hotels row">

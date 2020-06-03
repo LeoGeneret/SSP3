@@ -1,6 +1,6 @@
 // Libs
 import React from 'react'
-import { BrowserRouter as Router, useHistory, Switch, Route } from 'react-router-dom'
+import { useHistory, Switch, Route } from 'react-router-dom'
 
 // Shared
 import Sidebar from './shared/Sidebar'
@@ -26,50 +26,49 @@ function App() {
 
   let HideSidebar = history.location.pathname === '/login' ? null : <Sidebar />
   let contentHidebar = history.location.pathname === '/login' ? 'content-login' : 'content'
+
+  console.log("up")
   
   return (
     <div id="App">
-        <Router>
-          <Sidebar />
-          {HideSidebar}
-          <div className={contentHidebar}>
-            <Switch>
-              {/* <Route path="/login">
-                <Login />
-              </Route> */}
-              <Route path="/EditPwd">
-                <EditPwd />
-              </Route>
-              <Route path="/planning">
-                <Planning />
-              </Route>
-              {/* Formulaire ressources */}
-              <Route path="/agents/create">
-                <PageFormAgent />
-              </Route>
-              <Route path="/agents/:id/edit">
-                <PageFormAgent editMode={true}/>
-              </Route>
+        {HideSidebar}
+        <div className={contentHidebar}>
+          <Switch>
+            <Route path="/login">
+              <Login />
+            </Route>
+            <Route path="/EditPwd">
+              <EditPwd />
+            </Route>
+            <Route path="/planning">
+              <Planning />
+            </Route>
+            {/* Formulaire ressources */}
+            <Route path="/agents/create">
+              <PageFormAgent />
+            </Route>
+            <Route path="/agents/:id/edit">
+              <PageFormAgent editMode={true}/>
+            </Route>
 
-              <Route path="/hotels/create">
-                <PageFormHotel />
-              </Route>
-              <Route path="/hotels/:id/edit">
-                <PageFormHotel editMode={true}/>
-              </Route>
+            <Route path="/hotels/create">
+              <PageFormHotel />
+            </Route>
+            <Route path="/hotels/:id/edit">
+              <PageFormHotel editMode={true}/>
+            </Route>
 
-              <Route path="/visite/create">
-                <PageFormVisite />
-              </Route>
-              <Route exact path="/agents">
-                <ListAgent />
-              </Route>
-              <Route path="/" exact>
-                <ListHotels />
-              </Route>
-            </Switch>
-          </div>
-        </Router>
+            <Route path="/visite/create">
+              <PageFormVisite />
+            </Route>
+            <Route exact path="/agents">
+              <ListAgent />
+            </Route>
+            <Route path="/" exact>
+              <ListHotels />
+            </Route>
+          </Switch>
+        </div>
     </div>
   )
 }
