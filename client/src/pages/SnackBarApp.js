@@ -33,31 +33,7 @@ const useStyles = makeStyles({
   }
 });
 
-function SnackbarApp () {
-
-  // snackbar default
-  const [snackbar, setSnackbar] = React.useState({
-    open: false,
-    message: '',
-    type: '',
-  });
-  
-  // Open the snackbar
-  const openSnackBar = (message, type) => {
-    setSnackbar({
-      open: true,
-      message,
-      type,
-    })
-  }
-
-  // Close the snackbar
-  const handleClose = (event, reason) => {
-    setSnackbar ({
-      ...snackbar,
-      open: false,
-    })
-  };
+function SnackbarApp (props) {
 
   const classes = useStyles();
 
@@ -72,18 +48,18 @@ function SnackbarApp () {
         vertical: 'bottom',
         horizontal: 'center',
         }}
-        open={snackbar.open}
+        open={props.open}
         autoHideDuration={2000}
-        onClose={handleClose}
-        severity={snackbar.type}
-        message={snackbar.message}
+        onClose={props.handleClose}
+        severity={props.type}
+        message={props.message}
         classes={{
         root: classes.root,
         }}
 
     >
         {(() => {
-        if (snackbar.type=='success') {
+        if (props.type=='success') {
             return (
             <div style={snackStyle.component}>
                 <CheckCircleIcon classes={{
@@ -91,7 +67,7 @@ function SnackbarApp () {
                 }}/>
                 <div>
                 <h4 style={snackStyle.title}>Terminé !</h4>
-                <p>{snackbar.message}</p>
+                <p>{props.message}</p>
                 </div>
                 <HighlightOffIcon onClick={handleClose} classes={{
                 root: classes.inconClose,
@@ -107,7 +83,7 @@ function SnackbarApp () {
                 root: classes.iconError,
                 }}/>
                 <div>
-                <p>{snackbar.message}</p>
+                <p>{props.message}</p>
                 </div>
                 <HighlightOffIcon onClick={handleClose} classes={{
                 root: classes.inconClose,
