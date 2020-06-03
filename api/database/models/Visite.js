@@ -53,7 +53,7 @@ module.exports = (sequelize, DataTypes) => {
     // Fetchers
 
 
-    Visite.getPlanning = async date => {
+    Visite.getPlanning = async (week, day, userId) => {
 
         const DATE_VALID_FORMAT = "YYYY-MM-DD"
         const DATE_VALID_FORMAT_REGEX = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/
@@ -64,28 +64,55 @@ module.exports = (sequelize, DataTypes) => {
             data: null
         }
 
-        if(date !== null){
+        if(week !== null || day !== null){
+           
+            let momentWeekDate = week && moment(week, DATE_VALID_FORMAT)
+            let momentDayDate = day && moment(day, DATE_VALID_FORMAT)
 
-            let momentDate = moment(date, DATE_VALID_FORMAT)
+            console.log("test moment : ", day)
 
             // if match format date and is a correct date (i.e !30 fevrier, !2000-35-01)
-            if(DATE_VALID_FORMAT_REGEX.test(date) && momentDate.isValid()){
+            if((day && DATE_VALID_FORMAT_REGEX.test(day) && momentDayDate.isValid()) || (week && DATE_VALID_FORMAT_REGEX.test(week) && momentWeekDate.isValid())){
 
                 let visites = null
+                let where = {}
         
+                if (week){
+                    where = {
+                        visited_at: {
+                            [Op.between]: [
+                                // OPTI - from dimanche to samedi ???
+                                momentWeekDate.clone().weekday(1),
+                                momentWeekDate.clone().weekday(7),
+                            ]
+                        }
+                    }
+                }
+                else {
+                    where = {
+                        visited_at: {[Op.between]: [
+                            // OPTI - from dimanche to samedi ???
+                            momentDayDate.clone().hour(0),
+                            momentDayDate.clone().hour(23),
+                        ]}
+                    }
+                }
+
+                if (userId) {
+                    where = {
+                        ...where,
+                        [Op.or] : [
+                            {visiteur_id_1: userId},
+                            {visiteur_id_2: userId}
+                        ]
+                    }
+                }
+
                 try {
         
                     visites = await Visite.findAll({
                         ...Format.regularVisiteAttributes,
-                        where: {
-                            visited_at: {
-                                [Op.between]: [
-                                    // OPTI - from dimanche to samedi ???
-                                    momentDate.clone().weekday(1),
-                                    momentDate.clone().weekday(7),
-                                ]
-                            }
-                        }
+                        where: where
                     })
         
                     results.data = {

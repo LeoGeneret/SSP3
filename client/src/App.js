@@ -34,9 +34,9 @@ function App() {
           {HideSidebar}
           <div className={contentHidebar}>
             <Switch>
-              {/* <Route path="/login">
+              <Route path="/login">
                 <Login />
-              </Route> */}
+              </Route>
               <Route path="/EditPwd">
                 <EditPwd />
               </Route>
