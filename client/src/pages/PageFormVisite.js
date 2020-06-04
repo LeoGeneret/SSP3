@@ -20,12 +20,12 @@ function PageFormHotel(props){
 
     // States
     const [stateFormData, setStateFormData] = useState({
-        visited_at: null,
-        time_start: null,
-        time_end: null,
-        hotel_id: null,
-        visiteur_id_1: null,
-        visiteur_id_2: null,
+        visited_at: "",
+        time_start: "",
+        time_end: "",
+        hotel_id: "",
+        visiteur_id_1: "",
+        visiteur_id_2: "",
     })
     const [secteurOptions, setSecteurOptions] = React.useState([])
     const [hotelOptions, setHotelOptions] = React.useState([])

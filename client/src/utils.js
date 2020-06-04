@@ -9,11 +9,14 @@ import params from './app.params'
  */
 function fetchJson(url, parameters = {}){
 
+  parameters.headers = parameters.headers || {}
+
   return fetch(process.env.REACT_APP_API_ENDPOINT + url, {
     method: parameters.method || "GET" ,
-    headers: parameters.headers || {
+    headers: {
       "Content-Type": "application/json",
-      "x-access-token": localStorage.getItem(params.LOCAL_STORAGE_ACCESS_TOKEN) || ""
+      "x-access-token": localStorage.getItem(params.LOCAL_STORAGE_ACCESS_TOKEN) || "",
+      ...parameters.headers,
     },
     body: parameters.body
   })

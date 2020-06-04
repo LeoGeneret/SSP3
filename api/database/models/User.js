@@ -64,7 +64,7 @@ module.exports = (sequelize, DataTypes) => {
 
                 results.data = {
                     role: user.get("role"),
-                    nom: user.get("visiteur").get("nom"),
+                    nom: user.get("visiteur") && user.get("visiteur").get("nom"),
                 }
             } else {
                 results.error = {

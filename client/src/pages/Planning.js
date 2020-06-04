@@ -57,33 +57,23 @@ function Planning () {
 
     
     // GET Visiteur
-    utils
-      .fetchJson('/visiteur?no_limit=1&attributes=id,nom')
-      .then(requester => {
-        if (requester.error) {
-          console.log(requester.error)
-        } else {
-          setRessources(
-            requester.data.visiteurs.map(visiteur => {
-              return {
-                id: visiteur.id,
-                title: visiteur.nom
-              }
-            })
-          )
-        }
-      })
 
     // GET Events
     utils
       .fetchJson('/planning?date=' + moment().format('YYYY-MM-DD'))
-      .then(requester => {
-        if (requester.error) {
-          console.log(requester.error)
+      .then(res => {
+        if (res.error) {
+          console.log(res.error)
         } else {
-          setEvents(requester.data.events.map(e => {
-            return { ...e, color: getRandomColor() }
-          }))
+        
+          /** Build binomes */
+          let agents = res.data.visites.map(v => v.agents)
+          let binomes = getBinomesRessources(agents)
+          setRessources(binomes)
+
+          /** Build visites */
+          setEvents(getVisitesEvents(res.data.visites, binomes))
+
         }
       })
 
@@ -93,11 +83,70 @@ function Planning () {
         console.log(requester.error)
       } else {
         setListHotel(requester.data.list)
-        console.log(requester)
       }
     })
   }, [])
 
+  /** Helpers */
+
+  const getVisitesEvents = (visites, binomes) => {
+
+    let binomesIds = binomes.map(b => b.agents.map(a => a.id))
+
+    let events = visites.map(v => {
+
+      let visitesAgentsIds = v.agents.map(a => a.id)
+      let indexOfMatchedBinome = binomesIds.findIndex(binomesIdsItem => visitesAgentsIds.every(visitesAgentsIdsItem => binomesIdsItem.includes(visitesAgentsIdsItem)))
+      let matchedBinome = indexOfMatchedBinome !== -1 ? binomes[indexOfMatchedBinome] : null
+
+      return {
+        id: v.id_string,
+        id_int: v.id,
+        title: v.hotel.nom,
+        start: v.start,
+        end: v.end,
+        associated_binome_int: matchedBinome.id_int,
+        resourceIds: matchedBinome ? [matchedBinome.id] : [],
+      }
+    })
+
+
+    events = events.map(e => {
+
+      let colorPos = (e.associated_binome_int / binomes.length) * 255
+      let color = `hsl(${colorPos}, 60%, 50%)`
+
+      return {
+        ...e,
+        backgroundColor: color,
+        borderColor: color,
+      }
+    })
+
+
+    return events
+  }
+
+  const getBinomesRessources = agents => {
+
+    let binomes = {}
+
+    for(let i = 0; i < agents.length; i++){
+      let key = agents[i][0].id + "-" + agents[i][1].id
+      binomes[key] = agents[i]
+    }
+    
+    binomes = Object.values(binomes).map((b, index) => ({
+      id: index + "", // need to be string,
+      id_int: index,
+      title: b[0].nom + "\n" + b[1].nom,
+      agents: b,
+    }))
+
+    return binomes
+  }
+
+  /** Events */
   const handleEventClickCreate = () => {
     history.push("/visite/create")
   }
@@ -110,7 +159,7 @@ function Planning () {
       agent1: info.event._def.resourceIds[0],
       agent2: info.event._def.resourceIds[1],
       dateStart: info.event.start,
-      dateEnd: info.event.end
+      dateEnd: info.event.end,
     })
     setOpenPopIn(!openPopIn)
   }
@@ -278,9 +327,9 @@ function Planning () {
                 }
                 value={editedEvent.dateEnd}
               /> */}
-              {/* <button className="btn-create" type="submit">
+              <button className="btn-create" type="submit">
                 Modifier
-              </button> */}
+              </button>
             </form>
 
             <button className="btn-create bg-danger" onClick={handleRemove}>
@@ -290,130 +339,6 @@ function Planning () {
         </div>
       )}
       <h1>Les plannings</h1>
-      {/* <div className="container-filter card">
-        <h3>Filter par</h3>
-        <div className="row"> */}
-      {/* <div className="col-4">
-            <span>Catégories :</span>
-            <div className="row f-wrap">
-              <input
-                className="input-filter"
-                type="checkbox"
-                id="all"
-                name="all"
-              ></input>
-              <label className="btn-filter" for="all">
-                Tous
-              </label>
-
-              <input
-                className="input-filter"
-                type="checkbox"
-                id="urgence"
-                name="urgence"
-              ></input>
-              <label className="btn-filter" for="urgence">
-                Urgence
-              </label>
-
-              <input
-                className="input-filter"
-                type="checkbox"
-                id="duration"
-                name="duration"
-              ></input>
-              <label className="btn-filter" for="duration">
-                Longue durée
-              </label>
-
-              <input
-                className="input-filter"
-                type="checkbox"
-                id="relance"
-                name="relance"
-              ></input>
-              <label className="btn-filter" for="relance">
-                relance
-              </label>
-
-              <input
-                className="input-filter"
-                type="checkbox"
-                id="suspent"
-                name="suspent"
-              ></input>
-              <label className="btn-filter" for="suspent">
-                En suspent
-              </label>
-
-              <input
-                className="input-filter"
-                type="checkbox"
-                id="Anomalies"
-                name="Anomalies"
-              ></input>
-              <label className="btn-filter" for="Anomalies">
-                Anomalies
-              </label>
-            </div>
-          </div> */}
-      {/* <div className="col-4">
-            <span>Secteur :</span>
-            <div className="row f-wrap">
-              <input
-                className="input-filter"
-                type="checkbox"
-                id="secteurs"
-                name="secteurs"
-              ></input>
-              <label className="btn-filter" htmlFor="secteurs">
-                Tous
-              </label>
-
-              <input
-                className="input-filter"
-                type="checkbox"
-                id="paris"
-                name="paris"
-              ></input>
-              <label className="btn-filter" htmlFor="paris">
-                paris
-              </label>
-
-              <input
-                className="input-filter"
-                type="checkbox"
-                id="92"
-                name="92"
-              ></input>
-              <label className="btn-filter" htmlFor="92">
-                92
-              </label>
-
-              <input
-                className="input-filter"
-                type="checkbox"
-                id="77-91"
-                name="77-91"
-              ></input>
-              <label className="btn-filter" htmlFor="77-91">
-                77-91
-              </label>
-
-              <input
-                className="input-filter"
-                type="checkbox"
-                id="93"
-                name="93"
-              ></input>
-              <label className="btn-filter" htmlFor="93">
-                93
-              </label>
-            </div>
-          </div> */}
-      {/* <div className="col-4"></div>
-        </div>
-      </div> */}
       {openPopInCreate && (
         <div className="modal-container">
           <div className="modal-content">
@@ -475,19 +400,10 @@ function Planning () {
           maxTime="21:00:00"
           schedulerLicenseKey="GPL-My-Project-Is-Open-Source"
           slotDuration="01:00:00"
-          resourcesInitiallyExpanded={false}
-          // slotLabelFormat={[{
-          //   weekday: 'long',
-          //   day: 'numeric',
-          //   month: 'short'
-          // },
-          // {
-          //   hour: 'numeric'
-          // }]}
           eventClick={handleEventClick}
           editable={true}
           droppable={true}
-          resourceGroupField='binome'
+          // resourceGroupField='binome'
           header={{
             left: 'prev,next',
             center: 'title',

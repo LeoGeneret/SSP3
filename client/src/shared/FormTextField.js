@@ -16,7 +16,10 @@ function FormTextField(props){
 
 FormTextField.propTypes = {
     type: Proptypes.string,
-    value: Proptypes.string,
+    value: Proptypes.oneOfType([
+        Proptypes.string,
+        Proptypes.number
+    ]),
     handleChange: Proptypes.func,
     placeholder: Proptypes.string,
 } 

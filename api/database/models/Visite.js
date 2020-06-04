@@ -4,23 +4,29 @@ const moment = require("moment")
 const Format = {
 
     regularVisiteAttributes: {
-        attributes: ["id", "hotel_id", "time_start", "time_end", "visiteur_id_1", "visiteur_id_2"],
+        attributes: ["id", "time_start", "time_end", "visiteur_id_1", "visiteur_id_2"],
         include: [
             {
                 association: "hotel",
-            }
+            },
+            {
+                association: "visiteur_1"
+            },
+            {
+                association: "visiteur_2"
+            },
         ]
     },
     regularVisiteFormat: visiteItem => ({
-        id: visiteItem.get("id").toString(),
+        id: visiteItem.get("id"),
+        id_string: visiteItem.get("id").toString(),
         start: moment(visiteItem.get("time_start")).format("YYYY-MM-DDTHH:mm:ssZ"),
         end: moment(visiteItem.get("time_end")).format("YYYY-MM-DDTHH:mm:ssZ"),
-        title: visiteItem.get("hotel").get("nom"),
-        // URGENT - erreur ici
-        resourceIds: [
-            visiteItem.get("visiteur_id_1") && visiteItem.get("visiteur_id_1").toString(),
-            visiteItem.get("visiteur_id_2") && visiteItem.get("visiteur_id_2").toString(),
-        ],
+        hotel: visiteItem.get("hotel"),
+        agents: [
+            visiteItem.get("visiteur_1"),
+            visiteItem.get("visiteur_2"),
+        ]
     })
 }
 
@@ -87,9 +93,9 @@ module.exports = (sequelize, DataTypes) => {
                             }
                         }
                     })
-        
+
                     results.data = {
-                        events: visites.map(visitesIitem => ({
+                        visites: visites.map(visitesIitem => ({
                             ...Format.regularVisiteFormat(visitesIitem),
                             hotel_id: visitesIitem.get("hotel_id")
                         }))

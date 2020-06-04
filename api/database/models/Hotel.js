@@ -30,6 +30,9 @@ const Format = {
     },
 
     regularHotel: hotelsItem => {
+
+        console.log({AAA: hotelsItem})
+
         return {
             id: hotelsItem.get("id"),
             nom: hotelsItem.get("nom"),

@@ -48,8 +48,11 @@ Voiture.hasMany(Visite, { as: "voiture_visites", foreignKey: "voiture_id" }) // 
 Visite.belongsTo(Voiture, { as: "voiture", foreignKey: "voiture_id" })
 
 // // Visite <-> Visiteur 1 et 2
-Visiteur.hasMany(Visite, {as: "visiteurs_1", foreignKey: "visiteur_id_1"})
-Visiteur.hasMany(Visite, {as: "visiteurs_2", foreignKey: "visiteur_id_2"})
+Visiteur.hasMany(Visite, {as: "visites_1", foreignKey: "visiteur_id_1"})
+Visite.belongsTo(Visiteur, {as: "visiteur_1", foreignKey: "visiteur_id_1"})
+
+Visiteur.hasMany(Visite, {as: "visites_2", foreignKey: "visiteur_id_2"})
+Visite.belongsTo(Visiteur, {as: "visiteur_2", foreignKey: "visiteur_id_2"})
 
 // // Visite <-> Rapport
 Rapport.hasOne(Visite, { as: "rapport_visites", foreignKey: "rapport_id" })

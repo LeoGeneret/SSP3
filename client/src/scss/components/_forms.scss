@@ -292,42 +292,6 @@ select {
   border: none;
 }
 
-.btn-add-visit {
-  position: fixed;
-  top: 80%;
-  right: 30px;
-  width: 50px;
-  height: 50px;
-  background-color: $color-primary;
-  border-radius: 50%;
-  z-index: 100;
-
-  &:hover {
-    background-color: $bluelink;
-    cursor: pointer;
-  }
-
-
-  span {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 16px;
-    height: 2px;
-
-    transform: translate(-50%, -50%);
-
-    background-color: $color-white;
-  }
-
-
-  span:nth-child(2) {
-    transform: rotate(-90deg);
-    top: 24px;
-    left: 17px;
-  }
-}
-
 .btn-large {
   width: 100%;
 }

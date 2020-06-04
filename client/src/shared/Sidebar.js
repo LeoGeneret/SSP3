@@ -25,14 +25,9 @@ function Sidebar (props) {
     if(payload){
       utils.fetchJson(`/user/${payload.id}/info`).then(res => {
 
-        console.log({res: res})
-
-        
         if(res.error){
-          //
           return
         }
-
   
         setStateUsername(res.data.nom)
         setStateRole(params.WORDING.role[res.data.role])

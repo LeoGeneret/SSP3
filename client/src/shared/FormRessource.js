@@ -114,7 +114,7 @@ export default function FormRessource(props){
                             else if(type === "range-time"){
 
                                 return (
-                                    <div className="form__row">
+                                    <div key={form_name + i} className="form__row">
                                         <div className="form__label">{label}</div>
                                         <div className="form__row-multiple-cols">
                                             <FormTimePicker
@@ -192,9 +192,15 @@ FormRessource.propTypes = {
 
         inputType: Proptypes.oneOf(INPUT_TYPE),
         label: Proptypes.string.isRequired,
-        placeholder: Proptypes.string.isRequired,
+        placeholder: Proptypes.oneOfType([
+            Proptypes.string,
+            Proptypes.array,
+        ]).isRequired,
 
-        form_name: Proptypes.string.isRequired,
+        placeholder: Proptypes.oneOfType([
+            Proptypes.string,
+            Proptypes.array,
+        ]).isRequired,
         form_value: Proptypes.any,
 
 
