@@ -43,6 +43,8 @@ const routesSecteur = require("./routes/api.routes.secteur")(app, sequelize, exp
 const routesVisit = require("./routes/api.routes.visit")(app, sequelize, express)
 const routesVisiteur = require("./routes/api.routes.visiteur")(app, sequelize, express)
 const routesUser = require("./routes/api.routes.user")(app, sequelize, express)
+const routesRapport = require("./routes/api.routes.rapport")(app, sequelize, express)
+
 // const routesVoiture = require("./routes/api.routes.voiture")(app, sequelize, express) - Unused for the moment
 
 app.use("/apidoc", express.static("apidoc"))
