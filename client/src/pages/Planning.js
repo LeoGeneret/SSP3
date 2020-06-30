@@ -60,7 +60,7 @@ function Planning () {
 
     // GET Events
     utils
-      .fetchJson('/planning?date=' + moment().format('YYYY-MM-DD'))
+      .fetchJson('/planning?week=' + moment().format('YYYY-MM-DD'))
       .then(res => {
         if (res.error) {
           console.log(res.error)
@@ -78,11 +78,11 @@ function Planning () {
       })
 
     // GET HOTELS
-    utils.fetchJson('/hotel').then(requester => {
-      if (requester.error) {
-        console.log(requester.error)
+    utils.fetchJson('/hotel').then(res => {
+      if (res.error) {
+        console.log(res.error)
       } else {
-        setListHotel(requester.data.list)
+        setListHotel(res.data.list)
       }
     })
   }, [])

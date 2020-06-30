@@ -3,14 +3,20 @@ const params = require("../api.params")
 
 module.exports = (app, sequelize, express) => {
 
-    // UNUSED
     // app.get("/visite", async (req, res) => {
 
     //     // query
-    //     const offset = (req.query.offset && Number(req.query.offset)) || undefined
-    //     const limit = (req.query.limit && Number(req.query.limit)) || undefined
+    //     // const offset = (req.query.offset && Number(req.query.offset)) || undefined
+    //     // const limit = (req.query.limit && Number(req.query.limit)) || undefined
 
     //     const results = await sequelize.models.Visite.getAll(offset, limit)
+    //     return res.status(results.status).json(results)
+    // })
+
+    // app.get("/visite", async (req, res) => {
+    //     // query
+    //     const date = req.query.date || null
+    //     const results = await sequelize.models.Visite.getPlanning(date)
     //     return res.status(results.status).json(results)
     // })
 

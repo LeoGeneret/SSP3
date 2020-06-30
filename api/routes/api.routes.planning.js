@@ -26,8 +26,12 @@ module.exports = (app, sequelize, express) => {
      */
     app.get("/planning", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER]), async (req, res) => {
         // query
-        const date = req.query.date || null
-        const results = await sequelize.models.Visite.getPlanning(date)
+        const week = req.query.week || null
+        const day = req.query.day || null
+
+        const userId = req.token.id
+
+        const results = await sequelize.models.Visite.getPlanning(week, day, userId)
         return res.status(results.status).json(results)
     })
 
