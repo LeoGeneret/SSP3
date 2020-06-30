@@ -12,6 +12,7 @@ const Utils = {
         try {
             results.data = jwt.verify(token, secret)
         } catch (error) {
+            console.log("verifyToken", error)
             results.error = {
                 code: 401,
                 message: "Unauthorized - token is invalid or has expired"
@@ -82,6 +83,7 @@ const Utils = {
                     results.status = 403
                 }
             } else {
+                console.log("checkUserRole", error)
                 results.error = {
                     code: 401,
                     message: "Unauthorized - token is invalid or has expired"

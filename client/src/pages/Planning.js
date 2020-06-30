@@ -76,7 +76,7 @@ function Planning () {
 
     // GET Events
     utils
-      .fetchJson('/planning?date=' + moment().format('YYYY-MM-DD'))
+      .fetchJson('/planning?week=' + moment().format('YYYY-MM-DD'))
       .then(requester => {
         if (requester.error) {
           console.log(requester.error)
