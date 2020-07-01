@@ -50,6 +50,9 @@ Visite.belongsTo(Voiture, { as: "voiture", foreignKey: "voiture_id" })
 // // Visite <-> Visiteur 1 et 2
 Visiteur.hasMany(Visite, {as: "visiteurs_1", foreignKey: "visiteur_id_1"})
 Visiteur.hasMany(Visite, {as: "visiteurs_2", foreignKey: "visiteur_id_2"})
+Visite.belongsTo(Visiteur, {as: "visiteurs_1_visite", foreignKey: "visiteur_id_1"})
+Visite.belongsTo(Visiteur, {as: "visiteurs_2_visite", foreignKey: "visiteur_id_2"})
+
 
 // // Visite <-> Rapport
 Rapport.hasOne(Visite, { as: "rapport_visites", foreignKey: "rapport_id" })
