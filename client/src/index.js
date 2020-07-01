@@ -5,8 +5,6 @@ import App from './App'
 import * as serviceWorker from './serviceWorker'
 import { BrowserRouter } from 'react-router-dom'
 
-console.log({ env: process.env })
-
 ReactDOM.render((
     <BrowserRouter>
         <App />

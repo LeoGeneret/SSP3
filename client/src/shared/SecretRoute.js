@@ -17,6 +17,9 @@ const SecretRoute = (props) => {
                 authorized: true
             })
         }).catch(() => {
+
+            utils.logout()
+
             setState({
                 loading: false,
                 authorized: false

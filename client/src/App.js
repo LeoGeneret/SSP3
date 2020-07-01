@@ -26,8 +26,6 @@ function App() {
 
   let HideSidebar = history.location.pathname === '/login' ? null : <Sidebar />
   let contentHidebar = history.location.pathname === '/login' ? 'content-login' : 'content'
-
-  console.log("up")
   
   return (
     <div id="App">
@@ -37,36 +35,36 @@ function App() {
             <Route path="/login">
               <Login />
             </Route>
-            <Route path="/EditPwd">
+            <SecretRoute path="/EditPwd">
               <EditPwd />
-            </Route>
-            <Route path="/planning">
+            </SecretRoute>
+            <SecretRoute path="/planning">
               <Planning />
-            </Route>
+            </SecretRoute>
             {/* Formulaire ressources */}
-            <Route path="/agents/create">
+            <SecretRoute path="/agents/create">
               <PageFormAgent />
-            </Route>
-            <Route path="/agents/:id/edit">
+            </SecretRoute>
+            <SecretRoute path="/agents/:id/edit">
               <PageFormAgent editMode={true}/>
-            </Route>
+            </SecretRoute>
 
-            <Route path="/hotels/create">
+            <SecretRoute path="/hotels/create">
               <PageFormHotel />
-            </Route>
-            <Route path="/hotels/:id/edit">
+            </SecretRoute>
+            <SecretRoute path="/hotels/:id/edit">
               <PageFormHotel editMode={true}/>
-            </Route>
+            </SecretRoute>
 
-            <Route path="/visite/create">
+            <SecretRoute path="/visite/create">
               <PageFormVisite />
-            </Route>
-            <Route exact path="/agents">
+            </SecretRoute>
+            <SecretRoute exact path="/agents">
               <ListAgent />
-            </Route>
-            <Route path="/" exact>
+            </SecretRoute>
+            <SecretRoute path="/" exact>
               <ListHotels />
-            </Route>
+            </SecretRoute>
           </Switch>
         </div>
     </div>

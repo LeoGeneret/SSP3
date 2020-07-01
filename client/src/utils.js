@@ -67,15 +67,16 @@ function tokenIsExpired(token) {
     let now = Date.now() / 1000
     return (tokenDecoded.exp <= now)
   } catch (err) {
-    return false
+    console.error({tokenIsExpired: err})
+    return true
   }
 }
 
 function checkToken(){
 
   return new Promise((resolve, reject) => {
-    let tokenValue = localStorage.getItem(params.LOCAL_STORAGE_ACCESS_TOKEN)
 
+    let tokenValue = localStorage.getItem(params.LOCAL_STORAGE_ACCESS_TOKEN)
 
     console.log({tokenValue})
       // if invalid or expired => reject
@@ -85,6 +86,10 @@ function checkToken(){
       resolve(true)
     }
   })
+}
+
+function logout(){
+  localStorage.removeItem(params.LOCAL_STORAGE_ACCESS_TOKEN)
 }
 
 export default {
@@ -97,5 +102,7 @@ export default {
     id: s.id,
     label: s.label,
     value: s.id,
-  }))
+  })),
+
+  logout
 }
