@@ -1,38 +1,47 @@
 .page-planning{
 
-    .btn-add-visit {
-        position: absolute;
-        bottom: 45px;
-        right: 45px;
-        width: 60px;
-        height: 60px;
-        background-color: $color-primary;
-        border-radius: 50%;
-        z-index: 100;
-      
-        &:hover {
-          background-color: $bluelink;
-          cursor: pointer;
-        }
-      
-      
-        span {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 16px;
-          height: 2px;
-      
-          transform: translate(-50%, -50%);
-      
-          background-color: $color-white;
-        }
-      
-      
-        span:nth-child(2) {
-          transform: translate(-50%, -50%) rotate(-90deg);
-          top: 50%;
-          left: 50%;
-        }
+  &__title{
+    margin-bottom: 20px;
+  }
+
+  .calendar-container .fc-view-container{
+    // height: auto;
+    overflow-x: auto!important;
+  }
+
+  .btn-add-visit {
+      position: absolute;
+      bottom: 45px;
+      right: 45px;
+      width: 60px;
+      height: 60px;
+      background-color: $color-primary;
+      border-radius: 50%;
+      z-index: 100;
+    
+      &:hover {
+        background-color: $bluelink;
+        cursor: pointer;
       }
+    
+    
+      span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 16px;
+        height: 2px;
+    
+        transform: translate(-50%, -50%);
+    
+        background-color: $color-white;
+      }
+    
+    
+      span:nth-child(2) {
+        transform: translate(-50%, -50%) rotate(-90deg);
+        top: 50%;
+        left: 50%;
+      }
+    }
 }

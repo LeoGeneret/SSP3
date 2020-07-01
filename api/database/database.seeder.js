@@ -180,7 +180,7 @@ const generate = async () => {
         return Visite.bulkCreate(Helpers.loop(10, () => {
     
             let visited_at = moment()
-                .add((15 + faker.random.number(30 * 24)) * -1, "day")
+                .add(-365, "day")
                 .add(faker.random.number(4), "day")
     
             let time_start = visited_at.clone().hour(9).add(faker.random.number(9), "hour")

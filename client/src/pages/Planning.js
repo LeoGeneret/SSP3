@@ -26,7 +26,6 @@ function Planning () {
   
   // REFS
   const teamPlanning = useRef(null)
-  const [teamPlanningRef, setTeamPlanningRef] = useState(null)
 
   // STATES
   const [agent1, setAgent1] = useState('')
@@ -49,34 +48,31 @@ function Planning () {
   const [events, setEvents] = useState([])
   const [listHotel, setListHotel] = useState([])
 
+  const [calendarDate, setCalendarDate] = useState()
+
   useEffect(() => {
-    // get FullCalendar API
-    const calendarApi = teamPlanning.current.getApi()
-    setTeamPlanningRef(calendarApi)
 
-
-    
-    // GET Visiteur
 
     // GET Events
     utils
-      .fetchJson('/planning?week=' + moment().format('YYYY-MM-DD'))
-      .then(res => {
-        if (res.error) {
-          console.log(res.error)
-        } else {
+    .fetchJson('/planning?week=' + moment().format('YYYY-MM-DD'))
+    .then(res => {
+      if (res.error) {
+        console.log(res.error)
+      } else {
+      
+        /** Build binomes */
+        let agents = res.data.visites.map(v => v.agents)
+        let binomes = getBinomesRessources(agents)
+        setRessources(binomes)
+
+        /** Build visites */
+        setEvents(getVisitesEvents(res.data.visites, binomes))
+
+      }
+    })
+
         
-          /** Build binomes */
-          let agents = res.data.visites.map(v => v.agents)
-          let binomes = getBinomesRessources(agents)
-          setRessources(binomes)
-
-          /** Build visites */
-          setEvents(getVisitesEvents(res.data.visites, binomes))
-
-        }
-      })
-
     // GET HOTELS
     utils.fetchJson('/hotel').then(res => {
       if (res.error) {
@@ -86,6 +82,7 @@ function Planning () {
       }
     })
   }, [])
+
 
   /** Helpers */
 
@@ -211,30 +208,6 @@ function Planning () {
     e.preventDefault()
     setopenPopInCreate(!openPopInCreate)
 
-    // let newBinome = [agent1, agent2];
-    // let newDateStart = dateStart;
-    // let newDateEnd = dateEnd;
-
-    // let newEvent = {
-    //   title: "Visite",
-    //   resourceIds: newBinome,
-    //   start: newDateStart,
-    //   end: newDateEnd
-    // };
-
-    // if (agent1 === "" || agent2 === "")
-    //   alert("Vous n'avez pas selectionné 2 agents");
-    // else if (agent1 === agent2) alert("Vous avez selectionné le même agent");
-    // else if (dateStart === "" || dateEnd === "") alert("Il manque une date");
-    // else {
-    //   teamPlanningRef.addEvent(newEvent);
-    //   // RESET INPUTS
-    //   setAgent1("");
-    //   setAgent2("");
-    //   setDateStart("");
-    //   setDateEnd("");
-    // }
-
     var eventCreated = {
       visiteur_id_1: agent1,
       visiteur_id_2: agent2,
@@ -251,7 +224,6 @@ function Planning () {
       })
       .then(res => console.log(res))
 
-    console.log(teamPlanningRef)
   }
 
   const handleEditEvent = e => {
@@ -273,60 +245,6 @@ function Planning () {
         <div className="formContainer" id="popin">
           <div className={`pop-in ${openPopIn ? 'active' : ''}`}>
             <form onSubmit={handleEditEvent}>
-              {/* <select
-                value={editedEvent.agent1}
-                onChange={e =>
-                  setEditedEvent({
-                    ...editedEvent,
-                    agent1: e.target.value
-                  })
-                }
-              >
-                <option>Selectionnez agent 1</option>
-                {ressources.map((item, index) => (
-                  <option key={index} value={item.id}>
-                    {item.nom}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={editedEvent.agent2}
-                onChange={e =>
-                  setEditedEvent({
-                    ...editedEvent,
-                    agent2: e.target.value
-                  })
-                }
-              >
-                <option>Selectionnez agent 2</option>
-                {ressources.map((item, index) => (
-                  <option key={index} value={item.id}>
-                    {item.nom}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="datetime-local"
-                placeholder="Date de début"
-                onChange={e =>
-                  setEditedEvent({
-                    ...editedEvent,
-                    dateStart: e.target.value
-                  })
-                }
-                value={editedEvent.dateStart}
-              />
-              <input
-                type="datetime-local"
-                placeholder="Date de fin"
-                onChange={e =>
-                  setEditedEvent({
-                    ...editedEvent,
-                    dateEnd: e.target.value
-                  })
-                }
-                value={editedEvent.dateEnd}
-              /> */}
               <button className="btn-create" type="submit">
                 Modifier
               </button>
@@ -338,7 +256,7 @@ function Planning () {
           </div>
         </div>
       )}
-      <h1>Les plannings</h1>
+      <h1 className="page-planning__title">Les plannings</h1>
       {openPopInCreate && (
         <div className="modal-container">
           <div className="modal-content">
@@ -405,7 +323,7 @@ function Planning () {
           droppable={true}
           // resourceGroupField='binome'
           header={{
-            left: 'prev,next',
+            left: "",
             center: 'title',
             right: 'resourceTimelineDay, resourceTimelineWeek'
           }}
