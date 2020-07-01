@@ -1,4 +1,5 @@
 const apiAlgo = require("../Algo/Algo")
+const PrioritizedHotel = require("../Algo/PrioritizedHotel")
 const utils = require("../api.utils")
 const params = require("../api.params")
 
@@ -31,6 +32,11 @@ module.exports = (app, sequelize, express) => {
 
     app.get("/hotel", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER]), async (req, res) => {
         const results = await apiAlgo.getHotelFormated()
+        return res.status(results.status).json(results)
+    })  
+
+    app.get("/algo/hotel"/*, utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER])*/,async (req, res) => {
+        const results = await PrioritizedHotel.getAll()
         return res.status(results.status).json(results)
     })  
 

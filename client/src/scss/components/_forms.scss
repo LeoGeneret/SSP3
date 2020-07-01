@@ -279,10 +279,19 @@ select {
   border-radius: 5px;
   border: none;
   cursor: pointer;
+  color: $color-dark-grey;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+
+  .icon{
+    margin-right: 5px;
+  }
 }
 
 .priority-active {
   background-color: $yellow;
+  color: #fff;
 }
 
 .btn-supp {

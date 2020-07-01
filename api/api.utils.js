@@ -1,6 +1,28 @@
 const jwt = require("jsonwebtoken")
 
 const Utils = {
+
+    isNullOrUndefined: obj => obj === null || typeof obj === "undefined",
+
+    filterPop: (array, filter) => {
+
+        let filtered = []
+        let rest = []
+
+        for(let i = 0; i < array.length; i++){
+
+            if(filter(array[i]) === true){
+                filtered.push(array[i])
+            } else {
+                rest.push(array[i])
+            }
+
+        }
+
+        return {filtered, rest}
+
+    },
+
     verifyToken: (token, secret) => {
 
         let results = {
@@ -96,7 +118,7 @@ const Utils = {
             } else {
                 return next()
             }
-        }
+        },
     }
 }
 module.exports = Utils

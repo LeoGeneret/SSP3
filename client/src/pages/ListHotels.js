@@ -6,6 +6,10 @@ import moment from 'moment'
 import FormSelect from '../shared/FormSelect'
 import IconSearch from '../icons/icon-search'
 
+// Icons
+import IconUrgent from "../icons/icon-urgent"
+import IconUrgentActive from "../icons/icon-urgent-active"
+
 function ListHotels (props) {
 
   const history = useHistory()
@@ -124,11 +128,11 @@ function ListHotels (props) {
   }
 
   useEffect(() => {
-    utils.fetchJson('/hotel').then(requester => {
+    utils.fetchJson('/algo/hotel').then(requester => {
       if (requester.error) {
         console.log(requester.error)
       } else {
-        setList(requester.data.list)
+        setList(requester.data.hotels)
         setPagination(requester.data.pagination)
         console.log(requester)
       }
@@ -381,13 +385,15 @@ function ListHotels (props) {
                   <p className="col-2">{item.secteur.label}</p>
                   <div className="col-2">
                     <p className={`${item.last_note <= 30 ? 'badnote' : item.last_note <= 40 ? 'moyennote' : item.last_note == null ? 'item.notnote' : 'goodnote'}`}>
-                      {item.last_note == null ? 'Aucune note' : item.last_note}</p>
+                      {item.last_note == null ? 'Aucune note' : item.last_note + "/60"}</p>
                   </div>
                   <p className="col-2">{item.last_visited_at == null ? 'Aucune date' : moment(item.last_visited_at).format('DD/MM/YYYY')}</p>
                   <div className="col-2">
                     <button onClick={togglePriority(item)} className={'btn-priority ' + (item.priority ? 'priority-active' : '')}>
-                      <span className="icon-alert-outline"></span>
-                      Urgent
+                      {
+                        item.priority ? <IconUrgentActive/> : <IconUrgent/>
+                      }
+                      Prioritaire
                     </button>
                   </div>
                   <div className="col-1 justify-center">

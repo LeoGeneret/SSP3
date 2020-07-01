@@ -75,7 +75,7 @@ const generate = async () => {
             ville: ville,
             nombre_chambre : faker.random.number(122),
             secteur_id : faker.random.arrayElement(secteurs).get("id"),
-            priority: Math.random() > .95 ? true : false
+            priority: Math.random() > .9 ? true : false
         }
     }))
 
@@ -180,7 +180,7 @@ const generate = async () => {
         return Visite.bulkCreate(Helpers.loop(10, () => {
     
             let visited_at = moment()
-                .add(-365, "day")
+                .add(-faker.random.number(365) - 30 * 4, "day")
                 .add(faker.random.number(4), "day")
     
             let time_start = visited_at.clone().hour(9).add(faker.random.number(9), "hour")
