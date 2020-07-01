@@ -2,13 +2,15 @@
   font-weight: 700;
 
   *[class^="col-"] {
-    margin: 10px 20px;
+    padding: 10px 0;
+    padding-left: 16px;
   }
 }
 
 .table-container {
   *[class^="col-"] {
-    padding: 20px 20px;
+    padding: 10px 0;
+    padding-left: 16px;
     overflow: hidden;
     text-overflow: ellipsis;
   }

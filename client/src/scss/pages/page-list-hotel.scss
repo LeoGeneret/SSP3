@@ -3,4 +3,42 @@
     .filter-secteur{
         margin-left: 20px;
     }
+
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &__title{
+        margin-left: 10px;
+        margin-bottom: 20px;
+    }
+
+    &__content{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+
+        & > .row{
+            margin-left: 10px;
+        }
+
+        .card{
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: auto;
+
+            // .row{
+
+            //     & > * {
+            //         border: 1px solid orange;
+            //     }
+            // }
+
+            .table-container{
+                flex: 1;
+            }
+        }
+    }
 }

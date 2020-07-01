@@ -1,5 +1,11 @@
 
-// const bcrypt = require("bcryptjs")
+const CommonQueryParameters = {
+    include: [
+        {
+            association: "secteur"
+        }
+    ]
+}
 
 module.exports = (sequelize, DataTypes) => {
 
@@ -31,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
     })
 
 
-    Visiteur.getAll = async (attributes = undefined, visiteurId = null) => {
+    Visiteur.getAll = async (visiteurId = null) => {
         
         let results = {
             error: false,
@@ -39,20 +45,22 @@ module.exports = (sequelize, DataTypes) => {
             data: null
         }
 
-        if(attributes){
-            attributes = attributes.split(",")
-        }
 
         let visiteurs = null
 
         try {
-            visiteurs = await Visiteur.findAll(Object.assign({
-                attributes: attributes,
-            }, visiteurId && ({
-                where: {
+
+            let queryParameter = {
+                ...CommonQueryParameters
+            }
+
+            if(visiteurId){
+                queryParameter.where = {
                     id: visiteurId
                 }
-            })))
+            } 
+
+            visiteurs = await Visiteur.findAll(queryParameter)
 
             if(visiteurs){
 
@@ -65,7 +73,6 @@ module.exports = (sequelize, DataTypes) => {
             results.error = {
                 code: 502,
                 message: "BAD GATEWAY - error on fetching visiteurs",
-                extra_message: attributes ? ("you specified attributes=" + attributes.toString()) : undefined
             }
             results.status = 502
         }
@@ -73,9 +80,9 @@ module.exports = (sequelize, DataTypes) => {
         return results
     }
 
-    Visiteur.getOne = async (attributes = undefined, visiteurId = null) => {
+    Visiteur.getOne = async (visiteurId = null) => {
 
-        let results = await Visiteur.getAll(attributes, visiteurId)
+        let results = await Visiteur.getAll(visiteurId)
 
         if(results.data.visiteurs && results.data.visiteurs.length){
             results.data = results.data.visiteurs[0]

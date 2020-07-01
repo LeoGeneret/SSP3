@@ -193,9 +193,8 @@ function ListHotels (props) {
   }
   return (
     <div className="page-list-hotel">
-      <h1>Liste des hôtels</h1>
-      <br></br>
-      <div>
+      <h1 className="page-list-hotel__title">Liste des hôtels</h1>
+      <div className="page-list-hotel__content">
         <div className="row">
           <div className="input-search">
             <IconSearch/>
@@ -216,8 +215,6 @@ function ListHotels (props) {
           </div>
           <button onClick={handleEventClickCreate} className="btn-ressource-add">Ajouter un agent</button>
         </div>
-        <br></br>
-
         {/* CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE */}
         {openModalCreate && (
           <div className="modal-container">

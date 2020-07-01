@@ -59,8 +59,8 @@ Rapport.hasOne(Visite, { as: "rapport_visites", foreignKey: "rapport_id" })
 Visite.belongsTo(Rapport, { as: "rapport", foreignKey: "rapport_id" })
 
 // Secteur <-> Visiteur
-Secteur.hasMany(Visiteur, { as: "visiteur_secteur", foreignKey: "secteur_id" })
-Visiteur.belongsTo(Secteur, { as: "visiteurs", foreignKey: "secteur_id" })
+Secteur.hasMany(Visiteur, { as: "visiteurs", foreignKey: "secteur_id" })
+Visiteur.belongsTo(Secteur, { as: "secteur", foreignKey: "secteur_id" })
 
 
 // Secteur <-> Hotel

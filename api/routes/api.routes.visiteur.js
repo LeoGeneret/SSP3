@@ -25,12 +25,10 @@ module.exports = (app, sequelize, express) => {
      * @apiSuccess {String} visiteurs.adresse
      * @apiSuccess {String} visiteurs.ville
      * @apiSuccess {String} visiteurs.code_postal
-     * @apiSuccess {Number} visiteurs.secteur_id
+     * @apiSuccess {Object} visiteurs.secteur
+     * @apiSuccess {String} visiteurs.secteur.label
+     * @apiSuccess {Number} visiteurs.secteur.id
      * @apiSuccess {Number} visiteurs.user_id
-     * @apiSuccess {object} pagination
-     * @apiSuccess {Number} pagination.item_count Nombre total existant
-     * @apiSuccess {Number} pagination.page_current Page actuelle
-     * @apiSuccess {Number} pagination.page_count Nombre de page
      * 
      */
     app.get("/visiteur", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER]), async (req, res) => {
@@ -39,9 +37,8 @@ module.exports = (app, sequelize, express) => {
         const offset = (req.query.offset && Number(req.query.offset)) || undefined
         const limit = (req.query.limit && Number(req.query.limit)) || undefined
         // use a int boolean
-        const attributes = req.query.attributes || undefined
 
-        const results = await sequelize.models.Visiteur.getAll(attributes)
+        const results = await sequelize.models.Visiteur.getAll()
         return res.status(results.status).json(results)
     })
 
@@ -50,10 +47,7 @@ module.exports = (app, sequelize, express) => {
         // query
         const visiteurId = req.params.id
 
-        // use a int boolean
-        const attributes = req.query.attributes || undefined
-
-        const results = await sequelize.models.Visiteur.getOne(attributes, visiteurId)
+        const results = await sequelize.models.Visiteur.getOne( visiteurId)
         return res.status(results.status).json(results)
     })
 

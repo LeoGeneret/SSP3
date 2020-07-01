@@ -170,8 +170,8 @@ function ListAgent (props) {
 
   return (
     <div className="page-agents">
-      <h1>Liste des agents</h1>
-      <div>
+      <h1 className="page-agents__title">Liste des agents</h1>
+      <div className="page-agents__content">
         <div className="nav-hotels row">
           <div className="input-search">
             <IconSearch/>
@@ -322,7 +322,7 @@ function ListAgent (props) {
             {results.map((item, index) => (
               <li className="row" key={item.id}>
                 <p className="col-2">{item.nom}</p>
-                <p className="col-2">{secteurMatch()}</p>
+                <p className="col-2">{item.secteur.label}</p>
                 <p className="col-4">{item.adresse}</p>
                 <p className="col-2">{item.ville}</p>
                 <div className="col-2 justify-center">
