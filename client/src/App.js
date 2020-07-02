@@ -5,6 +5,7 @@ import { useHistory, Switch, Route } from 'react-router-dom'
 // Shared
 import Sidebar from './shared/Sidebar'
 import ListAgent from './pages/ListAgent'
+import Notifications from './shared/Notifications'
 
 // Pages
 import Login from './pages/Login'
@@ -24,13 +25,17 @@ function App() {
   // router
   const history = useHistory()
 
-  let HideSidebar = history.location.pathname === '/login' ? null : <Sidebar />
-  let contentHidebar = history.location.pathname === '/login' ? 'content-login' : 'content'
+  let routeIsLogin = history.location.pathname === '/login'
+  let HideSidebar = routeIsLogin ? null : <Sidebar />
+  let contentHidebar = routeIsLogin ? 'content-login' : 'content'
   
   return (
     <div id="App">
         {HideSidebar}
         <div className={contentHidebar}>
+          {
+            !routeIsLogin && <Notifications/>
+          }
           <Switch>
             <Route path="/login">
               <Login />

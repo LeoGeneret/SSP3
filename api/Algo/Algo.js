@@ -156,7 +156,7 @@ class Algo {
     }
 
     ajoutHotelsParDate(listePrio, listeHotelsParDate, contrainte){
-        while((moment().diff(listeHotelsParDate[0].hotel_visites[0].visited_at, 'months'))>contrainte){
+        while(listeHotelsParDate[0] && (moment().diff(listeHotelsParDate[0].hotel_visites[0].visited_at, 'months'))>contrainte){
             listePrio.add(listeHotelsParDate[0])
             listeHotelsParDate.splice(0, 1)
         }
