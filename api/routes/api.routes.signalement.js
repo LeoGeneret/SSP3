@@ -11,11 +11,12 @@ module.exports = (app, sequelize, express) => {
 
     app.put("/signalement/create", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER]), async (req, res) => {
 
+        const userId = req.token.id
         
         const results = await sequelize.models.Signalement.createSignalement(
             req.body.motif,
             req.body.visit_id,
-            req.body.visiteur_id,
+            userId,
             req.body.commentaire,
         )
         return res.status(results.status).json(results)

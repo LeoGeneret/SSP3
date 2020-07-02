@@ -19,11 +19,60 @@ import PageFormVisite from './pages/PageFormVisite'
 
 // Style
 import './scss/App.scss'
+import utils from './utils'
 
 function App() {
   
   // router
   const history = useHistory()
+
+
+  // State
+  const [notifications, setNotifications] = React.useState([])
+
+
+  React.useEffect(() => {
+    utils.fetchJson("/signalement").then(response => {
+
+      if(!response.error){
+        setNotifications(response.data)
+      }
+
+    })
+  }, [])
+
+  // Methods
+  const notifyNotifications = () => {
+
+    let nextNotifications = [...notifications]
+    let needToBeNotified = nextNotifications.filter(n => !n.notified)
+
+    let promises = needToBeNotified.map(notification => {
+
+      return utils.fetchJson("/signalement/" + (notification.id) + "/notify", {
+        method: "PATCH"
+      }).then(res => {
+
+        if(!res.error){
+          nextNotifications = nextNotifications.map(n => {
+            if(n.id === res.data.id){
+              return {
+                ...n,
+                notified: true
+              }
+            } else {
+              return n
+            }
+          })
+        }
+
+      })
+    })
+    Promise.all(promises).then(res => {
+      setNotifications(nextNotifications)
+    })
+    
+  }
 
   let routeIsLogin = history.location.pathname === '/login'
   let HideSidebar = routeIsLogin ? null : <Sidebar />
@@ -34,7 +83,12 @@ function App() {
         {HideSidebar}
         <div className={contentHidebar}>
           {
-            !routeIsLogin && <Notifications/>
+            !routeIsLogin && (
+              <Notifications 
+                notifications={notifications}
+                notifyNotifications={notifyNotifications}
+              />
+            )
           }
           <Switch>
             <Route path="/login">

@@ -76,10 +76,12 @@ User.hasOne(Visiteur, {as: "visiteur", foreignKey: "user_id"})
 Visiteur.belongsTo(User, {as: "user_related", foreignKey: "user_id"})
 
 // Signalement <-> Visit
-Visite.hasOne(Signalement, {as: "visit", foreignKey: "visit_id"})
+Visite.hasOne(Signalement, {foreignKey: "visit_id"})
+Signalement.belongsTo(Visite, {as: "visit", foreignKey: "visit_id"})
 
 // Signalement <-> Visiteur
-Visiteur.hasOne(Signalement, {as: "visiteur", foreignKey: "visiteur_id"})
+Visiteur.hasOne(Signalement, {foreignKey: "visiteur_id"})
+Signalement.belongsTo(Visiteur, {as: "reported_by", foreignKey: "visiteur_id"})
 
 
 

@@ -214,6 +214,10 @@ const generate = async () => {
     console.log("#######")
     console.log("HAS GENERATED " + visits.length + " visits")
     console.log("#######")
+
+    let flattenVisits = [...visits].flat()
+    let randomCanceledVisits = Helpers.randomSubArray(flattenVisits, Math.floor(flattenVisits.length * .1))
+    console.log({randomCanceledVisits: await randomCanceledVisits[0]})
 }
 
 

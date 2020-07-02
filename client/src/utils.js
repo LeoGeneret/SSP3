@@ -78,7 +78,6 @@ function checkToken(){
 
     let tokenValue = localStorage.getItem(params.LOCAL_STORAGE_ACCESS_TOKEN)
 
-    console.log({tokenValue})
       // if invalid or expired => reject
     if (!tokenValue || (tokenValue && tokenIsExpired(tokenValue))) {
       reject(false)

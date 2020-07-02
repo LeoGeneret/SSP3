@@ -2,8 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 // icons
-import IconArrowDown from "../icons/icon-arrow-down"
-import IconSearch from "../icons/icon-search"
+
 
 export default function FormSelect(props){
 
@@ -11,7 +10,6 @@ export default function FormSelect(props){
     const refContainer = React.createRef()
 
     // States
-    const [open, setOpen] = React.useState(false)
 
     // Methods
 

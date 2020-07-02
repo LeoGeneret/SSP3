@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         },
 
         motif: {
-            type: DataTypes.ENUM(...MOTIFS),
+            type: DataTypes.STRING,
             allowNull: false,
         },
 
@@ -41,7 +41,27 @@ module.exports = (sequelize, DataTypes) => {
 
             let signalements = null
 
-            signalements = await Signalement.findAll()
+            signalements = await Signalement.findAll({
+                order: [
+                    ["created_at", "DESC"]
+                ],
+                include: [
+                    {
+                        association: "visit",
+                        include: [
+                            {
+                                association: "hotel"
+                            }
+                        ]
+                    },
+                    {
+                        association: "reported_by"
+                    }
+                ],
+                // where: {
+                //     notified: false
+                // }
+            })
 
             results.data = signalements
 
