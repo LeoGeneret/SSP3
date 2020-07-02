@@ -1,6 +1,9 @@
 const jwt = require("jsonwebtoken")
 
 const Utils = {
+
+    isNullOrUndefined: obj => obj === null || typeof obj === "undefined",
+    
     verifyToken: (token, secret) => {
 
         let results = {
