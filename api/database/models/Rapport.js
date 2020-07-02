@@ -1,3 +1,5 @@
+const Utils = require("../../api.utils")
+const Op = require("sequelize").Op
 
 module.exports = (sequelize, DataTypes) => {
 
@@ -18,37 +20,46 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: false
     })
 
-    Rapport.getAll = async (attributes = undefined, userId) => {
+    Rapport.getAll = async userId => {
 
-        const idUtil = userId
-        console.log("TEST2 :" + userId)
         let results = {
             error: false,
             status: 200,
             data: null
         }
 
-        if(attributes){
-            attributes = attributes.split(",")
-        }
-
         let rapports = null
 
         try {
-            rapports = await sequelize.query("select distinct * from rapports, visites, visiteurs, users where rapports.id = visites.rapport_id and visites.visiteur_id_1 = visiteurs.id and visiteurs.user_id = users.id and users.id = $idUtil UNION select distinct * from rapports, visites, visiteurs, users where rapports.id = visites.rapport_id and visites.visiteur_id_2 = visiteurs.id and visiteurs.user_id = users.id and users.id = $idUtil", {bind: { idUtil }});
-    
-            if(rapports){
-                // results.data = rapports.map(r => r.toJSON())
-                // console.log('IF RAPPORTS', results.data)
-                console.log(rapports[0])
-            }
+
+            rapports = await sequelize.models.Visite.findAll({
+                include: [
+                    {
+                        association: "rapport"
+                    },
+                    {
+                        association: "hotel"
+                    },
+                ],
+                where: {
+                    [Op.or]: [
+                        {
+                            visiteur_id_1: userId
+                        },
+                        {
+                            visiteur_id_2: userId
+                        },
+                    ]
+                }
+            })
+
+            results.data = rapports
 
         } catch (GetAllRapportError) {
             console.error({GetAllRapportError})
             results.error = {
                 code: 502,
                 message: "BAD GATEWAY - error on fetching ressources",
-                extra_message: attributes ? ("you specified attributes=" + attributes.toString()) : undefined
             }
             results.status = 502
         }
@@ -86,11 +97,28 @@ module.exports = (sequelize, DataTypes) => {
             results.status = 400
         } else {
             try {
-                rapport = await Rapport.create(fields)
-                if(rapport){
-                    results.data = rapport
-                    results.status = 201
+
+                let visitRelated = await sequelize.models.Visite.findByPk(fields.visit_id)
+
+                if(!visitRelated){
+                    results.error = {
+                        code: 404,
+                        message: "NOT FOUND - visit not found"
+                    }
+                    results.status = 404
+                } else {
+
+                    rapport = await Rapport.create(fields)
+
+                    if(rapport){
+
+                        await visitRelated.setRapport(rapport)
+
+                        results.data = rapport
+                        results.status = 201
+                    }
                 }
+
             } catch (CreateRapportError) {
                 console.error({CreateRapportError})
                 results.error = {

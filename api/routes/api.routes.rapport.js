@@ -6,16 +6,16 @@ module.exports = (app, sequelize, express) => {
     app.put("/rapport/create", async (req, res) => {
         const results = await sequelize.models.Rapport.createRapport({
             note: req.body.note,
-            commentaire: req.body.commentaire
+            commentaire: req.body.commentaire,
+            visit_id: req.body.visit_id,
         })
         return res.status(results.status).json(results)
     })
 
     app.get("/rapport", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER]), async (req, res) => {
-        const attributes = req.query.attributes || undefined
-        const userId = req.token.id
         
-        const results = await sequelize.models.Rapport.getAll(attributes, userId)
+        const userId = req.token.id
+        const results = await sequelize.models.Rapport.getAll(userId)
         
         return res.status(results.status).json(results)
     })
