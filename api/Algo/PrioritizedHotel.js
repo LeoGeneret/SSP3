@@ -22,7 +22,23 @@ function sortByNote(a, b){
 
 const NOTE_MAX = 60
 
-module.exports = {
+const PrioritizedHotel = {
+
+    createPlanning: async function(){
+        let results = {
+            data: null,
+            error: null,
+            status: 200,
+        }
+
+        let hotelsResults = await PrioritizedHotel.getAll()
+        results = {...hotelsResults}
+
+        console.log(sequelize.models)
+
+        
+        return results
+    },
 
     getAll: async function() {
 
@@ -84,3 +100,5 @@ module.exports = {
         return results
     }
 }
+
+module.exports = PrioritizedHotel

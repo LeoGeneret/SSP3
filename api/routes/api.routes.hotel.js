@@ -35,8 +35,13 @@ module.exports = (app, sequelize, express) => {
         return res.status(results.status).json(results)
     })  
 
-    app.get("/algo/hotel"/*, utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER])*/,async (req, res) => {
+    app.get("/algo/hotel", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER]),async (req, res) => {
         const results = await PrioritizedHotel.getAll()
+        return res.status(results.status).json(results)
+    })  
+
+    app.put("/algo/planning", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER]),async (req, res) => {
+        const results = await PrioritizedHotel.createPlanning()
         return res.status(results.status).json(results)
     })  
 
