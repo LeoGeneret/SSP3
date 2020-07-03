@@ -37,6 +37,28 @@ module.exports = (sequelize, DataTypes) => {
         try {
             rapports = await sequelize.query("select distinct * from rapports, visites, visiteurs, users where rapports.id = visites.rapport_id and visites.visiteur_id_1 = visiteurs.id and visiteurs.user_id = users.id and users.id = $idUtil UNION select distinct * from rapports, visites, visiteurs, users where rapports.id = visites.rapport_id and visites.visiteur_id_2 = visiteurs.id and visiteurs.user_id = users.id and users.id = $idUtil", {bind: { idUtil }});
     
+            // Rapport.findAll({
+            //     include: [
+            //         {
+            //             required : true,
+            //             association: "rapport_visites",
+            //             include: [
+            //                 {
+            //                     required : true,
+            //                     association: "visiteurs_1_visite",
+            //                     include: [
+            //                         {
+            //                             required : true,
+            //                             association: "user_related", 
+            //                             where: {id : 3}
+            //                         }
+            //                     ],
+            //                 }
+            //             ], 
+            //         }
+            //     ]
+            // });
+
             if(rapports){
                 // results.data = rapports.map(r => r.toJSON())
                 // console.log('IF RAPPORTS', results.data)

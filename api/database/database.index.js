@@ -32,6 +32,7 @@ const Visite = sequelize.import("./models/Visite.js")
 const Hotel = sequelize.import("./models/Hotel.js")
 const Voiture = sequelize.import("./models/Voiture.js")
 const Rapport = sequelize.import("./models/Rapport.js")
+const RapportImage = sequelize.import("./models/RapportImage.js")
 const VisiteurAbsence = sequelize.import("./models/VisiteurAbsence.js")
 const User = sequelize.import("./models/User.js")
 
@@ -58,6 +59,10 @@ Visite.belongsTo(Visiteur, {as: "visiteurs_2_visite", foreignKey: "visiteur_id_2
 Rapport.hasOne(Visite, { as: "rapport_visites", foreignKey: "rapport_id" })
 Visite.belongsTo(Rapport, { as: "rapport", foreignKey: "rapport_id" })
 
+// // RapportImage <-> Rapport
+Rapport.hasMany(RapportImage, { as: "images", foreignKey: "rapport_id" })
+// RapportImage.belongsTo(Rapport, { as: "rapport_img", foreignKey: "rapport_id" })
+
 // Secteur <-> Visiteur
 Secteur.hasMany(Visiteur, { as: "visiteur_secteur", foreignKey: "secteur_id" })
 Visiteur.belongsTo(Secteur, { as: "visiteurs", foreignKey: "secteur_id" })
@@ -82,6 +87,7 @@ sequelize.models = {
   Hotel,
   Voiture,
   Rapport,
+  RapportImage,
   Visite,
   VisiteurAbsence,
   User,
