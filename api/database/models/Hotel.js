@@ -3,50 +3,7 @@
 /*
     DOIT ETER RACCORD AVEC ALGO.js
 */
-const Format = {
 
-    regularHotelAttributes: {
-        include: [
-            {
-                association: "secteur",
-                attributes: ["id", "label"]
-            },
-            {
-                association: "hotel_visites",
-                attributes: ["visited_at", "rapport_id"],
-                separate: true,
-                order: [
-                    ["visited_at", "DESC"]
-                ],
-                limit: 1,
-                include: [
-                    {
-                        association: "rapport",
-                        attributes: ["note"]
-                    }
-                ]
-            }
-        ]
-    },
-
-    regularHotel: hotelsItem => {
-
-        return {
-            id: hotelsItem.get("id"),
-            nom: hotelsItem.get("nom"),
-            code_postal: hotelsItem.get("code_postal"),
-            priority: hotelsItem.get("priority"),
-            secteur: hotelsItem.get("secteur"),
-            ville: hotelsItem.get("ville"),
-            adresse: hotelsItem.get("adresse"),
-            nombre_chambre: hotelsItem.get("nombre_chambre"),
-            last_visited_at: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("visited_at"),
-            last_note: hotelsItem.get("hotel_visites") && 
-                hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("rapport") &&
-                        hotelsItem.get("hotel_visites")[0].get("rapport").get("note"),
-        }
-    }
-}
 
 module.exports = (sequelize, DataTypes) => {
 
@@ -91,6 +48,55 @@ module.exports = (sequelize, DataTypes) => {
     })
 
     const Op = require("sequelize").Op
+
+    const Format = {
+
+        regularHotelAttributes: {
+            include: [
+                {
+                    association: "secteur",
+                    attributes: ["id", "label"]
+                },
+                {
+                    association: "hotel_visites",
+                    attributes: ["time_start", "rapport_id"],
+                    where: {
+                        rapport_id: {
+                            [Op.not]: null
+                        },
+                    },
+                    separate: true,
+                    order: [
+                        ["time_start", "DESC"]
+                    ],
+                    limit: 1,
+                    include: [
+                        {
+                            association: "rapport",
+                            attributes: ["note"]
+                        }
+                    ]
+                }
+            ]
+        },
+    
+        regularHotel: hotelsItem => {
+            return {
+                id: hotelsItem.get("id"),
+                nom: hotelsItem.get("nom"),
+                code_postal: hotelsItem.get("code_postal"),
+                priority: hotelsItem.get("priority"),
+                secteur: hotelsItem.get("secteur"),
+                ville: hotelsItem.get("ville"),
+                adresse: hotelsItem.get("adresse"),
+                nombre_chambre: hotelsItem.get("nombre_chambre"),
+                last_visited_at: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("time_start"),
+                last_note: hotelsItem.get("hotel_visites") && 
+                    hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("rapport") &&
+                            hotelsItem.get("hotel_visites")[0].get("rapport").get("note"),
+            }
+        }
+    }
 
     Hotel.getAll = async (offset = 0, limit = 5, search) => {
 

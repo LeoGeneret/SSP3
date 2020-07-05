@@ -30,10 +30,12 @@ const Secteur = sequelize.import("./models/Secteur.js")
 const Visiteur = sequelize.import("./models/Visiteur.js")
 const Visite = sequelize.import("./models/Visite.js")
 const Hotel = sequelize.import("./models/Hotel.js")
-const Voiture = sequelize.import("./models/Voiture.js")
+// const Voiture = sequelize.import("./models/Voiture.js")
 const Rapport = sequelize.import("./models/Rapport.js")
-const VisiteurAbsence = sequelize.import("./models/VisiteurAbsence.js")
+// unused
+// const VisiteurAbsence = sequelize.import("./models/VisiteurAbsence.js")
 const User = sequelize.import("./models/User.js")
+const VisiteurVisite = sequelize.import("./models/VisiteurVisite.js")
 
 /**
  * Database relationship
@@ -44,15 +46,12 @@ Hotel.hasMany(Visite, { as: "hotel_visites", foreignKey: "hotel_id", onDelete: "
 Visite.belongsTo(Hotel, { as: "hotel", foreignKey: "hotel_id" })
 
 // // Visite <-> Voiture
-Voiture.hasMany(Visite, { as: "voiture_visites", foreignKey: "voiture_id" }) // @OPTI - useless?
-Visite.belongsTo(Voiture, { as: "voiture", foreignKey: "voiture_id" })
+// Voiture.hasMany(Visite, { as: "voiture_visites", foreignKey: "voiture_id" }) // @OPTI - useless?
+// Visite.belongsTo(Voiture, { as: "voiture", foreignKey: "voiture_id" })
 
-// // Visite <-> Visiteur 1 et 2
-Visiteur.hasMany(Visite, {as: "visites_1", foreignKey: "visiteur_id_1"})
-Visite.belongsTo(Visiteur, {as: "visiteur_1", foreignKey: "visiteur_id_1"})
-
-Visiteur.hasMany(Visite, {as: "visites_2", foreignKey: "visiteur_id_2"})
-Visite.belongsTo(Visiteur, {as: "visiteur_2", foreignKey: "visiteur_id_2"})
+// // Visite <-> Visiteurs
+Visite.belongsToMany(Visiteur, { through: VisiteurVisite, as: "visiteurs", foreignKey: "visite_id"})
+Visiteur.belongsToMany(Visite, { through: VisiteurVisite, as: "visites", foreignKey: "visiteur_id"})
 
 // // Visite <-> Rapport
 Rapport.hasOne(Visite, { as: "rapport_visites", foreignKey: "rapport_id" })
@@ -67,8 +66,9 @@ Visiteur.belongsTo(Secteur, { as: "secteur", foreignKey: "secteur_id" })
 Secteur.hasMany(Hotel, { as: "hotels_related", foreignKey: "secteur_id" })
 Hotel.belongsTo(Secteur, { as: "secteur", foreignKey: "secteur_id" })
 
+// unused
 // Visiteur <-> VisiteurAbsence
-Visiteur.hasMany(VisiteurAbsence, { as: "absences", foreignKey: "visiteur_id" })
+// Visiteur.hasMany(VisiteurAbsence, { as: "absences", foreignKey: "visiteur_id" })
 
 // User <-> Visiteur
 User.hasOne(Visiteur, {as: "visiteur", foreignKey: "user_id"})
@@ -80,11 +80,13 @@ sequelize.models = {
   Secteur,
   Visiteur,
   Hotel,
-  Voiture,
+  // Voiture,
   Rapport,
   Visite,
-  VisiteurAbsence,
+  // unused
+  // VisiteurAbsence,
   User,
+  VisiteurVisite,
 }
 
 module.exports = sequelize

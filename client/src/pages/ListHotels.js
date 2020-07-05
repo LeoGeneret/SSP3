@@ -132,9 +132,8 @@ function ListHotels (props) {
       if (requester.error) {
         console.log(requester.error)
       } else {
-        setList(requester.data.hotels)
-        setPagination(requester.data.pagination)
-        console.log(requester)
+        setList(requester.data)
+        // setPagination(requester.data.pagination)
       }
     })
 
@@ -217,7 +216,7 @@ function ListHotels (props) {
               handleChange={e => setFilterSecteurLabel(e.target.value)}
             />
           </div>
-          <button onClick={handleEventClickCreate} className="btn-ressource-add">Ajouter un agent</button>
+          <button onClick={handleEventClickCreate} className="btn-ressource-add">Ajouter un hotel</button>
         </div>
         {/* CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE CREATE */}
         {openModalCreate && (

@@ -16,10 +16,10 @@ const Format = {
             },
             {
                 association: "hotel_visites",
-                attributes: ["visited_at", "rapport_id"],
+                attributes: ["time_start", "rapport_id"],
                 separate: true,
                 order: [
-                    ["visited_at", "DESC"]
+                    ["time_start", "DESC"]
                 ],
                 limit: 1,
                 include: [
@@ -42,7 +42,7 @@ const Format = {
             ville: hotelsItem.get("ville"),
             adresse: hotelsItem.get("adresse"),
             nombre_chambre: hotelsItem.get("nombre_chambre"),
-            last_visited_at: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("visited_at"),
+            last_visited_at: hotelsItem.get("hotel_visites") && hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("time_start"),
             last_note: hotelsItem.get("hotel_visites") && 
                 hotelsItem.get("hotel_visites")[0] && hotelsItem.get("hotel_visites")[0].get("rapport") &&
                         hotelsItem.get("hotel_visites")[0].get("rapport").get("note"),
@@ -82,7 +82,7 @@ class Algo {
         var listeHotelsParDate = await sequelize.models.Hotel.findAll({
             
             order: [
-                ["hotel_visites", "visited_at", "DESC"]    
+                ["hotel_visites", "time_start", "DESC"]    
             ],
             include: [
                 {
@@ -156,7 +156,7 @@ class Algo {
     }
 
     ajoutHotelsParDate(listePrio, listeHotelsParDate, contrainte){
-        while((moment().diff(listeHotelsParDate[0].hotel_visites[0].visited_at, 'months'))>contrainte){
+        while(listeHotelsParDate[0] && (moment().diff(listeHotelsParDate[0].hotel_visites[0].time_start, 'months'))>contrainte){
             listePrio.add(listeHotelsParDate[0])
             listeHotelsParDate.splice(0, 1)
         }
@@ -256,6 +256,7 @@ class Algo {
        var jourRef = moment(jour)
        console.log({memfe: jourRef.format("YYYY-MM-DD")})
        var visites = []
+       var visiteurVisites = []
 
 
 
@@ -344,15 +345,13 @@ class Algo {
                             const hotel = hotelsDansSecteur.shift()
                             
                             if(hotel){
-                                const visited_at = jourSemaine.clone().hour(this.visitehorraire[j])
-                                const time_start = visited_at
-                                const time_end = visited_at.clone().add(1, 'hour')
+                                const time_start = jourSemaine.clone().hour(this.visitehorraire[j])
+                                const time_end = time_start.clone().add(1, 'hour')
                                 const visiteur_id_1 = binome[0].get("id")
                                 const visiteur_id_2 = binome[1].get("id")
                                 const voiture_id = 1
                                 const hotel_id = hotel.id
                                 visites.push({
-                                    visited_at: visited_at,
                                     time_start: time_start,
                                     time_end: time_end,
                                     hotel_id: hotel_id,
@@ -370,8 +369,16 @@ class Algo {
         })
 
 
-        const visitesCreated  = await sequelize.models.Visite.bulkCreate(visites)
+        const visitesCreated  = await Promise.all(visites.map(visitesItem => {
 
+            return sequelize.models.Visite.create(visitesItem).then(createdVisite => {
+                return sequelize.getQueryInterface().bulkInsert("visiteur_visites", [
+                    {visite_id: createdVisite.get("id"), visiteur_id: visitesItem.visiteur_id_1},
+                    {visite_id: createdVisite.get("id"), visiteur_id: visitesItem.visiteur_id_2},
+                ])
+            })
+
+        }))
         return visitesCreated
 
     }

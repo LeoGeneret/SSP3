@@ -4,6 +4,12 @@ import './index.css'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
 import { BrowserRouter } from 'react-router-dom'
+import moment from "moment"
+
+// set local for moment
+moment.updateLocale("fr", {
+    firstDayOfWeek: 1
+})
 
 ReactDOM.render((
     <BrowserRouter>

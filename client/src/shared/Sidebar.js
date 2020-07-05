@@ -40,10 +40,10 @@ function Sidebar (props) {
 
   const createPlanningAction = () => {
     
-    const keepgoing = window.confirm("Etes vous sûr de vouloir générer un plannig pour cette semaine ?")
+    const keepgoing = window.confirm("Etes vous sûr de vouloir générer un planning pour la semaine prochaine ?")
     
     if(keepgoing === true){
-      utils.fetchJson("/planning/create?date=" + moment().format("YYYY-MM-DD"), {
+      utils.fetchJson("/algo/planning", {
         method: "PUT"
       }).then(res => {
       

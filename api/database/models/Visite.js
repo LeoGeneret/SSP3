@@ -1,43 +1,11 @@
 const Op = require("sequelize").Op
 const moment = require("moment")
-
-const Format = {
-
-    regularVisiteAttributes: {
-        attributes: ["id", "time_start", "time_end", "visiteur_id_1", "visiteur_id_2"],
-        include: [
-            {
-                association: "hotel",
-            },
-            {
-                association: "visiteur_1"
-            },
-            {
-                association: "visiteur_2"
-            },
-        ]
-    },
-    regularVisiteFormat: visiteItem => ({
-        id: visiteItem.get("id"),
-        id_string: visiteItem.get("id").toString(),
-        start: moment(visiteItem.get("time_start")).format("YYYY-MM-DDTHH:mm:ssZ"),
-        end: moment(visiteItem.get("time_end")).format("YYYY-MM-DDTHH:mm:ssZ"),
-        hotel: visiteItem.get("hotel"),
-        agents: [
-            visiteItem.get("visiteur_1"),
-            visiteItem.get("visiteur_2"),
-        ]
-    })
-}
+const Utils = require("../../api.utils")
+const Format = require("../../data-format")
 
 module.exports = (sequelize, DataTypes) => {
 
     const Visite = sequelize.define('visite', {
-        
-        visited_at: {
-            type: DataTypes.DATE,
-            allowNull: false,
-        },
 
         time_start: {
             type: DataTypes.DATE,
@@ -54,107 +22,24 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: false
     })
 
-    const Visiteur = sequelize.models.visiteur
 
-    // Fetchers
-
-
-    Visite.getPlanning = async (week, day, userId) => {
-
-        const DATE_VALID_FORMAT = "YYYY-MM-DD"
-        const DATE_VALID_FORMAT_REGEX = /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/
-
-        let results = {
-            error: false,
-            status: 200,
-            data: null
-        }
-
-        if(week !== null || day !== null){
-           
-            let momentWeekDate = week && moment(week, DATE_VALID_FORMAT)
-            let momentDayDate = day && moment(day, DATE_VALID_FORMAT)
-
-            console.log("test moment : ", day)
-
-            // if match format date and is a correct date (i.e !30 fevrier, !2000-35-01)
-            if((day && DATE_VALID_FORMAT_REGEX.test(day) && momentDayDate.isValid()) || (week && DATE_VALID_FORMAT_REGEX.test(week) && momentWeekDate.isValid())){
-
-                let visites = null
-                let where = {}
-        
-                if (week){
-                    where = {
-                        visited_at: {
-                            [Op.between]: [
-                                // OPTI - from dimanche to samedi ???
-                                momentWeekDate.clone().weekday(1),
-                                momentWeekDate.clone().weekday(7),
-                            ]
-                        }
-                    }
-                }
-                else {
-                    where = {
-                        visited_at: {[Op.between]: [
-                            // OPTI - from dimanche to samedi ???
-                            momentDayDate.clone().hour(0),
-                            momentDayDate.clone().hour(23),
-                        ]}
-                    }
-                }
-
-                if (userId) {
-                    where = {
-                        ...where,
-                        [Op.or] : [
-                            {visiteur_id_1: userId},
-                            {visiteur_id_2: userId}
-                        ]
-                    }
-                }
-
-                try {
-        
-                    visites = await Visite.findAll({
-                        ...Format.regularVisiteAttributes,
-                        where: where
-                    })
-
-                    results.data = {
-                        visites: visites.map(visitesIitem => ({
-                            ...Format.regularVisiteFormat(visitesIitem),
-                            hotel_id: visitesIitem.get("hotel_id")
-                        }))
-                    }
-        
-                } catch (GetPlanningError) {
-                    console.error({GetPlanningError})
-                    results.error = {
-                        code: 502,
-                        message: "BAD GATEWAY - error on fetching planning"
-                    }
-                    results.status = 502
-                }
-
-            } else {
-                results.status = 400
-                results.error = {
-                    message: "BAD REQUEST - invalid date (format must be " + DATE_VALID_FORMAT + ")"
-                }
+    const Helpers = {
+        setVisiteurs: async (visitModel, visiteursIds) => {
+            let nextVisiteurs = visiteursIds.map(id => {
+                return sequelize.models.Visiteur.findByPk(id, {attributes: ["id"]}).then(visiteur => visiteur ? visiteur : null)
+            })
+    
+            nextVisiteurs = await Promise.all(nextVisiteurs)
+    
+            if(nextVisiteurs.every(v => v)){
+                await visitModel.setVisiteurs(nextVisiteurs)
             }
-        } else {
-            results.status = 400
-            results.error = {
-                message: "BAD REQUEST - date is null"
-            }
+
+            return nextVisiteurs
         }
-
-        return results
-
     }
 
-    Visite.getAll = async (offset = 0, limit = 5) => {
+    Visite.getAll = async (week, day, userId) => {
         
         let results = {
             error: false,
@@ -164,41 +49,68 @@ module.exports = (sequelize, DataTypes) => {
 
         let visites = null
 
+        week = week && moment(week, "YYYY-MM-DD")
+        day = day && moment(day, "YYYY-MM-DD")
+
+        if(!week && !day){
+            results.error = {
+                message: "BAD REQUEST - week or day is null",
+                code: 400
+            }
+            results.status = 400
+
+            return results
+        }
+
+        let queryParameters = {}
+
         try {
-            visites = await Visite.findAll({
-                offset: offset * limit,
-                limit: limit,
-                attributes: ["id", "visited_at", "time_start", "time_end", "visiteur_id_1", "visiteur_id_2"],
-                include: [
-                    {
-                        association: "hotel",
-                        attributes: ["id", "ville"]
-                    },
-                    {
-                        association: "voiture",
-                        attributes: ["id", "type"]
-                    },
-                    {
-                        association: "rapport",
-                        attributes: ["id", "note"]
+
+            if (week){
+                queryParameters = {
+                    where: {
+                        time_start: {
+                            [Op.between]: [
+                                // OPTI - from dimanche to samedi ???
+                                week.clone().weekday(0),
+                                week.clone().weekday(6),
+                            ]
+                        }
                     }
-                ]
-            })
-            
+                }
 
-            if(visites){
-
-                let item_count = await Visite.count()
-
-                results.data = {
-                    pagination: {
-                        item_count: item_count,
-                        page_current: offset,
-                        page_count: Math.ceil(item_count / limit)
-                    },
-                    visites: visites
+            }
+            else {
+                queryParameters = {
+                    where: {
+                        time_start: {[Op.between]: [
+                            // OPTI - from dimanche to samedi ???
+                            day.clone().hour(0),
+                            day.clone().hour(23),
+                        ]}
+                    }
                 }
             }
+
+            if(Utils.isNullOrUndefined(userId)){
+                visites = await Visite.findAll(Format.Visite.queryParameters({
+                    ...queryParameters      
+                })).map(v => Format.Visite.format(v))
+            } else {
+                let visiteur = await sequelize.models.Visiteur.findByPk(userId, {
+                    attributes: ["id"],
+                    include: [
+                        Format.Visite.queryParameters({
+                            association: "visites",
+                            required: false,
+                        })
+                    ]
+                })
+
+                visites = visiteur.visites.map(v => Format.Visite.format(v))
+            }
+
+            results.data = visites
 
         } catch (GetAllVisiteError) {
             console.error({GetAllVisiteError})
@@ -286,21 +198,32 @@ module.exports = (sequelize, DataTypes) => {
 
             // if found perform an update
             if (foundVisite) {
-                console.log(nextVisite)
-                const aa = await Visite.update(nextVisite, {
+                await Visite.update(nextVisite, {
                     where: {
                         id: visiteId
                     }
-                })
+                })  
 
-                console.log("@@@@@")
-                console.log("@@@@@")
-                console.log({aa})
-                console.log("@@@@@")
-                console.log("@@@@@")
+                
+                /* Update visiteurs */
+                if(nextVisite.visiteurs && nextVisite.visiteurs.length){
+
+                    let visiteurs = await Helpers.setVisiteurs(foundVisite, nextVisite.visiteurs)
+
+                    if(!visiteurs.length){
+                        results.error = {
+                            message: "NOT FOUND - visiteur not found"
+                        }
+                        results.status = 404
+                        return results
+                    }
+                }
 
                 // OPTI - may crash if null
-                results.data = Format.regularVisiteFormat(await Visite.findByPk(visiteId, Format.regularVisiteAttributes))
+                results.data = Format.Visite.format(await Visite.findByPk(visiteId, Format.Visite.queryParameters({
+
+                })))
+
             } else {
                 results.error = {
                     message: "NOT FOUND - no visite found"
@@ -339,12 +262,22 @@ module.exports = (sequelize, DataTypes) => {
         } else {
             try {
                 visite = await Visite.create(fields)
+
+                let visiteurs = await Helpers.setVisiteurs(visite, fields.visiteurs)
+
+                if(!visiteurs.length){
+                    results.error = {
+                        message: "NOT FOUND - visiteur not found"
+                    }
+                    results.status = 404
+                    return results
+                }
     
                 if(visite){
 
-                    const createdVisite = await Visite.findByPk(visite.get("id"), Format.regularVisiteAttributes)
-
-                    results.data = Format.regularVisiteFormat(createdVisite)
+                    const createdVisite = await Visite.findByPk(visite.get("id"), Format.Visite.queryParameters)
+                    
+                    results.data = Format.Visite.format(createdVisite)
                     results.status = 201
                 }
             } catch (CreateVisiteError) {
