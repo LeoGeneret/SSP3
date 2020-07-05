@@ -47,6 +47,11 @@ function PageFormHotel(props){
         submittedFormData.time_start = moment(stateFormData.visited_at + " " + submittedFormData.time_start)
         submittedFormData.time_end = moment(stateFormData.visited_at + " " + submittedFormData.time_end)
 
+        submittedFormData.visiteurs = [
+            submittedFormData.visiteur_id_1,
+            submittedFormData.visiteur_id_2,
+        ]
+        
         utils.fetchReadyData('/visite/create', {
           method: 'PUT',
           body: JSON.stringify(submittedFormData),

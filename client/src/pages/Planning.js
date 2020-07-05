@@ -23,9 +23,9 @@ function Planning () {
 
   // Others
   const history = useHistory()
-  
-  // REFS
-  const teamPlanning = useRef(null)
+
+    // REFS
+    const teamPlanning = useRef(null)
 
   // STATES
   const [agent1, setAgent1] = useState('')
@@ -50,24 +50,34 @@ function Planning () {
 
   const [calendarDate, setCalendarDate] = useState()
 
+  // Methods
+
   useEffect(() => {
 
+    let refElement = teamPlanning.current.elRef.current
+
+    let prevButton = refElement.querySelector(".fc-prev-button span")
+    let nextButton = refElement.querySelector(".fc-next-button span")
+
+  }, [teamPlanning])
+
+  useEffect(() => {
 
     // GET Events
     utils
-    .fetchJson('/planning?week=' + moment().format('YYYY-MM-DD'))
+    .fetchJson('/visite?week=' + moment().format('YYYY-MM-DD'))
     .then(res => {
       if (res.error) {
         console.log(res.error)
       } else {
       
         /** Build binomes */
-        let agents = res.data.visites.map(v => v.agents)
+        let agents = res.data.filter(f => f.agents.length === 2).map(v => v.agents)
         let binomes = getBinomesRessources(agents)
         setRessources(binomes)
 
-        /** Build visites */
-        setEvents(getVisitesEvents(res.data.visites, binomes))
+        /** Build */
+        setEvents(getVisitesEvents(res.data, binomes))
 
       }
     })
@@ -108,20 +118,20 @@ function Planning () {
     })
 
 
-    events = events.map(e => {
-
-      let colorPos = (e.associated_binome_int / binomes.length) * 255
-      let color = `hsl(${colorPos}, 60%, 50%)`
-
-      return {
-        ...e,
-        backgroundColor: color,
-        borderColor: color,
-      }
-    })
-
+    events = events.map(e => setEventColor(e, binomes))
 
     return events
+  }
+
+  const setEventColor = (eventsItem, resources) => {
+
+    let colorPos = (eventsItem.associated_binome_int / resources.length) * 255
+    let color = `hsl(${colorPos}, 60%, 50%)`
+
+    return {
+      ...eventsItem,
+      color: color,
+    }
   }
 
   const getBinomesRessources = agents => {
@@ -163,25 +173,37 @@ function Planning () {
 
   // ON DROP EVENT
   const handleDropEvent = eventDropInfo => {
-    var eventId = eventDropInfo.event.id
-    if (!eventDropInfo.event.end) {
-      eventDropInfo.revert()
-    } else {
-      const eventUpdate = {
-        time_start: moment(eventDropInfo.event.start),
-        time_end: moment(eventDropInfo.event.end),
-        visited_at: moment(eventDropInfo.event.start),
-        visiteur_id_1: eventDropInfo.event._def.resourceIds[0],
-        visiteur_id_2: eventDropInfo.event._def.resourceIds[1]
-      }
 
-      utils
-        .fetchJson(`/visite/${eventId}/update`, {
-          method: 'PATCH',
-          body: JSON.stringify(eventUpdate),
-          })
-        .then(res => console.log(res))
+
+    let eventIdString = eventDropInfo.event.id
+    let delta = eventDropInfo.delta.milliseconds
+    let newResource = eventDropInfo.newResource
+
+    let beforeEventIndex = events.findIndex(evt => evt.id === eventIdString)
+    let beforeEvent = events[beforeEventIndex]
+
+    const eventUpdate = {
+      time_start: moment(beforeEvent.start).add(delta, "millisecond").format("YYYY-MM-DDTHH:mm:ssZ"),
+      time_end: moment(beforeEvent.end).add(delta, "millisecond").format("YYYY-MM-DDTHH:mm:ssZ"),
+      visiteurs: newResource ? newResource.extendedProps.agents.map(agent => agent.id) : undefined
     }
+
+    utils
+      .fetchJson(`/visite/${eventIdString}/update`, {
+        method: 'PATCH',
+        body: JSON.stringify(eventUpdate),
+        }).then(res => {
+
+          if(!res.error){
+             let nextEvents = [...events]
+             nextEvents[beforeEventIndex].start = res.data.start
+             nextEvents[beforeEventIndex].end = res.data.end
+
+             setEvents(nextEvents)
+          } else {
+            eventDropInfo.revert()
+          }
+        })
   }
 
   // ON RESIZE EVENT
@@ -310,8 +332,8 @@ function Planning () {
       )}
       <div className="card calendar-container">
         <FullCalendar
-          locale={frLocale}
           ref={teamPlanning}
+          locale={frLocale}
           defaultView="resourceTimelineWeek"
           resourceAreaWidth="15%"
           minTime="09:00:00"
@@ -323,7 +345,7 @@ function Planning () {
           droppable={true}
           // resourceGroupField='binome'
           header={{
-            left: "",
+            // left: "prev,next",
             center: 'title',
             right: 'resourceTimelineDay, resourceTimelineWeek'
           }}

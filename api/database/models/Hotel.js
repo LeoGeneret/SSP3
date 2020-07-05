@@ -13,10 +13,10 @@ const Format = {
             },
             {
                 association: "hotel_visites",
-                attributes: ["visited_at", "rapport_id"],
+                attributes: ["time_start", "rapport_id"],
                 separate: true,
                 order: [
-                    ["visited_at", "DESC"]
+                    ["time_start", "DESC"]
                 ],
                 limit: 1,
                 include: [
@@ -30,9 +30,6 @@ const Format = {
     },
 
     regularHotel: hotelsItem => {
-
-        console.log({AAA: hotelsItem})
-
         return {
             id: hotelsItem.get("id"),
             nom: hotelsItem.get("nom"),

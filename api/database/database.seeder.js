@@ -36,11 +36,10 @@ const {
     Visiteur,
     Visite,
     Voiture,
-    VisiteurAbsence,
+    VisiteurVisite,
     Secteur,
     User
 } = sequelize.models
-
 
 
 const HOTEL_COUNT = 56
@@ -121,30 +120,31 @@ const generate = async () => {
     console.log("HAS GENERATED " + visiteurs.length + " visiteurs")
     console.log("#######")
 
-    const visiteursAbsences = await visiteurs.map(visiteursItem => {
+    // unused
+    // const visiteursAbsences = await visiteurs.map(visiteursItem => {
 
-        let absencesCount = faker.random.number(2)
-        const lesRaisons = ["congé maladie", "congé payé", "en formation"]
+    //     let absencesCount = faker.random.number(2)
+    //     const lesRaisons = ["congé maladie", "congé payé", "en formation"]
 
-        return VisiteurAbsence.bulkCreate(Helpers.loop(absencesCount, () => {
+    //     return VisiteurAbsence.bulkCreate(Helpers.loop(absencesCount, () => {
 
-            let date_start = moment().startOf("week").add(faker.random.number(4), "day")
-            let date_end = date_start.clone().add(faker.random.number(1), "day").endOf("day")
-
-
-            return {
-                date_start: date_start,
-                date_end: date_end,
-                raison: faker.random.arrayElement(lesRaisons),
-                visiteur_id: visiteursItem.get("id"),
-            }
-        }))
-    })
+    //         let date_start = moment().startOf("week").add(faker.random.number(4), "day")
+    //         let date_end = date_start.clone().add(faker.random.number(1), "day").endOf("day")
 
 
-    console.log("#######")
-    console.log("HAS GENERATED " + visiteursAbsences.length + " visiteursAbsences")
-    console.log("#######")
+    //         return {
+    //             date_start: date_start,
+    //             date_end: date_end,
+    //             raison: faker.random.arrayElement(lesRaisons),
+    //             visiteur_id: visiteursItem.get("id"),
+    //         }
+    //     }))
+    // })
+
+
+    // console.log("#######")
+    // console.log("HAS GENERATED " + visiteursAbsences.length + " visiteursAbsences")
+    // console.log("#######")
 
 
     const voitures = await Voiture.bulkCreate(Helpers.loop(VOITURE_COUNT, () => {
@@ -182,20 +182,18 @@ const generate = async () => {
             let visited_at = moment()
                 .add(-365, "day")
                 .add(faker.random.number(4), "day")
-    
+
             let time_start = visited_at.clone().hour(9).add(faker.random.number(9), "hour")
             let time_end = time_start.clone().add(faker.random.number(3), "hour")
     
             return {
-                visiteur_id_1: binomesItem.visiteur_id_1,
-                visiteur_id_2: binomesItem.visiteur_id_2,
                 hotel_id: faker.random.arrayElement(hotels).get("id"),
                 voiture_id: faker.random.arrayElement(voitures).get("id"),
                 rapport: {
                     note: faker.random.number(60),
                     commentaire: Math.random() > .5 ? null : faker.lorem.sentences(2)
                 },
-                visited_at: visited_at,
+                visited_at: time_start,
                 time_start: time_start,
                 time_end: time_end,
             }
@@ -205,6 +203,19 @@ const generate = async () => {
                     association: "rapport"
                 }
             ]
+        })
+        .then(createdVisits => {
+
+            return Promise.all(
+                createdVisits.map(createdVisitsItem => {
+
+                    return VisiteurVisite.bulkCreate([
+                        {visiteur_id: binomesItem.visiteur_id_1, visite_id: createdVisitsItem.get("id")},
+                        {visiteur_id: binomesItem.visiteur_id_2, visite_id: createdVisitsItem.get("id")},
+
+                    ])
+                })
+            )
         })
     })
 
