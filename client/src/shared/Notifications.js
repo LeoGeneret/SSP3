@@ -53,12 +53,13 @@ function Notifications(props){
                         let now = moment()
                         let createdAt = moment(notification.created_at)
 
-                        if(now.diff(createdAt, "minute") < 60){
-                            createdAt = now.diff(createdAt, "minute") + " minutes"
+
+                        if(now.diff(createdAt, "second") < 60){
+                            createdAt = now.diff(createdAt, "second") + " secondes"
 
                         } 
-                        else if(now.diff(createdAt, "hour") < 24){
-                            createdAt = now.diff(createdAt, "hour") + " heures"
+                        else if(now.diff(createdAt, "minute") < 60){
+                            createdAt = now.diff(createdAt, "minute") + " minutes"
 
                         } 
                         else if(now.diff(createdAt, "hour") < 24){
