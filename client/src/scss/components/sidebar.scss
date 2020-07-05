@@ -30,6 +30,9 @@
                 border-radius: 10px;
                 background-color: $main-grey;
                 margin-right: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
 
             .userInfos {

@@ -36,6 +36,7 @@ const Rapport = sequelize.import("./models/Rapport.js")
 // const VisiteurAbsence = sequelize.import("./models/VisiteurAbsence.js")
 const User = sequelize.import("./models/User.js")
 const VisiteurVisite = sequelize.import("./models/VisiteurVisite.js")
+const Signalement = sequelize.import("./models/Signalement.js")
 
 /**
  * Database relationship
@@ -74,6 +75,14 @@ Hotel.belongsTo(Secteur, { as: "secteur", foreignKey: "secteur_id" })
 User.hasOne(Visiteur, {as: "visiteur", foreignKey: "user_id"})
 Visiteur.belongsTo(User, {as: "user_related", foreignKey: "user_id"})
 
+// Signalement <-> Visit
+Visite.hasOne(Signalement, {foreignKey: "visit_id"})
+Signalement.belongsTo(Visite, {as: "visit", foreignKey: "visit_id"})
+
+// Signalement <-> Visiteur
+Visiteur.hasOne(Signalement, {foreignKey: "visiteur_id"})
+Signalement.belongsTo(Visiteur, {as: "reported_by", foreignKey: "visiteur_id"})
+
 
 
 sequelize.models = {
@@ -87,6 +96,7 @@ sequelize.models = {
   // VisiteurAbsence,
   User,
   VisiteurVisite,
+  Signalement
 }
 
 module.exports = sequelize

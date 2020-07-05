@@ -17,6 +17,12 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
 
+        is_canceled: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+            allowNull: true
+        }
+
     }, {
         createdAt: false,
         updatedAt: false

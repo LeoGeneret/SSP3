@@ -8,7 +8,6 @@ import moment from "moment"
 import FormRessource from "../shared/FormRessource";
 
 // Utils
-import fetcher from '../utils/fetcher'
 import utils from '../utils'
 
 // icons
@@ -27,7 +26,6 @@ function PageFormHotel(props){
         visiteur_id_1: "",
         visiteur_id_2: "",
     })
-    const [secteurOptions, setSecteurOptions] = React.useState([])
     const [hotelOptions, setHotelOptions] = React.useState([])
     const [visiteurOptions, setVisiteurOptions] = React.useState([])
 

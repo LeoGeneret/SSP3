@@ -71,7 +71,9 @@ function Sidebar (props) {
       <div>
         <div className="profile">
           <div className="user">
-            <div className="userImg"></div>
+            <div className="userImg">
+              <IconPerson/>
+            </div>
             <div className="userInfos">
               <div className="userName">{stateUsername}</div>
               <div className="userStatus">{stateRole}</div>

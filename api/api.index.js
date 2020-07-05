@@ -50,6 +50,7 @@ const routesVisit = require("./routes/api.routes.visit")(app, sequelize, express
 const routesVisiteur = require("./routes/api.routes.visiteur")(app, sequelize, express)
 const routesUser = require("./routes/api.routes.user")(app, sequelize, express)
 const routesRapport = require("./routes/api.routes.rapport")(app, sequelize, express)
+const routesSignalement = require("./routes/api.routes.signalement")(app, sequelize, express)
 
 // const routesVoiture = require("./routes/api.routes.voiture")(app, sequelize, express) - Unused for the moment
 

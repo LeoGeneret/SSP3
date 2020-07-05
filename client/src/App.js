@@ -5,6 +5,7 @@ import { useHistory, Switch, Route } from 'react-router-dom'
 // Shared
 import Sidebar from './shared/Sidebar'
 import ListAgent from './pages/ListAgent'
+import Notifications from './shared/Notifications'
 
 // Pages
 import Login from './pages/Login'
@@ -18,19 +19,77 @@ import PageFormVisite from './pages/PageFormVisite'
 
 // Style
 import './scss/App.scss'
+import utils from './utils'
 
 function App() {
   
   // router
   const history = useHistory()
 
-  let HideSidebar = history.location.pathname === '/login' ? null : <Sidebar />
-  let contentHidebar = history.location.pathname === '/login' ? 'content-login' : 'content'
+
+  // State
+  const [notifications, setNotifications] = React.useState([])
+
+
+  React.useEffect(() => {
+    utils.fetchJson("/signalement").then(response => {
+
+      if(!response.error){
+        setNotifications(response.data)
+      }
+
+    })
+  }, [])
+
+  // Methods
+  const notifyNotifications = () => {
+
+    let nextNotifications = [...notifications]
+    let needToBeNotified = nextNotifications.filter(n => !n.notified)
+
+    let promises = needToBeNotified.map(notification => {
+
+      return utils.fetchJson("/signalement/" + (notification.id) + "/notify", {
+        method: "PATCH"
+      }).then(res => {
+
+        if(!res.error){
+          nextNotifications = nextNotifications.map(n => {
+            if(n.id === res.data.id){
+              return {
+                ...n,
+                notified: true
+              }
+            } else {
+              return n
+            }
+          })
+        }
+
+      })
+    })
+    Promise.all(promises).then(res => {
+      setNotifications(nextNotifications)
+    })
+    
+  }
+
+  let routeIsLogin = history.location.pathname === '/login'
+  let HideSidebar = routeIsLogin ? null : <Sidebar />
+  let contentHidebar = routeIsLogin ? 'content-login' : 'content'
   
   return (
     <div id="App">
         {HideSidebar}
         <div className={contentHidebar}>
+          {
+            !routeIsLogin && (
+              <Notifications 
+                notifications={notifications}
+                notifyNotifications={notifyNotifications}
+              />
+            )
+          }
           <Switch>
             <Route path="/login">
               <Login />

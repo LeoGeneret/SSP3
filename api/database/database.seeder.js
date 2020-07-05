@@ -196,6 +196,7 @@ const generate = async () => {
                 },
                 time_start: time_start,
                 time_end: time_end,
+                is_canceled: Math.random() > .95 ? true : false
             }
         }), {
             include: [
@@ -224,6 +225,7 @@ const generate = async () => {
     console.log("#######")
     console.log("HAS GENERATED " + visits.length + " visits")
     console.log("#######")
+
 }
 
 
