@@ -74,6 +74,9 @@ function Planning () {
         /** Build binomes */
         let agents = res.data.filter(f => f.agents.length === 2).map(v => v.agents)
         let binomes = getBinomesRessources(agents)
+        
+        console.log({binomes})
+
         setRessources(binomes)
 
         /** Build */
@@ -112,13 +115,15 @@ function Planning () {
         title: v.hotel.nom,
         start: v.start,
         end: v.end,
-        associated_binome_int: matchedBinome.id_int,
+        associated_binome_int: matchedBinome && matchedBinome.id_int,
         resourceIds: matchedBinome ? [matchedBinome.id] : [],
       }
     })
 
 
     events = events.map(e => setEventColor(e, binomes))
+
+    console.log(events)
 
     return events
   }
@@ -332,6 +337,7 @@ function Planning () {
       )}
       <div className="card calendar-container">
         <FullCalendar
+          defaultDate="2020-07-07"
           ref={teamPlanning}
           locale={frLocale}
           defaultView="resourceTimelineWeek"
@@ -345,7 +351,7 @@ function Planning () {
           droppable={true}
           // resourceGroupField='binome'
           header={{
-            // left: "prev,next",
+            left: "",
             center: 'title',
             right: 'resourceTimelineDay, resourceTimelineWeek'
           }}

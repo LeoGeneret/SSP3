@@ -256,6 +256,7 @@ class Algo {
        var jourRef = moment(jour)
        console.log({memfe: jourRef.format("YYYY-MM-DD")})
        var visites = []
+       var visiteurVisites = []
 
 
 
@@ -368,8 +369,16 @@ class Algo {
         })
 
 
-        const visitesCreated  = await sequelize.models.Visite.bulkCreate(visites)
+        const visitesCreated  = await Promise.all(visites.map(visitesItem => {
 
+            return sequelize.models.Visite.create(visitesItem).then(createdVisite => {
+                return sequelize.getQueryInterface().bulkInsert("visiteur_visites", [
+                    {visite_id: createdVisite.get("id"), visiteur_id: visitesItem.visiteur_id_1},
+                    {visite_id: createdVisite.get("id"), visiteur_id: visitesItem.visiteur_id_2},
+                ])
+            })
+
+        }))
         return visitesCreated
 
     }
