@@ -1,6 +1,6 @@
 // Libs
 import React from 'react'
-import { useHistory, Switch, Route } from 'react-router-dom'
+import { useLocation, Switch, Route } from 'react-router-dom'
 
 // Shared
 import Sidebar from './shared/Sidebar'
@@ -22,24 +22,38 @@ import './scss/App.scss'
 import utils from './utils'
 
 function App() {
+
   
   // router
-  const history = useHistory()
+  const location = useLocation()
 
 
   // State
   const [notifications, setNotifications] = React.useState([])
-
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false)
 
   React.useEffect(() => {
-    utils.fetchJson("/signalement").then(response => {
+      utils.checkToken().then(() => {
+        setIsAuthenticated(true)
+      }).catch(err => {
+        console.log({err})
+      })
 
-      if(!response.error){
-        setNotifications(response.data)
-      }
-
-    })
   }, [])
+
+  React.useEffect(() => {
+
+    if(isAuthenticated){
+      utils.fetchJson("/signalement").then(response => {
+
+        if(!response.error){
+          setNotifications(response.data)
+        }
+  
+      })
+    }
+
+  }, [isAuthenticated])
 
   // Methods
   const notifyNotifications = () => {
@@ -74,14 +88,12 @@ function App() {
     
   }
 
-  let routeIsLogin = history.location.pathname === '/login'
-  let HideSidebar = routeIsLogin ? null : <Sidebar />
-  let contentHidebar = routeIsLogin ? 'content-login' : 'content'
+  let routeIsLogin = location.pathname === '/login'
   
   return (
     <div id="App">
-        {HideSidebar}
-        <div className={contentHidebar}>
+        {!routeIsLogin && <Sidebar />}
+        <div className={routeIsLogin ? 'content-login' : 'content'}>
           {
             !routeIsLogin && (
               <Notifications 
@@ -92,7 +104,7 @@ function App() {
           }
           <Switch>
             <Route path="/login">
-              <Login />
+              <Login setIsAuthenticated={setIsAuthenticated}/>
             </Route>
             <SecretRoute path="/EditPwd">
               <EditPwd />

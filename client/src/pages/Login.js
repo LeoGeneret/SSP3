@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
-import utils from '../utils'
 import { useHistory } from "react-router-dom"
+import utils from '../utils'
 
-function Login() {
+function Login(props) {
+
+  const history = useHistory()
 
   /** STATES */
   const [stateEmail, setStateEmail] = useState("")
   const [statePassword, setStatePassword] = useState("")
   const [errorForm, setErrorForm] = useState(false)
 
-  let history = useHistory();
   /** METHODS */
 
   const submitLogin = event => {
@@ -27,6 +28,7 @@ function Login() {
           setErrorForm(true)
         } else {
           localStorage.setItem("access_token", response.data.token)
+          props.setIsAuthenticated(true)
           history.push('/')
         }
       })

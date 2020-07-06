@@ -63,7 +63,7 @@ function Planning () {
 
     // GET Events
     utils
-    .fetchJson('/visite?week=' + moment("2020-07-10").format('YYYY-MM-DD'))
+    .fetchJson('/visite?week=' + moment().format('YYYY-MM-DD'))
     .then(res => {
       if (res.error) {
         console.log(res.error)
@@ -334,7 +334,6 @@ function Planning () {
       )}
       <div className="card calendar-container">
         <FullCalendar
-          defaultDate="2020-07-07"
           ref={teamPlanning}
           locale={frLocale}
           defaultView="resourceTimelineWeek"
