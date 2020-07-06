@@ -1,10 +1,5 @@
 web_server_workdir: /home/app
 web_server_repo: https://github.com/LeoGeneret/SSP3.git
 web_server_repo_dirname: SSP3
-web_server_repo_branch: prod
-web_server_start_command: sudo docker-compose -f docker-compose-prod.yml up -d
-web_server_remote_ip: 15.236.180.77
 web_server_docker_compose_files: 
   - docker-compose-prod.yml
-web_server_docker_compose_env:
-  - MACHINE_HOST: 15.236.180.77
