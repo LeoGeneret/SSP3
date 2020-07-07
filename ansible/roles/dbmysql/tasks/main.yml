@@ -1,0 +1,11 @@
+---
+# tasks file for dbmysql
+- name: "[DBMYSQL] - start docker-compose database"
+  become: true
+  docker_service:
+    project_src: "{{ web_server_workdir }}/{{ web_server_repo_dirname }}"
+    files: "{{ web_server_docker_compose_files }}"
+    services:
+      - database
+    recreate: always
+  register: output

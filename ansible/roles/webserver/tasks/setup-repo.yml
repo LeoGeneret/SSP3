@@ -1,0 +1,23 @@
+---
+- name: "[SETUP/REPO] Create the workdir"
+  file:
+    path: "{{ web_server_workdir }}"
+    state: directory
+    mode: 0755
+
+- name: "[SETUP/REPO] Clone repository"
+  git:
+    repo: "{{ web_server_repo }}"
+    dest: "/home/app/{{ web_server_repo_dirname }}"
+
+- name: "[SETUP/REPO] Copy env file for docker-compose"
+  copy:
+    src: "{{ role_path }}/files/.env"
+    dest: "{{ web_server_workdir }}/{{ web_server_repo_dirname }}/.env"
+
+- name: "[SETUP/REPO] Create and start services"
+  docker_compose:
+    project_src: "{{ web_server_workdir }}/{{ web_server_repo_dirname }}"
+    files: "{{ web_server_docker_compose_files }}"
+    recreate: always
+  register: output

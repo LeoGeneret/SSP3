@@ -49,6 +49,26 @@ resource "aws_security_group" "security_group" {
   }
 }
 
+resource "aws_security_group" "dangerous_allow_all" {
+  name        = "dangerous_allow_all"
+  description = "Security group created with terraform"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+}
+
 # Création de l'instance AWS - machine Ubuntu 16.4
 # Machine Back-office
 
@@ -56,7 +76,7 @@ resource "aws_instance" "ssp3_backoffice" {
     ami                 = "ami-051ebe9615b416c15"
     instance_type       = "t2.micro"
     key_name            = aws_key_pair.key_pair.key_name
-    security_groups     = [aws_security_group.security_group.name]
+    security_groups     = [aws_security_group.dangerous_allow_all.name]
     tags = {
       Name = "SSP3 - Back-office"
     }
@@ -74,7 +94,7 @@ resource "aws_instance" "ssp3_api" {
     ami                 = "ami-051ebe9615b416c15"
     instance_type       = "t2.micro"
     key_name            = aws_key_pair.key_pair.key_name
-    security_groups     = [aws_security_group.security_group.name]
+    security_groups     = [aws_security_group.dangerous_allow_all.name]
     tags = {
       Name = "SSP3 - API"
     }
@@ -92,7 +112,7 @@ resource "aws_instance" "ssp3_dbmysql" {
     ami                 = "ami-051ebe9615b416c15"
     instance_type       = "t2.micro"
     key_name            = aws_key_pair.key_pair.key_name
-    security_groups     = [aws_security_group.security_group.name]
+    security_groups     = [aws_security_group.dangerous_allow_all.name]
     tags = {
       Name = "SSP3 - DBMySQL"
     }

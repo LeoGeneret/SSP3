@@ -1,0 +1,7 @@
+---
+# defaults file for ssp3
+web_server_workdir: /home/app
+web_server_repo: https://github.com/LeoGeneret/SSP3.git
+web_server_repo_dirname: SSP3
+web_server_docker_compose_files: 
+  - docker-compose-prod.yml

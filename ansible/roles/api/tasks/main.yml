@@ -1,0 +1,17 @@
+---
+# tasks file for api
+
+- name: "[API] Copy env file for docker-compose"
+  copy:
+    src: "{{ role_path }}/files/.env.api"
+    dest: "{{ web_server_workdir }}/{{ web_server_repo_dirname }}/.env"
+
+- name: "[API] - start docker-compose api"
+  become: true
+  docker_service:
+    project_src: "{{ web_server_workdir }}/{{ web_server_repo_dirname }}"
+    files: "{{ web_server_docker_compose_files }}"
+    services:
+      - api
+    recreate: always
+  register: output

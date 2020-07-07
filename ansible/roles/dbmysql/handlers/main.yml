@@ -1,0 +1,6 @@
+---
+# handlers file for dbmysql
+- name: restart mysql
+  service:
+    name: mysqld
+    state: restarted

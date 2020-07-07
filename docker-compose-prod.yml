@@ -33,8 +33,6 @@ services:
 
     api:
         container_name: ssp3_api
-        depends_on: 
-            - database
         build: 
             context: ./api
             dockerfile: Dockerfile-prod
@@ -42,11 +40,11 @@ services:
         volumes: 
             - /home/api/node_modules
         environment: 
-            DB_HOST: database
-            DB_NAME: ssp3
-            DB_USER: user_dev
-            DB_PASSWORD: 1234
-            API_SECRET: myjsonwebtokensecretvalue
+            DB_HOST: ${DB_HOST}
+            DB_NAME: ${DB_NAME}
+            DB_USER: ${DB_USER}
+            DB_PASSWORD: ${DB_PASSWORD}
+            API_SECRET: ${API_SECRET}
             EMAIL_SECRET: myemailsecretkeyfortoken
             MAIL_LOGIN: jwp7bw3ypsxhc3n6@ethereal.email
             MAIL_USER: jwp7bw3ypsxhc3n6@ethereal.email
@@ -55,9 +53,7 @@ services:
             MAIL_SERVICE_HOST: smtp.ethereal.email
             NODE_ENV: production
         ports:
-            - 3002:3002
-        networks: 
-            - network_database
+            - 80:3002
         command: npm run start-prod
 
     app:

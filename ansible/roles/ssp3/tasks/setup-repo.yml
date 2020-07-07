@@ -1,0 +1,11 @@
+---
+- name: "[SETUP/REPO] Create the workdir"
+  file:
+    path: "{{ web_server_workdir }}"
+    state: directory
+    mode: 0755
+
+- name: "[SETUP/REPO] Clone repository"
+  git:
+    repo: "{{ web_server_repo }}"
+    dest: "/home/app/{{ web_server_repo_dirname }}"
