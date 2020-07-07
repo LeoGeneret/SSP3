@@ -1,0 +1,7 @@
+---
+# WEB SERVER
+
+- hosts: webserver
+
+  roles:
+    - webserver

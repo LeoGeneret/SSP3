@@ -1,0 +1,42 @@
+---
+- name: "[SETUP/DOCKER] Install aptitude using apt"
+  apt: 
+    name: aptitude 
+    state: latest 
+    update_cache: yes 
+    force_apt_get: yes
+
+- name: "[SETUP/DOCKER] Install required system packages"
+  apt: 
+    name: "{{ item }}"
+    state: latest 
+    update_cache: yes
+  loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+
+- name: "[SETUP/DOCKER] Add Docker GPG apt Key"
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: "[SETUP/DOCKER] Add Docker Repository"
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+
+- name: "[SETUP/DOCKER] Update apt and install docker-ce"
+  apt: 
+    update_cache: yes 
+    name: docker-ce 
+    state: latest
+
+- name: "[SETUP/DOCKER] Install Docker Module for Python"
+  apt:
+    name: docker
+    
+- name: "[SETUP/DOCKER] Install docker-compose"
+  apt:
+    name: docker-compose=1.8.*
+    state: present
+    update_cache: yes
+  tags:
+    - docker
