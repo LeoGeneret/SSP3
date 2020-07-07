@@ -1,2 +1,16 @@
 ---
-# tasks file for backoffice
+- name: "[BACKOFFICE] Copy env file for docker-compose"
+  become: true
+  copy:
+    src: "{{ role_path }}/files/.env.backoffice"
+    dest: "{{ web_server_workdir }}/{{ web_server_repo_dirname }}/.env"
+
+- name: "[BACKOFFICE] - start docker-compose app"
+  become: true
+  docker_compose:
+    project_src: "{{ web_server_workdir }}/{{ web_server_repo_dirname }}"
+    files: "{{ web_server_docker_compose_files }}"
+    services:
+      - app
+    recreate: always
+  register: output

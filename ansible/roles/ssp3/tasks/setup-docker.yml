@@ -30,7 +30,7 @@
     state: latest
 
 - name: "[SETUP/DOCKER] Install Docker Module for Python"
-  pip:
+  apt:
     name: docker
     
 - name: "[SETUP/DOCKER] Install docker-compose"

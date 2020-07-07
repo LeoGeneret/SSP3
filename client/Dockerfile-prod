@@ -1,11 +1,6 @@
 FROM node:12.15.0-alpine as app_build
 
 ARG api_endpoint
-ARG foo1
-ARG foo2
-
-RUN echo "$foo1"
-RUN echo "my $foo2"
 
 WORKDIR /home/app
 COPY public ./public

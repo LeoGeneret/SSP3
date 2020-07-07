@@ -14,13 +14,9 @@ services:
             - "3306:3306"
         volumes: 
             - ./api/mysql_data:/var/lib/mysql
-        networks: 
-            - network_database
     
     phpmyadmin:
         container_name: ssp3_phpma
-        depends_on: 
-            - database
         image: phpmyadmin/phpmyadmin:4.9
         ports: 
             - "8080:80"
@@ -28,8 +24,6 @@ services:
             PMA_HOST: database
             PMA_USER: user_dev
             PMA_PASSWORD: 1234
-        networks: 
-            - network_database
 
     api:
         container_name: ssp3_api
@@ -58,8 +52,6 @@ services:
 
     app:
         container_name: ssp3_app
-        depends_on: 
-            - api
         build: 
             context: ./client
             dockerfile: Dockerfile-prod
@@ -68,8 +60,4 @@ services:
         ports: 
             - 80:80
         volumes: 
-            - /home/app/node_modules      
-        networks: 
-            - network_database     
-networks: 
-    network_database:
+            - /home/app/node_modules        
