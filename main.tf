@@ -50,13 +50,51 @@ resource "aws_security_group" "security_group" {
 }
 
 # Création de l'instance AWS - machine Ubuntu 16.4
-resource "aws_instance" "rs_instance_ssp3" {
+# Machine Back-office
+
+resource "aws_instance" "ssp3_backoffice" {
     ami                 = "ami-051ebe9615b416c15"
     instance_type       = "t2.micro"
     key_name            = aws_key_pair.key_pair.key_name
     security_groups     = [aws_security_group.security_group.name]
     tags = {
-      Name = "ssp3 prod server"
+      Name = "SSP3 - Back-office"
+    }
+
+    connection {
+        type        = "ssh"
+        user        = "ubuntu"
+        private_key = file(var.private_key_path)
+        host        = self.public_ip
+    }
+}
+
+# Machine API 
+resource "aws_instance" "ssp3_api" {
+    ami                 = "ami-051ebe9615b416c15"
+    instance_type       = "t2.micro"
+    key_name            = aws_key_pair.key_pair.key_name
+    security_groups     = [aws_security_group.security_group.name]
+    tags = {
+      Name = "SSP3 - API"
+    }
+
+    connection {
+        type        = "ssh"
+        user        = "ubuntu"
+        private_key = file(var.private_key_path)
+        host        = self.public_ip
+    }
+}
+
+# Machine BDD MySQL
+resource "aws_instance" "ssp3_dbmysql" {
+    ami                 = "ami-051ebe9615b416c15"
+    instance_type       = "t2.micro"
+    key_name            = aws_key_pair.key_pair.key_name
+    security_groups     = [aws_security_group.security_group.name]
+    tags = {
+      Name = "SSP3 - DBMySQL"
     }
 
     connection {
