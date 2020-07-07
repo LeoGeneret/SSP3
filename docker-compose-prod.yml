@@ -56,7 +56,7 @@ services:
             context: ./client
             dockerfile: Dockerfile-prod
             args: 
-                api_endpoint: "http://${MACHINE_HOST}:3002"
+                api_endpoint: "http://${MACHINE_HOST}"
         ports: 
             - 80:80
         volumes: 
