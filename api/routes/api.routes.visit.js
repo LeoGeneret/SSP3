@@ -80,7 +80,7 @@ module.exports = (app, sequelize, express) => {
      * @apiSuccess {String[]} data.resourceIds Ensemble des visiteurs
      * 
      */
-    app.put("/visite/create", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER]), async (req, res) => {
+    app.put("/visite/create", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER, params.USER_ROLE_VISITOR]), async (req, res) => {
         const results = await sequelize.models.Visite.createVisite({
             time_start: req.body.time_start,
             time_end: req.body.time_end,

@@ -267,6 +267,7 @@ module.exports = (sequelize, DataTypes) => {
             results.status = 400
         } else {
             try {
+
                 visite = await Visite.create(fields)
 
                 let visiteurs = await Helpers.setVisiteurs(visite, fields.visiteurs)
@@ -279,6 +280,7 @@ module.exports = (sequelize, DataTypes) => {
                     return results
                 }
     
+
                 if(visite){
 
                     const createdVisite = await Visite.findByPk(visite.get("id"), Format.Visite.queryParameters)

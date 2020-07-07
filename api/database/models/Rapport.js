@@ -32,26 +32,37 @@ module.exports = (sequelize, DataTypes) => {
 
         try {
 
-            rapports = await sequelize.models.Visite.findAll({
+            rapports = await sequelize.models.Visiteur.findByPk(userId, {
+                attributes: ["id"],
                 include: [
                     {
-                        association: "rapport"
-                    },
-                    {
-                        association: "hotel"
-                    },
-                ],
-                where: {
-                    [Op.or]: [
-                        {
-                            visiteur_id_1: userId
-                        },
-                        {
-                            visiteur_id_2: userId
-                        },
-                    ]
-                }
+                        association: "visites",
+                        include: [
+                            {
+                                association: "rapport",
+                                required: true
+                            },
+                            {
+                                association: "hotel"
+                            }
+                        ]
+                    }
+                ]
             })
+
+            rapports = rapports.visites.map(visite => ({
+                id: visite.rapport.id,
+                note: visite.rapport.note,
+                commentaire: visite.rapport.commentaire,
+                is_canceled: visite.is_canceled,
+                visite: {
+                    id: visite.id,
+                    time_start: visite.time_start,
+                    time_end: visite.time_end,
+                    hotel: visite.hotel,
+                }
+            }))
+
 
             results.data = rapports
 
