@@ -1,0 +1,5 @@
+---
+- name: "PLAYBOOK - HAPROXY-API"
+  hosts: haproxy_api
+  roles:
+    - haproxy_api

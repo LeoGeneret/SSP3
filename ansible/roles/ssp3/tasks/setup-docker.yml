@@ -1,4 +1,9 @@
 ---
+- name: "[SETUP/DOCKER] Uninstall old versions"
+  apt:
+    pkg: ["docker", "docker-engine", "docker.io", "containerd", "runc"]
+    state: absent
+  
 - name: "[SETUP/DOCKER] Install aptitude using apt"
   apt: 
     name: aptitude 
@@ -29,14 +34,6 @@
     name: docker-ce 
     state: latest
 
-- name: "[SETUP/DOCKER] Install Docker Module for Python"
+- name: "[SETUP/DOCKER] Install docker & docker-compose Module for Python"
   apt:
-    name: docker
-    
-- name: "[SETUP/DOCKER] Install docker-compose"
-  apt:
-    name: docker-compose=1.8.*
-    state: present
-    update_cache: yes
-  tags:
-    - docker
+    name: ["docker", "docker-compose"]

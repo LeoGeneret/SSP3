@@ -1,0 +1,26 @@
+---
+
+- name: "[HAPROXY-API] - update cache"
+  become: true
+  apt:
+    update_cache: yes
+
+- name: "[HAPROXY-API] - install haproxy"
+  become: true
+  apt:
+    name: haproxy
+    state: present
+
+- name: "[HAPROXY-API] - config"
+  become: true
+  template:
+    src: "haproxy.cfg.j2"
+    dest: "/etc/haproxy/haproxy.cfg"
+  notify: restart haproxy
+
+- name: "[HAPROXY-API] - start haproxy"
+  become: true
+  service:
+    name: haproxy
+    state: started
+    enabled: yes
