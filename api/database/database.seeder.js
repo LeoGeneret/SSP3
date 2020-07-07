@@ -82,9 +82,16 @@ const generate = async () => {
     console.log("#######")
 
 
-    const users = await User.bulkCreate(Helpers.loop(VISITEUR_COUNT, () => {
+    const usersWithNoms = Helpers.loop(VISITEUR_COUNT, () => {
         return {
-            email: faker.internet.email(),
+            firstName: faker.name.firstName(),
+            lastName: faker.name.lastName()
+        }
+    })
+
+    const users = await User.bulkCreate(usersWithNoms.map(u => {
+        return {
+            email: faker.internet.email(u.firstName, u.lastName),
             // must use async in production
             password: bcrypt.hashSync("1234", 10),
             role: params.USER_ROLE_VISITOR
@@ -104,7 +111,7 @@ const generate = async () => {
 
     const visiteurs = await Visiteur.bulkCreate(users.map((usersItem, index) => {
         return {
-            nom: faker.name.firstName() + " " + faker.name.lastName(),
+            nom: usersWithNoms[index].firstName + " " + usersWithNoms[index].lastName,
             adresse: faker.address.streetAddress(),
             code_postal: faker.address.zipCode(),
             ville: faker.address.city(),

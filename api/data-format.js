@@ -13,6 +13,9 @@ module.exports = {
                     {
                         association: "hotel",
                     },
+                    {
+                        association: "rapport"
+                    }
                 ]
             }
         },
@@ -25,8 +28,9 @@ module.exports = {
                 start: moment(visiteItem.get("time_start")).format("YYYY-MM-DDTHH:mm:ssZ"),
                 end: moment(visiteItem.get("time_end")).format("YYYY-MM-DDTHH:mm:ssZ"),
                 hotel: visiteItem.get("hotel"),
+                is_canceled: visiteItem.get("is_canceled"),
                 agents: visiteItem.visiteurs,
-                rapport_id: visiteItem.get("rapport_id")
+                rapport: visiteItem.get("rapport"),
             }
         }
     }

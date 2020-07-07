@@ -98,16 +98,21 @@ module.exports = (sequelize, DataTypes) => {
                 }
             }
 
+            console.log({userId})
             if(Utils.isNullOrUndefined(userId)){
+                console.log("xxxxx")
                 visites = await Visite.findAll(Format.Visite.queryParameters({
                     ...queryParameters      
                 })).map(v => Format.Visite.format(v))
             } else {
+
+                console.log("HERERERE ")
                 let visiteur = await sequelize.models.Visiteur.findByPk(userId, {
                     attributes: ["id"],
                     include: [
                         Format.Visite.queryParameters({
                             association: "visites",
+                            ...queryParameters,
                             required: false,
                         })
                     ]
@@ -268,8 +273,7 @@ module.exports = (sequelize, DataTypes) => {
         } else {
             try {
 
-                visite = await Visite.create(fields)
-
+                
                 let visiteurs = await Helpers.setVisiteurs(visite, fields.visiteurs)
 
                 if(!visiteurs.length){

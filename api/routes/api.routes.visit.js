@@ -8,10 +8,9 @@ module.exports = (app, sequelize, express) => {
         // query
         const week = req.query.week || null
         const day = req.query.day || null
-        const mine = utils.isNullOrUndefined(req.query.mine) ? null : true
+        const mine = req.query.mine === "1" ? true : false
 
         const userId = req.token.id
-
         const results = await sequelize.models.Visite.getAll(week, day, mine ? userId : null)
         return res.status(results.status).json(results)
     })
