@@ -1,7 +1,7 @@
 
 module.exports = (sequelize, DataTypes) => {
 
-    const RapportImage = sequelize.define('rapportImage', {
+    const RapportImage = sequelize.define('rapport_images', {
 
         src: {
             type: DataTypes.STRING,
@@ -28,10 +28,18 @@ module.exports = (sequelize, DataTypes) => {
         let rapportImages = null
 
         try {
-            rapportImages = await sequelize.query("select distinct * from rapport_images where rapport_images.rapport_id = $rapport_id", {bind: { rapport_id }});
-    
+            rapportImages = await RapportImage.findAll(Object.assign({
+                attributes: attributes,
+            }, rapport_id && ({
+                where: {
+                    rapport_id: rapport_id
+                }
+            })))
+
             if(rapportImages){
                 console.log(rapportImages[0])
+                results.data = {}
+                results.data.rapportImages = rapportImages
             }
 
         } catch (GetAllRapportImageError) {
@@ -54,8 +62,8 @@ module.exports = (sequelize, DataTypes) => {
         }
 
         let rapportImage = null
-        const srcContent = fields.src
-        const rapport_id = fields.rapport_id
+        // const srcContent = fields.src
+        // const rapport_id = fields.rapport_id
 
         if(Object.values(fields).some(fieldsItem => fieldsItem === undefined || fieldsItem === null || fieldsItem === "")){
             results.error = {
@@ -65,7 +73,7 @@ module.exports = (sequelize, DataTypes) => {
             results.status = 400
         } else {
             try {
-                rapportImage = await sequelize.query("insert into rapport_images (src, rapport_id) values ($srcContent, $rapport_id)", {bind: { srcContent, rapport_id }})
+                rapportImage = await RapportImage.create(fields)
                 if(rapportImage){
                     results.data = rapportImage
                     results.status = 201
@@ -94,57 +102,33 @@ module.exports = (sequelize, DataTypes) => {
         const rapportImgId = rapportImageId
         const srcContent = rapportImageInfo.src
         const rapport_id = rapportImageInfo.rapport_id
-                
-        // Remove undifined keys
 
-
-        if(Object.values(rapportImageInfo).some(rapportImageInfoItem => rapportImageInfoItem === undefined || rapportImageInfoItem === null || rapportImageInfoItem === "")){
-            results.error = {
-                code: 400,
-                message: "BAD REQUEST - one param is null" + JSON.stringify(rapportImageInfo)
-            }
-            results.status = 400
-        } else {
-            try {
-                rapportImage = await sequelize.query("update rapport_images set src=$srcContent, rapport_id=$rapport_id where id=$rapportImgId", {bind: { srcContent, rapport_id, rapportImgId }})
-                if(rapportImage){
-                    results.data = rapportImage
-                    results.status = 201
-                }
-            } catch (CreateRapportError) {
-                console.error({CreateRapportError})
-                results.error = {
-                    code: 502,
-                    message: "BAD GATEWAY - error on creating ressource"
-                }
-                results.status = 502
-            }
-        }
-
-
-
-        // Object.keys(nextRapportImage).forEach(key => (nextRapportImage[key] === null || nextRapportImage[key] === "" || nextRapportImage[key] === undefined) && delete nextRapportImage[key])
+        Object.keys(nextRapportImage).forEach(key => (nextRapportImage[key] === null || nextRapportImage[key] === "" || nextRapportImage[key] === undefined) && delete nextRapportImage[key])
         
-        // try {
-        //     [rapportModifiedCount,] = await sequelize.query("update rapport_images set src=$srcContent, rapport_id=$rapport_id where id=$rapportImgId", {bind: { srcContent, rapport_id, rapportImgId }})
+        try {
+            [rapportModifiedCount,] = await RapportImage.update(nextRapportImage, {
+                where: {
+                    id: rapportImageId
+                }
+            })
 
-        //     if(rapportModifiedCount === 1){
-        //         // results.data = await RapportImage.findByPk(rapportImageId)
-        //     } else {
-        //         results.error = {
-        //             code: 404,
-        //             message: "NOT FOUND - no rapport image found"
-        //         }
-        //         results.status = 404
-        //     }
-        // } catch (UpdateRapportError) {
-        //     console.error({UpdateRapportError})
-        //     results.error = {
-        //         code: 502,
-        //         message: "BAD GATEWAY - error on updating ressource"
-        //     }
-        //     results.status = 502
-        // }
+            if(rapportModifiedCount === 1){
+                results.data = await RapportImage.findByPk(rapportImageId)
+            } else {
+                results.error = {
+                    code: 404,
+                    message: "NOT FOUND - no rapport image found"
+                }
+                results.status = 404
+            }
+        } catch (UpdateRapportError) {
+            console.error({UpdateRapportError})
+            results.error = {
+                code: 502,
+                message: "BAD GATEWAY - error on updating ressource"
+            }
+            results.status = 502
+        }
         
         return results
     }
@@ -168,15 +152,19 @@ module.exports = (sequelize, DataTypes) => {
             data: null
         }
 
-        let rapport = null
-        const rapportImgId = rapportImageId
+        let rapportImage = null
+        // const rapportImgId = rapportImageId
 
         try {
-            rapport = await sequelize.query("delete from rapport_images where id=$rapportImgId", {bind: { rapportImgId }})
-            if(rapport === 0){
+            rapportImage = await RapportImage.destroy({
+                where: {
+                    id: rapportImageId
+                }
+            })
+            if(rapportImage === 0){
                 results.error = {
                     code: 404,
-                    message: "NOT FOUND - no rapport found"
+                    message: "NOT FOUND - no rapport image found"
                 }
                 results.status = 404
             } else {

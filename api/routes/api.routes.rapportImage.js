@@ -1,5 +1,6 @@
 const utils = require("../api.utils")
 const params = require("../api.params")
+const multer = require('../multer-config');
 
 module.exports = (app, sequelize, express) => {
 
@@ -12,21 +13,21 @@ module.exports = (app, sequelize, express) => {
         return res.status(results.status).json(results)
     })
 
-    app.put("/rapportImage/create", async (req, res) => {
+    app.put("/rapportImage/create", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER, params.USER_ROLE_VISITOR]), multer, async (req, res) => {
         const results = await sequelize.models.RapportImage.createRapportImage({
-            src: req.body.src,
+            src: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
             rapport_id: req.body.rapport_id
         })
         return res.status(results.status).json(results)
     })
 
-    app.patch("/rapportImage/:id/update", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER, params.USER_ROLE_VISITOR]), async (req, res) => {
+    app.patch("/rapportImage/:id/update", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER, params.USER_ROLE_VISITOR]), multer, async (req, res) => {
 
         // params
         const rapportImageId = (req.params.id && Number(req.params.id)) || undefined
 
         const results = await sequelize.models.RapportImage.updateRapportImage(rapportImageId, {
-            src: req.body.src,
+            src: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
             rapport_id: req.body.rapport_id
         })
         return res.status(results.status).json(results)
