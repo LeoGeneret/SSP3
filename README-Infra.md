@@ -5,8 +5,9 @@ Keny Zachelin s'est occupé de la partie infrastructure
 
 # Comment déployer l'application SSP3
 
-## #1 Déployer les serveurs
+## #1 Déployer les serveurs sur Amazon EC2
 
+- Configurer une paire de clé privée/publique sur son compte Amazon EC2 afin de pouvoir déployer des instances.
 - Se placer sur la branche <em>prod</em> du repository et a la racine du dossier
 - Renommer le fichier variables.copy en variables et renseigner les variables demandées :
     * public_key

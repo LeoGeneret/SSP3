@@ -47,21 +47,24 @@ resource "aws_security_group" "ssp3_database_security" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.LOCAL_MACHINE_IP]
+    security_groups = [
+      aws_security_group.ssp3_classic_access.id
+    ]
   }
 
   ingress {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.LOCAL_MACHINE_IP]
   }
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.LOCAL_MACHINE_IP]
   }
 
   egress {
@@ -95,7 +98,7 @@ resource "aws_security_group" "ssp3_classic_access" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.LOCAL_MACHINE_IP]
   }
 
   egress {
@@ -129,14 +132,14 @@ resource "aws_security_group" "ssp3_haproxy_access" {
     from_port   = 8080
     to_port     = 8080
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.LOCAL_MACHINE_IP]
   }
 
   ingress {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [var.LOCAL_MACHINE_IP]
   }
 
   egress {
