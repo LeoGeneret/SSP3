@@ -1,6 +1,30 @@
 ---
 # WEB SERVER
 
-- hosts: webserver
+- name: "PLAYBOOK - HAPROXY-API"
+  hosts: haproxy_api
+  tags:
+    - haproxy_api
   roles:
-    - webserver
+    - haproxy_api
+
+- name: "PLAYBOOK - DBMYSQL"
+  hosts: dbmysql
+  tags:
+    - database
+  roles:
+    - dbmysql
+
+- name: "PLAYBOOK - BACKOFFICE"
+  hosts: backoffice
+  tags:
+    - backoffice
+  roles:
+    - backoffice
+
+- name: "PLAYBOOK - API"
+  hosts: api
+  tags:
+    - api
+  roles:
+    - api

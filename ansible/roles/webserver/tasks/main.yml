@@ -1,9 +1,0 @@
----
-# tasks file for webserver
-- name: "[SETUP/DOCKER]"
-  become: true
-  include: setup-docker.yml
-
-- name: "[SETUP/REPO]"
-  become: true
-  include: setup-repo.yml

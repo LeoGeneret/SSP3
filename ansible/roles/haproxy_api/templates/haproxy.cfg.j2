@@ -26,11 +26,11 @@ defaults
 #---------------------------------------------------------------------
 # Listen webfarm
 #---------------------------------------------------------------------
-listen wordpress 
+listen api 
        bind 0.0.0.0:80
-       default_backend wp_apache
+       default_backend api_nginx
 
-backend wp_apache
+backend api_nginx
        mode http
        balance roundrobin
        option httpchk
@@ -44,7 +44,7 @@ listen webstats
        bind 0.0.0.0:8080
        stats enable
        stats hide-version
-       stats scope wordpress
+       stats scope api
        stats scope wp_apache
        stats uri /
        stats realm Haproxy\ Statistics

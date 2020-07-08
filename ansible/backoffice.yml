@@ -1,5 +1,0 @@
----
-- name: "PLAYBOOK - BACKOFFICE"
-  hosts: backoffice
-  roles:
-    - backoffice
