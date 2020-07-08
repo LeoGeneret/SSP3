@@ -14,40 +14,9 @@ resource "aws_key_pair" "key_pair" {
   
 }
 
-# Groupe de sécurité autorisant l'accès SSH pour notre machine uniquement, ainsi qu'une connexion tcp sur port 3002 (api) et 80 (back-office) pour tout le monde
-resource "aws_security_group" "security_group" {
-  name        = "ssp3_security_group"
-  description = "Security group created with terraform"
-  vpc_id      = data.aws_vpc.default.id
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = [var.self_machine_ip]
-  }
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port   = 3002
-    to_port     = 3002
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-}
+#
+# SECURITY GROUPS
+#
 
 resource "aws_security_group" "dangerous_allow_all" {
   name        = "dangerous_allow_all"
@@ -69,14 +38,126 @@ resource "aws_security_group" "dangerous_allow_all" {
   }
 }
 
-# Création de l'instance AWS - machine Ubuntu 16.4
+resource "aws_security_group" "ssp3_database_security" {
+  name        = "ssp3_database_security"
+  description = "Security group created with terraform"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "ssp3_classic_access" {
+  name        = "ssp3_classic_access"
+  description = "Security group created with terraform"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "ssp3_haproxy_access" {
+  name        = "ssp3_haproxy_access"
+  description = "Security group created with terraform"
+  vpc_id      = data.aws_vpc.default.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    cidr_blocks     = ["0.0.0.0/0"]
+  }
+}
+
+#
+# INSTANCES
+#
+
 # Machine Back-office
 
 resource "aws_instance" "ssp3_backoffice" {
     ami                 = "ami-051ebe9615b416c15"
     instance_type       = "t2.micro"
     key_name            = aws_key_pair.key_pair.key_name
-    security_groups     = [aws_security_group.dangerous_allow_all.name]
+    security_groups     = [aws_security_group.ssp3_classic_access.name]
     tags = {
       Name = "SSP3 - Back-office"
     }
@@ -92,11 +173,30 @@ resource "aws_instance" "ssp3_backoffice" {
 # Machine API 
 resource "aws_instance" "ssp3_api" {
     ami                 = "ami-051ebe9615b416c15"
+    count               = 2
     instance_type       = "t2.micro"
     key_name            = aws_key_pair.key_pair.key_name
-    security_groups     = [aws_security_group.dangerous_allow_all.name]
+    security_groups     = [aws_security_group.ssp3_classic_access.name]
     tags = {
       Name = "SSP3 - API"
+    }
+
+    connection {
+        type        = "ssh"
+        user        = "ubuntu"
+        private_key = file(var.private_key_path)
+        host        = self.public_ip
+    }
+}
+
+# Machine HAPROXY - API 
+resource "aws_instance" "ssp3_haproxy_api" {
+    ami                 = "ami-051ebe9615b416c15"
+    instance_type       = "t2.micro"
+    key_name            = aws_key_pair.key_pair.key_name
+    security_groups     = [aws_security_group.ssp3_haproxy_access.name]
+    tags = {
+      Name = "SSP3 - HAPROXY - API"
     }
 
     connection {
@@ -112,9 +212,9 @@ resource "aws_instance" "ssp3_dbmysql" {
     ami                 = "ami-051ebe9615b416c15"
     instance_type       = "t2.micro"
     key_name            = aws_key_pair.key_pair.key_name
-    security_groups     = [aws_security_group.dangerous_allow_all.name]
+    security_groups     = [aws_security_group.ssp3_database_security.name]
     tags = {
-      Name = "SSP3 - DBMySQL"
+      Name = "SSP3 - Database MySQL"
     }
 
     connection {
