@@ -8,18 +8,10 @@ module.exports = (app, sequelize, express) => {
         // query
         const week = req.query.week || null
         const day = req.query.day || null
-        const mine = utils.isNullOrUndefined(req.query.mine) ? null : true
+        const mine = req.query.mine === "1" ? true : false
 
         const userId = req.token.id
-
         const results = await sequelize.models.Visite.getAll(week, day, mine ? userId : null)
-        return res.status(results.status).json(results)
-    })
-
-    app.get("/visite", async (req, res) => {
-        // query
-        const date = req.query.date || null
-        const results = await sequelize.models.Visite.getPlanning(date)
         return res.status(results.status).json(results)
     })
 
@@ -80,7 +72,7 @@ module.exports = (app, sequelize, express) => {
      * @apiSuccess {String[]} data.resourceIds Ensemble des visiteurs
      * 
      */
-    app.put("/visite/create", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER]), async (req, res) => {
+    app.put("/visite/create", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER, params.USER_ROLE_VISITOR]), async (req, res) => {
         const results = await sequelize.models.Visite.createVisite({
             time_start: req.body.time_start,
             time_end: req.body.time_end,

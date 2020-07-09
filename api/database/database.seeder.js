@@ -43,12 +43,10 @@ const {
 
 
 const HOTEL_COUNT = 200
-const VISITEUR_COUNT = 20
 // const VOITURE_COUNT = 10
 const SECTEUR_COUNT = 5
 const SECTEUR_LIST = ['75', '93', '92-94', '77-91', '78-95']
-
-
+const VISITEUR_COUNT = (2 * SECTEUR_LIST.length) * 2
 const generate = async () => {
 
     const secteurs = await Secteur.bulkCreate(SECTEUR_LIST.map((secteur_intem) => {
@@ -84,9 +82,22 @@ const generate = async () => {
     console.log("#######")
 
 
-    const users = await User.bulkCreate(Helpers.loop(VISITEUR_COUNT, () => {
+    const usersWithNoms = Helpers.loop(VISITEUR_COUNT, () => {
         return {
-            email: faker.internet.email(),
+            firstName: faker.name.firstName(),
+            lastName: faker.name.lastName(),
+        }
+    })
+
+    usersWithNoms[0] = {
+        firstName: "Jean",
+        lastName: "François",
+        email: "jean.françois@monemail.com"
+    }
+
+    const users = await User.bulkCreate(usersWithNoms.map(u => {
+        return {
+            email: u.email || faker.internet.email(u.firstName, u.lastName),
             // must use async in production
             password: bcrypt.hashSync("1234", 10),
             role: params.USER_ROLE_VISITOR
@@ -104,13 +115,13 @@ const generate = async () => {
     console.log("HAS GENERATED " + users.length + " users")
     console.log("#######")
 
-    const visiteurs = await Visiteur.bulkCreate(users.map(usersItem => {
+    const visiteurs = await Visiteur.bulkCreate(users.map((usersItem, index) => {
         return {
-            nom: faker.name.firstName() + " " + faker.name.lastName(),
+            nom: usersWithNoms[index].firstName + " " + usersWithNoms[index].lastName,
             adresse: faker.address.streetAddress(),
             code_postal: faker.address.zipCode(),
             ville: faker.address.city(),
-            secteur_id : faker.random.arrayElement(secteurs).get("id"),
+            secteur_id : secteurs[index % secteurs.length].get("id"),
             user_id: usersItem.get("id"),
         }
     }))
