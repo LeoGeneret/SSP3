@@ -4,8 +4,27 @@
   template:
     src: "container-app-env.j2"
     dest: "{{ web_server_workdir }}/{{ web_server_repo_dirname }}/.env"
+  tags:
+    - first-deploy
+
+- name: "[API] - git pull"
+  become: true
+  shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo git pull origin prod"
+  register: output
+  tags:
+    - cd-deploy
+
+- name: "[API] - docker down"
+  become: true
+  shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo docker-compose -f {{ web_server_docker_compose_file }} down -d app"
+  register: output
+  tags:
+    - cd-deploy
 
 - name: "[BACKOFFICE] - start docker-compose app"
   become: true
   shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo docker-compose -f {{ web_server_docker_compose_file }} up -d app"
   register: output
+  tags:
+    - first-deploy
+    - cd-deploy

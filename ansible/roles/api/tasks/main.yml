@@ -7,11 +7,27 @@
     src: container-api-env.j2
     dest: "{{ web_server_workdir }}/{{ web_server_repo_dirname }}/.env"
   tags:
-    - copyenvapi
+    - first-deploy
+
+- name: "[API] - git pull"
+  become: true
+  shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo git pull origin prod"
+  register: output
+  tags:
+    - cd-deploy
+
+- name: "[API] - docker down"
+  become: true
+  shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo docker-compose -f {{ web_server_docker_compose_file }} down -d api"
+  register: output
+  tags:
+    - cd-deploy
 
 - name: "[API] - start docker-compose api"
   become: true
-  shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo docker-compose -f {{ web_server_docker_compose_file }} up -d api"
+  shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo docker-compose -f {{ web_server_docker_compose_file }} up --force-recreate --build -d api"
   register: output
   tags:
-    - startdockerapi
+    - first-deploy
+    - cd-deploy
+    
