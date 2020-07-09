@@ -38,6 +38,9 @@ function Login(props) {
     }
   }
   
+  React.useEffect(() => {
+    alert("kkok")
+  })
 
 
   return (
