@@ -22,19 +22,24 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    - name: Run Ansible playbook
-      uses: dawidd6/action-ansible-playbook@v2.1.1
-      with:
-        # Ansible playbook filepath
-        playbook: ansible/playbook.yml
-        # Root directory of Ansible project (defaults to current)
-        directory: /ansible
-        # SSH private key used to connect to the host
-        key: ${secrets.SSP3_HOSTS_KEY}
-        # Custom content to write into hosts
-        inventory: ""
-        # The password used for decrypting vaulted files
-        vault_password: ""
-        # Extra options that should be passed to ansible-playbook command
-        options: |
-          --tags cd-deploy
+    - name: TEst
+      run: |
+        pwd
+        ls -l
+
+    # - name: Run Ansible playbook
+    #   uses: dawidd6/action-ansible-playbook@v2.1.1
+    #   with:
+    #     # Ansible playbook filepath
+    #     playbook: ansible/playbook.yml
+    #     # Root directory of Ansible project (defaults to current)
+    #     directory: /ansible
+    #     # SSH private key used to connect to the host
+    #     key: ${secrets.SSP3_HOSTS_KEY}
+    #     # Custom content to write into hosts
+    #     inventory: ""
+    #     # The password used for decrypting vaulted files
+    #     vault_password: ""
+    #     # Extra options that should be passed to ansible-playbook command
+    #     options: |
+    #       --tags cd-deploy
