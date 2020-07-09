@@ -37,11 +37,6 @@ function Login(props) {
         })
     }
   }
-  
-  React.useEffect(() => {
-    alert("kkok")
-  }, [])
-
 
   return (
     <div className="row page-login">

@@ -11,6 +11,8 @@ moment.updateLocale("fr", {
     firstDayOfWeek: 1
 })
 
+console.log("version 1.0.0")
+
 ReactDOM.render((
     <BrowserRouter>
         <App />
