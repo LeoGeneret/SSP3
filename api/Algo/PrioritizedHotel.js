@@ -118,7 +118,7 @@ const PrioritizedHotel = {
                     
                     let visites = []
     
-                    let weekReference = moment().add(1, "week").startOf("week")
+                    let weekReference = moment().startOf("week")
     
                     for(secteur in hotelsBySecteur){
     

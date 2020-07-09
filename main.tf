@@ -47,10 +47,7 @@ resource "aws_security_group" "ssp3_database_security" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = [var.LOCAL_MACHINE_IP]
-    security_groups = [
-      aws_security_group.ssp3_classic_access.id
-    ]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   ingress {

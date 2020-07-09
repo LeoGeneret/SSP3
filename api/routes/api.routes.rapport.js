@@ -15,7 +15,7 @@ module.exports = (app, sequelize, express) => {
     app.get("/rapport", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_VISITOR, params.USER_ROLE_PLANNER]), async (req, res) => {
         
         const userId = req.token.id
-        const results = await sequelize.models.Rapport.getAll(userId)
+        const results = await sequelize.models.Rapport.getAllMine(userId)
         
         return res.status(results.status).json(results)
     })

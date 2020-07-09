@@ -1,5 +1,6 @@
 const Utils = require("../../api.utils")
 const Op = require("sequelize").Op
+const Format = require("../../data-format")
 
 module.exports = (sequelize, DataTypes) => {
 
@@ -20,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
         updatedAt: false
     })
 
-    Rapport.getAll = async userId => {
+    Rapport.getAllMine = async (userId) => {
 
         let results = {
             error: false,
@@ -28,32 +29,43 @@ module.exports = (sequelize, DataTypes) => {
             data: null
         }
 
-        let rapports = null
+        let visiteur = null
 
         try {
 
-            rapports = await sequelize.models.Visite.findAll({
+            visiteur = await sequelize.models.Visiteur.findByPk(userId, {
+                order: [
+                    ["visites", "time_start", "DESC"]
+                ],
                 include: [
                     {
-                        association: "rapport"
-                    },
-                    {
-                        association: "hotel"
-                    },
-                ],
-                where: {
-                    [Op.or]: [
-                        {
-                            visiteur_id_1: userId
-                        },
-                        {
-                            visiteur_id_2: userId
-                        },
-                    ]
-                }
+                        association: "visites",
+                        include: [
+                            {
+                                association: "rapport",
+                                required: true
+                            },
+                            {
+                                association: "hotel"
+                            }
+                        ]
+                    }
+                ]
             })
 
-            results.data = rapports
+            results.data = visiteur
+
+            results.data = visiteur.visites.map(visite => ({
+                id: visite.rapport.id,
+                note: visite.rapport.note,
+                commentaire: visite.rapport.commentaire,
+                visite: {
+                    id: visite.id,
+                    time_start: visite.time_start,
+                    time_end: visite.time_end,
+                    hotel: visite.hotel,
+                }
+            }))
 
         } catch (GetAllRapportError) {
             console.error({GetAllRapportError})
@@ -68,13 +80,35 @@ module.exports = (sequelize, DataTypes) => {
 
     Rapport.getOne = async (rapportId = null) => {
 
-        let results = await Rapport.getAll(undefined, rapportId)
+        let results = {
+            error: false,
+            status: 200,
+            data: null
+        }
+        
+        try {
+            
+            let rapport = await Rapport.findByPk(rapportId)
 
-        if(results.data && results.data.length){
-            results.data = results.data[0]
-        } else {
-            console.log('test data NULL !!!!!!')
-            results.data = null
+            console.log({exist: !!rapport})
+
+            if(rapport){
+                results.data = rapport
+            } else {
+                results.error = {
+                    code: 404,
+                    message: "NOT FOUND - visit not found"
+                }
+                results.status = 404
+            }
+
+        } catch (GetOneRapport) {
+            console.error({GetAllRapportError})
+            results.error = {
+                code: 502,
+                message: "BAD GATEWAY - error on fetching ressources",
+            }
+            results.status = 502
         }
 
         return results
