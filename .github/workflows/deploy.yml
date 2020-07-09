@@ -24,6 +24,9 @@ jobs:
 
     - name: Run Ansible playbook
       uses: dawidd6/action-ansible-playbook@v2.1.1
+      run: |
+        echo "iciiiiiii"
+        echo ${secrets.SSP3_HOSTS_KEY}
       with:
         # Ansible playbook filepath
         playbook: playbook.yml
