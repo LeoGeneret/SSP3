@@ -64,7 +64,7 @@ resource "aws_security_group" "ssp3_database_security" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.LOCAL_MACHINE_IP]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -98,7 +98,7 @@ resource "aws_security_group" "ssp3_classic_access" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.LOCAL_MACHINE_IP]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
@@ -139,7 +139,7 @@ resource "aws_security_group" "ssp3_haproxy_access" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = [var.LOCAL_MACHINE_IP]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   egress {
