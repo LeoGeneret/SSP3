@@ -18,7 +18,7 @@
 
 - name: "[API] - docker down"
   become: true
-  shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo docker-compose -f {{ web_server_docker_compose_file }} down api"
+  shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo docker-compose -f {{ web_server_docker_compose_file }} down"
   register: output
   tags:
     - cd-deploy
