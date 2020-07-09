@@ -31,10 +31,8 @@ jobs:
         directory: ansible
         # SSH private key used to connect to the host
         key: ${secrets.SSP3_HOSTS_KEY}
-        # Custom content to write into hosts
-        inventory: ""
-        # The password used for decrypting vaulted files
-        vault_password: ""
         # Extra options that should be passed to ansible-playbook command
         options: |
           --tags cd-deploy
+          -i hosts.yml
+          --verbose
