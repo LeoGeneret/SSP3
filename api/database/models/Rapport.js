@@ -1,3 +1,5 @@
+const Utils = require("../../api.utils")
+const Op = require("sequelize").Op
 
 module.exports = (sequelize, DataTypes) => {
 
@@ -35,33 +37,35 @@ module.exports = (sequelize, DataTypes) => {
         let rapports = null
 
         try {
-            rapports = await sequelize.query("select distinct * from rapports, visites, visiteurs, users where rapports.id = visites.rapport_id and visites.visiteur_id_1 = visiteurs.id and visiteurs.user_id = users.id and users.id = $idUtil UNION select distinct * from rapports, visites, visiteurs, users where rapports.id = visites.rapport_id and visites.visiteur_id_2 = visiteurs.id and visiteurs.user_id = users.id and users.id = $idUtil", {bind: { idUtil }});
-    
-            // Rapport.findAll({
-            //     include: [
-            //         {
-            //             required : true,
-            //             association: "rapport_visites",
-            //             include: [
-            //                 {
-            //                     required : true,
-            //                     association: "visiteurs_1_visite",
-            //                     include: [
-            //                         {
-            //                             required : true,
-            //                             association: "user_related", 
-            //                             where: {id : 3}
-            //                         }
-            //                     ],
-            //                 }
-            //             ], 
-            //         }
-            //     ]
-            // });
+            rapports = await sequelize.models.Visite.findAll({
+                include: [
+                    {
+                        association: "rapport",
+                        include: [
+                            {
+                                association: "images"
+                            },
+                        ]
+                    },
+                    {
+                        association: "hotel"
+                    },
+                ],
+                where: {
+                    [Op.or]: [
+                        {
+                            visiteur_id_1: userId
+                        },
+                        {
+                            visiteur_id_2: userId
+                        },
+                    ]
+                }
+            })
 
             if(rapports){
-                // results.data = rapports.map(r => r.toJSON())
-                // console.log('IF RAPPORTS', results.data)
+                results.data = rapports.map(r => r.toJSON())
+                console.log('IF RAPPORTS', results.data)
                 console.log(rapports[0])
             }
 

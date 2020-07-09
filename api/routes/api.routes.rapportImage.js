@@ -1,6 +1,6 @@
 const utils = require("../api.utils")
 const params = require("../api.params")
-const multer = require('../multer-config');
+const multer = require('../middleware/multerconfig');
 
 module.exports = (app, sequelize, express) => {
 
@@ -15,7 +15,7 @@ module.exports = (app, sequelize, express) => {
 
     app.put("/rapportImage/create", utils.routes.checkToken, utils.routes.checkUserRole([params.USER_ROLE_PLANNER, params.USER_ROLE_VISITOR]), multer, async (req, res) => {
         const results = await sequelize.models.RapportImage.createRapportImage({
-            src: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+            src: `${process.env.MEDIA_STORAGE_HOST}/images/${req.file.filename}`,
             rapport_id: req.body.rapport_id
         })
         return res.status(results.status).json(results)
