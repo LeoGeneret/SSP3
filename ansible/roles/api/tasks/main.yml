@@ -25,7 +25,7 @@
 
 - name: "[API] - start docker-compose api"
   become: true
-  shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo docker-compose -f {{ web_server_docker_compose_file }} up --force-recreate --build -d api"
+  shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo docker-compose -f {{ web_server_docker_compose_file }} up --build -d api"
   register: output
   tags:
     - first-deploy

@@ -23,7 +23,7 @@
 
 - name: "[BACKOFFICE] - start docker-compose app"
   become: true
-  shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo docker-compose -f {{ web_server_docker_compose_file }} up -d app"
+  shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo docker-compose -f {{ web_server_docker_compose_file }} up -d --build app"
   register: output
   tags:
     - first-deploy
