@@ -22,11 +22,13 @@ jobs:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    - name: Run Ansible playbook
-      uses: dawidd6/action-ansible-playbook@v2.1.1
+    - name: "test test"
       run: |
         echo "iciiiiiii"
         echo ${secrets.SSP3_HOSTS_KEY}
+
+    - name: Run Ansible playbook
+      uses: dawidd6/action-ansible-playbook@v2.1.1
       with:
         # Ansible playbook filepath
         playbook: playbook.yml
