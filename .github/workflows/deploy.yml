@@ -25,7 +25,7 @@ jobs:
     - name: "test test"
       run: |
         echo "iciiiiiii"
-        echo ${secrets.SSP3_HOSTS_KEY}
+        echo ${{secrets.SSP3_HOSTS_KEY}}
 
     - name: Run Ansible playbook
       uses: dawidd6/action-ansible-playbook@v2.1.1
@@ -35,7 +35,7 @@ jobs:
         # Root directory of Ansible project (defaults to current)
         directory: ansible
         # SSH private key used to connect to the host
-        key: ${secrets.SSP3_HOSTS_KEY}
+        key: ${{secrets.SSP3_HOSTS_KEY}}
         # Extra options that should be passed to ansible-playbook command
         options: |
           --tags cd-deploy
