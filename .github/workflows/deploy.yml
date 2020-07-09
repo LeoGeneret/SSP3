@@ -36,3 +36,4 @@ jobs:
           --tags cd-deploy
           -i hosts.yml
           --verbose
+          -u ubuntu

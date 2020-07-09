@@ -7,14 +7,14 @@
   tags:
     - first-deploy
 
-- name: "[API] - git pull"
+- name: "[BACKOFFICE] - git pull"
   become: true
   shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo git pull origin prod"
   register: output
   tags:
     - cd-deploy
 
-- name: "[API] - docker down"
+- name: "[BACKOFFICE] - docker down"
   become: true
   shell: "cd {{ web_server_workdir }}/{{ web_server_repo_dirname }} && sudo docker-compose -f {{ web_server_docker_compose_file }} down -d app"
   register: output
