@@ -4,11 +4,12 @@ const params = require("../api.params")
 module.exports = (app, sequelize, express) => {
 
     app.put("/rapport/create", async (req, res) => {
-        const results = await sequelize.models.Rapport.createRapport({
+        const results = await sequelize.models.Rapport.createRapport(Object.assign({
             note: req.body.note,
-            commentaire: req.body.commentaire,
             visit_id: req.body.visit_id,
-        })
+        }, req.body.commentaire && {
+            commentaire: req.body.commentaire
+        }))
         return res.status(results.status).json(results)
     })
 

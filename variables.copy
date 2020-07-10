@@ -10,8 +10,8 @@ variable "private_key_path" {
 }
 
 // your machine's public ip for ssh connection (format is "your_ip/32") 
-// (you can find with dig +short myip.opendns.com @resolver1.opendns.com)
-variable "self_machine_ip" {
+// (you can find with "$ curl ifconfig.me"
+variable "LOCAL_MACHINE_IP" {
   default = "/32"
 }
 

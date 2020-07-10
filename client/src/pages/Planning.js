@@ -73,8 +73,6 @@ function Planning () {
         let agents = res.data.filter(f => f.agents.length === 2).map(v => v.agents)
         let binomes = getBinomesRessources(agents)
         
-        console.log({binomes})
-
         setRessources(binomes)
 
         /** Build */

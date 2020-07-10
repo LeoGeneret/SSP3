@@ -18,26 +18,6 @@ resource "aws_key_pair" "key_pair" {
 # SECURITY GROUPS
 #
 
-resource "aws_security_group" "dangerous_allow_all" {
-  name        = "dangerous_allow_all"
-  description = "Security group created with terraform"
-  vpc_id      = data.aws_vpc.default.id
-
-  ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
-  }
-}
-
 resource "aws_security_group" "ssp3_database_security" {
   name        = "ssp3_database_security"
   description = "Security group created with terraform"
@@ -47,7 +27,9 @@ resource "aws_security_group" "ssp3_database_security" {
     from_port   = 3306
     to_port     = 3306
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [
+      aws_security_group.ssp3_classic_access.id,
+    ]
   }
 
   ingress {

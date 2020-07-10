@@ -106,7 +106,7 @@ const generate = async () => {
 
     // generate one planner
     const userPlanner = await User.create({
-        email: "planner@spp3.email",
+        email: "planner@ssp3.email",
         password: bcrypt.hashSync("0000", 10),
         role: params.USER_ROLE_PLANNER
     })
