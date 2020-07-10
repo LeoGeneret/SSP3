@@ -6,9 +6,11 @@ const MIME_TYPES = {
   'image/png': 'png'
 };
 
+const folderName = 'images'
+
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, 'images');
+    callback(null, folderName);
   },
   filename: (req, file, callback) => {
     const name = file.originalname.split(' ').join('_');
